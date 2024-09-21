@@ -334,18 +334,6 @@ def index():
 def solve_page():
     return render_template('solve.html')
 
-@app.route('/solve_fuerza')
-def solve_fuerza_page():
-    return render_template('solve_fuerza.html')
-
-@app.route('/solve_backtracking')
-def solve_backtracking_page():
-    return render_template('solve_backtracking.html')
-
-@app.route('/solve_by_rules')
-def solve_by_rules_page():
-    return render_template('solve_by_rules.html')
-
 @app.route('/play')
 def play_page():
     return render_template('play.html')
