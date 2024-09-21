@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>By Rules Solver</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div style="text-align:center; margin-bottom: 8px;"></div>
+    <h1 style="text-align:center; margin-bottom: 8px;">Solucionador de 0H H1</h1>
+    <label for="matrix-size" style="font-size: 18px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir método</label>
+        <select id="algorithm" style="padding: 10px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="updateMatrixOptions()">
+            <option value="1" selected>Backtracking</option>
+            <option value="2">Fuerza</option>
+            <option value="3">Reglas</option>
+        </select>
+    </div>
+    <div style="text-align:center; margin-bottom: 8px;">
+        <label for="matrix-size" style="font-size: 18px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
+        <select id="matrix-size" style="padding: 10px;margin-top: 20px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
+            <option value="4" selected>4 x 4</option>
+            <option value="6">6 x 6</option>
+            <option value="8">8 x 8</option>
+            <option value="10">10 x 10</option>
+            <option value="12">12 x 12</option>
+        </select>
+    </div>
+
+    <table id="matrix" style="margin: 0 auto; border-collapse: collapse; margin-top: 20px;">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <div style="text-align:center;">
+        <button onclick="solveMatrix()" class="resolver rojito" style="margin-top: 20px;">Encontrar Solución</button>
+        <button onclick="reset()" class="resolver azulito" style="margin-top: 20px;">Reiniciar</button>
+        <label for="image-upload" class="resolver rojito" style="margin-top: 20px;">Procesar imagen</label>
+        <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="uploadImage()">
+    </div>
+
+    <script>
+        let matrixSize = 4; // Tamaño de la matriz por defecto
+        let matrix = [];
+        let initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+        let stopSolution = false;
+
+        function updateMatrixOptions() {
+            const algorithm = document.getElementById("algorithm").value;
+            const matrixSelect = document.getElementById("matrix-size");
+
+            // Limpiar las opciones actuales
+            matrixSelect.innerHTML = "";
+
+            if (algorithm === "fuerza") {
+                // Si se selecciona "Fuerza", solo mostrar opciones 4x4 y 6x6
+                matrixSelect.innerHTML += '<option value="4" selected>4 x 4</option>';
+                matrixSelect.innerHTML += '<option value="6">6 x 6</option>';
+            } else {
+                // Si se selecciona "Backtracking", mostrar todas las opciones
+                matrixSelect.innerHTML += '<option value="4" selected>4 x 4</option>';
+                matrixSelect.innerHTML += '<option value="6">6 x 6</option>';
+                matrixSelect.innerHTML += '<option value="8">8 x 8</option>';
+                matrixSelect.innerHTML += '<option value="10">10 x 10</option>';
+                matrixSelect.innerHTML += '<option value="12">12 x 12</option>';
+            }
+            reset();
+        }
+
+        function reset(){
+            stopSolution = true; // Activar bandera para detener la animación
+            matrixSize = parseInt(document.getElementById('matrix-size').value);
+            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            createTable(initial);
+        }
+
+        function uploadImage() {
+            const fileInput = document.getElementById('image-upload');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('matrix_size', document.getElementById('matrix-size').value);
+
+            fetch('/process_image', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                createTable(data);
+            });
+        }
+
+        function adjustLockSize() {
+            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
+                                matrixSize <= 6 ? 'lock-size-35' :
+                                matrixSize <= 8 ? 'lock-size-30' :
+                                matrixSize <= 10 ? 'lock-size-25' : 'lock-size-20';
+
+            // Remover cualquier clase de tamaño de candado previo
+            document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25', 'lock-size-20');
+
+            // Añadir la nueva clase según el tamaño
+            document.body.classList.add(lockSizeClass);
+        }
+
+        function adjustCellSize() {
+            const cellSize = matrixSize <= 4 ? 100 :
+                            matrixSize <= 6 ? 80 :
+                            matrixSize <= 8 ? 60 :
+                            matrixSize <= 10 ? 50 : 40;
+            
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = `${cellSize}px`;
+                cell.style.height = `${cellSize}px`;
+            });
+
+            adjustLockSize(); // Llamar para ajustar el tamaño del candado
+        }
+
+        function createTable(mtx) {
+            matrixSize = parseInt(document.getElementById('matrix-size').value);
+            matrix = Array.from({ length: matrixSize }, (_, i) => Array.from({ length: matrixSize }, (_, j) => mtx[i][j]));
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = matrix[i][j] === 0 ? 'red blocked' : matrix[i][j] === 1 ? 'blue blocked' : 'grey';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+        }
+
+
+
+
+        function toggleColor(row, col, cell) {
+            // Secuencia de colores: gris -> rojo bloqueado -> azul bloqueado -> gris
+            if (cell.className === 'grey') {
+                cell.className = 'red blocked';
+                matrix[row][col] = 0;
+            } else if (cell.className === 'red blocked') {
+                cell.className = 'blue blocked';
+                matrix[row][col] = 1;
+            } else if (cell.className === 'blue blocked') {
+                cell.className = 'grey';
+                matrix[row][col] = -1;
+            }
+        }
+
+        function solveMatrix() {
+            algorithm = parseInt(document.getElementById('algorithm').value);
+            if (algorithm == 1){
+                fetch('/solve/solve_backtracking/matrix', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ matrix: matrix }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.solution != 0) {
+                        alert(`La solución se encontró en ${data.steps.length} pasos.`);
+                        stopSolution = false;
+                        displaySolution(data.steps);
+                    } else {
+                        alert("La condición inicial no tiene solución.");
+                    }
+                });
+            } else if (algorithm == 2){
+                fetch('/solve/solve_fuerza/matrix', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ matrix: matrix }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.solutions_count > 0) {
+                        alert(`La condición inicial tiene ${data.solutions_count} soluciones`);
+                        stopSolution = false;
+                        displaySolution(data.solutions);
+                    } else {
+                        alert("La condición inicial no tiene solución hpta");
+                    }
+                });
+            } else {
+                fetch('/solve/solve_by_rules/matrix', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ matrix: matrix }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.solution != 0) {
+                        alert(`La solución se encontró en ${data.steps.length} pasos.`);
+                        stopSolution = false;
+                        displaySolution(data.steps);
+                    } else {
+                        alert("La condición inicial no tiene solución.");
+                    }
+                });
+            }
+        }
+
+        function displaySolution(steps) {
+            algorithm = parseInt(document.getElementById('algorithm').value);
+            let sleep_time = 0
+            if (algorithm == 1){
+                sleep_time = 10
+            } else if (algorithm == 2){
+                sleep_time = 1000
+            } else {
+                sleep_time = 800
+            }
+            let stepIndex = 0;
+            function showStep() {
+                if (stopSolution) return;
+                if (stepIndex < steps.length) {
+                    const solution = steps[stepIndex];
+                    const table = document.getElementById('matrix');
+                    for (let i = 0; i < matrixSize; i++) {
+                        for (let j = 0; j < matrixSize; j++) {
+                            const cell = table.rows[i].cells[j];
+                            if (!cell.classList.contains('blocked')) { // Solo actualizar si no está bloqueada
+                                if (solution[i][j] === 0) {
+                                    cell.className = 'red';
+                                } else if (solution[i][j] === 1) {
+                                    cell.className = 'blue';
+                                } else {
+                                    cell.className = 'grey';
+                                }
+                            }
+                        }
+                    }
+                    stepIndex++;
+                    setTimeout(showStep, sleep_time); // Cambia 500 para ajustar el tiempo entre pasos
+                }
+            }
+            showStep();
+        }
+
+        createTable(initial);
+    </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Game</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1 style="text-align:center;">0h h1</h1>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <div style="text-align:center;" class="botones">
+        <button onclick="startGame()" class="resolver evaluar">Iniciar</button>
+        <button onclick="evaluateMatrix()" class="resolver evaluar">Evaluar</button>
+    </div>
+    <script>
+        let matrixSize = 4; // Tamaño de la matriz
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+
+        function adjustLockSize() {
+            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
+                                matrixSize <= 6 ? 'lock-size-35' :
+                                matrixSize <= 8 ? 'lock-size-30' :
+                                matrixSize <= 10 ? 'lock-size-25' : 'lock-size-20';
+
+            // Remover cualquier clase de tamaño de candado previo
+            document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25', 'lock-size-20');
+
+            // Añadir la nueva clase según el tamaño
+            document.body.classList.add(lockSizeClass);
+        }
+
+        function adjustCellSize() {
+            const cellSize = matrixSize <= 4 ? 100 :
+                            matrixSize <= 6 ? 80 :
+                            matrixSize <= 8 ? 60 :
+                            matrixSize <= 10 ? 50 : 40;
+            
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = `${cellSize}px`;
+                cell.style.height = `${cellSize}px`;
+            });
+
+            adjustLockSize(); // Llamar para ajustar el tamaño del candado
+        }
+
+        function createTable() {
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'grey';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+        }
+
+        function toggleColor(row, col, cell) {
+            if (cell.classList.contains('locked')) {
+                return; // Do nothing if the cell is locked
+            }
+            if (cell.className === 'grey') {
+                cell.className = 'red';
+                matrix[row][col] = 0;
+            } else if (cell.className === 'red') {
+                cell.className = 'blue';
+                matrix[row][col] = 1;
+            } else {
+                cell.className = 'grey';
+                matrix[row][col] = -1;
+            }
+        }
+
+        function startGame() {
+            fetch('/play/matrix', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const gameMatrix = data.matrix;
+                const table = document.getElementById('matrix');
+                for (let i = 0; i < gameMatrix.length; i++) {
+                    for (let j = 0; j < gameMatrix[i].length; j++) {
+                        const cell = table.rows[i].cells[j];
+                        if (gameMatrix[i][j] === 0) {
+                            cell.className = 'red locked';
+                        } else if (gameMatrix[i][j] === 1) {
+                            cell.className = 'blue locked';
+                        } else {
+                            cell.className = 'grey';
+                        }
+                        matrix[i][j] = gameMatrix[i][j];
+                    }
+                }
+            });
+        }
+
+        function evaluateMatrix() {
+            if (rules_final(matrix)) {
+                alert("¡Felicidades, has ganado!");
+            }
+        }
+
+        function rules_final(matrix) {
+            const n = matrix.length;
+            const matrixt = matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
+            let control = true;
+            if (all(matrix)) {
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n - 2; j++) {
+                        if (matrix[i][j] === matrix[i][j + 1] && matrix[i][j] === matrix[i][j + 2]) {
+                            alert(`Hay 3 en línea en la fila ${i + 1}`);
+                            control = false;
+                            return control;
+                        }
+                        if (matrix[j][i] === matrix[j + 1][i] && matrix[j][i] === matrix[j + 2][i]) {
+                            alert(`Hay 3 en línea en la columna ${i + 1}`);
+                            control = false;
+                            return control;
+                        }
+                    }
+                }
+                for (let i = 0; i < n; i++) {
+                    if (sum(matrix[i]) < (n) / 2) {
+                        alert(`Hay más rojos que azules en la fila ${i + 1}`);
+                        control = false;
+                        return control;
+                    }
+                    if (sum(matrix[i]) > (n) / 2) {
+                        alert(`Hay más azules que rojos en la fila ${i + 1}`);
+                        control = false;
+                        return control;
+                    }
+                }
+                for (let i = 0; i < n; i++) {
+                    if (sum(matrixt[i]) < (n) / 2) {
+                        alert(`Hay más rojos que azules en la columna ${i + 1}`);
+                        control = false;
+                        return control;
+                    }
+                    if (sum(matrixt[i]) > (n) / 2) {
+                        alert(`Hay más azules que rojos en la columna ${i + 1}`);
+                        control = false;
+                        return control;
+                    }
+                }
+                for (let i = 0; i < n; i++) {
+                    for (let j = i + 1; j < n; j++) {
+                        if (arraysEqual(matrix[i], matrix[j])) {
+                            alert(`Las filas ${i + 1} y ${j + 1} son iguales`);
+                            control = false;
+                            return control;
+                        }
+                        if (arraysEqual(matrixt[i], matrixt[j])) {
+                            alert(`Las columnas ${i + 1} y ${j + 1} son iguales`);
+                            control = false;
+                            return control;
+                        }
+                    }
+                }
+                return control;
+            }
+            return false;
+        }
+
+        function all(matrix) {
+            return matrix.every(row => row.every(cell => cell !== -1));
+        }
+
+        function sum(array) {
+            return array.reduce((a, b) => a + b, 0);
+        }
+
+        function arraysEqual(a, b) {
+            return JSON.stringify(a) === JSON.stringify(b);
+        }
+
+        createTable();
+    </script>
+</body>
+</html>
