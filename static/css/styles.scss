@@ -1,0 +1,218 @@
+$rojo: #ef0606;
+$azul: #004eeb;
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #000; /* Fondo negro */
+    box-sizing: border-box;
+    font-family: "Rubik", sans-serif;
+}
+
+table { 
+    border-collapse: collapse; 
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #fff; /* Títulos en blanco */
+}
+
+.game-board {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+table {
+    border-collapse: collapse;
+    border-radius: 5px;
+    background-color: #1a1a1a; /* Fondo más oscuro para la tabla */
+    box-shadow:  6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(255, 255, 255, 0.1); /* Sombras ajustadas */
+}
+
+tr {
+    border-radius: 5px;
+}
+
+td {
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  font-size: 24px;
+  padding: 10px;
+  background-color: rgba(228, 228, 228, 0.1);
+  box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.7), inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+  border: 3px solid #1f1f1f;
+  border-radius: 5px;
+  transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
+}
+
+a {
+    text-decoration: none;
+}
+
+.resolver {
+    height: 60px;
+    width: 240px;
+    display: flex;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: center;
+    color: #e8eaee;
+    font-weight: bold;
+    outline: none;
+    border: none;
+
+    &.azulito {
+        &:hover {
+            background: linear-gradient(145deg, #0046d4, #0053fb); 
+            box-shadow: inset -3px -3px 10px rgba(0, 0, 0, 0.5),
+                        inset 2px 2px 10px rgba(255, 255, 255, 0.1),
+                        6px 6px 12px rgba(0, 0, 0, 0.5),
+                        -6px -6px 12px rgba(255, 255, 255, 0.1); /* Sombras ajustadas */
+            color: #e8eaee;
+        }
+        &:active {
+            background-color: #0036a3;
+        }
+    }
+
+    &.rojito {
+        margin-bottom: 20px;
+        &:hover {
+            background: linear-gradient(145deg, #d70505, #ff0606);
+            box-shadow: inset -3px -3px 10px rgba(0, 0, 0, 0.5),
+                        inset 2px 2px 10px rgba(255, 255, 255, 0.1),
+                        6px 6px 12px rgba(0, 0, 0, 0.5),
+                        -6px -6px 12px rgba(255, 255, 255, 0.1); /* Sombras ajustadas */
+            color: #e8eaee;
+        }
+        &:active {
+            background: #ef0606;
+            box-shadow: inset 6px 6px 12px #aa0404,
+                        inset -6px -6px 12px #ff0808;
+        }
+    }
+
+    &.inicio {
+        width: 120px;
+        height: 40px;
+        &:hover {
+            background: linear-gradient(145deg, #d70505, #ff0606);
+            box-shadow: inset -3px -3px 10px rgba(0, 0, 0, 0.5),
+                        inset 2px 2px 10px rgba(255, 255, 255, 0.1),
+                        6px 6px 12px rgba(0, 0, 0, 0.5),
+                        -6px -6px 12px rgba(255, 255, 255, 0.1); /* Sombras ajustadas */
+            color: #e8eaee;
+        }
+    }
+
+    &.evaluar {
+        &:hover {
+            background: linear-gradient(145deg, #0046d4, #0053fb); 
+            box-shadow: inset -3px -3px 10px rgba(0, 0, 0, 0.5),
+                        inset 2px 2px 10px rgba(255, 255, 255, 0.1),
+                        6px 6px 12px rgba(0, 0, 0, 0.5),
+                        -6px -6px 12px rgba(255, 255, 255, 0.1); /* Sombras ajustadas */
+            color: #e8eaee;
+        }
+        width: 120px;
+        height: 40px;
+    }
+}
+
+.azulito, .rojito, .inicio, .evaluar {
+    background: linear-gradient(145deg, #d1d3d6, #f8faff);
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.5),
+                -6px -6px 12px rgba(255, 255, 255, 0.1),
+                inset -3px -3px 10px rgba(0, 0, 0, 0.5),
+                inset 2px 2px 10px rgba(255, 255, 255, 0.1); /* Sombras ajustadas */
+}
+.blue {
+    color: #d1d3d6;
+    background: linear-gradient(145deg, #0046d4, #0053fb); 
+    box-shadow: inset -3px -3px 10px rgb(1, 14, 128),
+                inset 2px 2px 10px rgba(90, 120, 255, 0.993);
+}
+.botones {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+    button {
+        margin: 0 15px;
+    }
+}
+.locked {
+    pointer-events: none; /* Prevent clicking */
+}
+.blue.blocked {
+    color: #d1d3d6;
+    background: linear-gradient(145deg, #0046d4, #0053fb); 
+    box-shadow: inset -3px -3px 10px rgb(1, 14, 128),
+                inset 2px 2px 10px rgba(90, 120, 255, 0.993);
+}
+.red.blocked {
+    color: #d1d3d6;
+    background: linear-gradient(145deg, #d70505, #ff0606);
+    box-shadow: inset -3px -3px 10px rgb(117, 2, 2),
+                inset 2px 2px 10px rgba(248, 112, 112, 0.993);
+}
+.red.blocked::before, .blue.blocked::before {
+    content: "";
+    position: absolute;
+    background-image: url('https://openclipart.org/image/800px/184625'); /* Imagen del candado */
+    background-size: cover;
+    filter: invert(1);
+    opacity: 0.25;
+}
+
+.lock-size-40 .red.blocked::before,
+.lock-size-40 .blue.blocked::before {
+width: 100px;
+height: 92px;
+top: 10px; /* Ajusta la posición vertical para centrar la imagen */
+right: 10px; /* Ajusta la posición horizontal */
+}
+
+.lock-size-35 .red.blocked::before,
+.lock-size-35 .blue.blocked::before {
+width: 80px;
+height: 74px;
+top: 10px; /* Ajusta la posición vertical para centrar la imagen */
+right: 10px; /* Ajusta la posición horizontal */
+}
+
+.lock-size-30 .red.blocked::before,
+.lock-size-30 .blue.blocked::before {
+width: 60px;
+height: 55px;
+top: 10px; /* Ajusta la posición vertical para centrar la imagen */
+right: 10px; /* Ajusta la posición horizontal */
+}
+
+.lock-size-25 .red.blocked::before,
+.lock-size-25 .blue.blocked::before {
+width: 50px;
+height: 46px;
+top: 10px; /* Ajusta la posición vertical para centrar la imagen */
+right: 10px; /* Ajusta la posición horizontal */
+}
+
+.lock-size-20 .red.blocked::before,
+.lock-size-20 .blue.blocked::before {
+width: 40px;
+height: 37px;
+top: 10px; /* Ajusta la posición vertical para centrar la imagen */
+right: 10px; /* Ajusta la posición horizontal */
+}
+
+.red.blocked, .blue.blocked {
+   position: relative; /* Necesario para posicionar el ::before dentro del elemento */
+}
+
