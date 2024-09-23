@@ -85,11 +85,26 @@ def has_solution(matrix, combinaciones, row, col):
         del count
     return c, sols
 
-def no_three_consecutive(perm):
-    for i in range(len(perm) - 2):
-        if perm[i] == perm[i+1] == perm[i+2]:
-            return False
-    return True
+def generate_permutations(n):
+    if n % 2 != 0:
+        return []  # No es posible si n no es par
+
+    def backtrack(seq, zeros_left, ones_left, last_two):
+        # Caso base: hemos generado una secuencia de longitud n
+        if len(seq) == n:
+            yield seq
+            return
+
+        # Intentamos agregar un '0' si quedan ceros y no hay dos ceros consecutivos
+        if zeros_left > 0 and (len(last_two) < 2 or last_two != [0, 0]):
+            yield from backtrack(seq + [0], zeros_left - 1, ones_left, (last_two[-1:] + [0])[-2:])
+
+        # Intentamos agregar un '1' si quedan unos y no hay dos unos consecutivos
+        if ones_left > 0 and (len(last_two) < 2 or last_two != [1, 1]):
+            yield from backtrack(seq + [1], zeros_left, ones_left - 1, (last_two[-1:] + [1])[-2:])
+
+    # Inicializamos la búsqueda con secuencia vacía, n/2 ceros y n/2 unos
+    return backtrack([], n // 2, n // 2, [])
 
 #---------------------------------------backtracking-------------------------------------------------------
 steps = []
@@ -321,6 +336,119 @@ def process_image_route():
     matrix = process_image(open_cv_image, n)
     return jsonify(matrix)
 
+#------------------------------------------------GENETIC ALGORTHM-------------------------------------------------------
+
+def check_rows_ga(matrix):
+    check = []
+    n = len(matrix)
+    for row in matrix:
+        for i in range(n-2):
+            if row[i] == row[i+1] == row[i+2]:
+                check.append(2)
+        if sum(row) != int((n)/2):
+            check.append(3)
+    return check
+
+def check_cols_ga(matrix):
+    check = []
+    n = len(matrix)
+    matrixt = list(zip(*matrix))
+    for col in matrixt:
+        for i in range(n-2):
+            if col[i] == col[i+1] == col[i+2]:
+                check.append(2)
+        if sum(col) != int((n)/2):
+            check.append(3)
+    return check
+
+def check_duplicates_ga(matrix):
+    check = []
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i+1, n):
+            if list(matrix[i]) == list(matrix[j]):
+                check.append(4)
+            if list(zip(*matrix))[i] == list(zip(*matrix))[j]:
+                check.append(4)
+    return check
+
+def enforce_constraints(individual,mtx,ubi):
+    check = []
+    for r,c in ubi:
+        if individual[r][c] != mtx[r][c]:
+            check.append(5)
+    return check
+
+# Fitness function example: lower is better (goal is 0 fitness)
+def fitness_fn(individual,mtx,ubi):
+    # Implement fitness function logic here
+    violations = count_rule_violations(individual,mtx,ubi)
+    return (10 * violations.count(2) + 5 * violations.count(3) + 2 * violations.count(4) + 5 * violations.count(5)) ** 2
+
+# Function to randomly select an individual based on fitness
+def random_selection(population, fitness_fn,mtx,ubi):
+    weights = [1 / (fitness_fn(ind,mtx,ubi) + 1e-6) for ind in population]
+    return random.choices(population, weights=weights, k=1)[0]
+
+# Function to perform crossover between two individuals
+def crossover(x, y):
+    if random.random() < 0.5:  # 50% chance to transpose
+        x, y = np.transpose(x), np.transpose(y)
+    
+    n = len(x)
+    start, end = sorted(random.sample(range(n), 2))
+    
+    child = np.vstack((x[:start], y[start:end], x[end:]))
+    return child
+
+# Function to mutate a child with some probability
+def mutate(child,mutation_rate):
+    if random.random() < mutation_rate:
+        row = random.randint(0, len(child) - 1)
+        col = random.randint(0, len(child[0]) - 1)
+        child[row][col] = 1 - child[row][col]  # Flip the bit (0 <-> 1)
+    return child
+
+# Elitism: preserve the top N fittest individuals
+def elitism(population, fitness_fn, elitism_count,mtx,ubi):
+    return sorted(population, key=lambda individual: fitness_fn(individual,mtx,ubi))[:elitism_count]
+
+# Genetic Algorithm function
+def genetic_algorithm(population, fitness_fn, mutation_rate, elitism_count,mtx,ubi):
+    cont = 0
+    while True:
+        new_population = []
+        
+        # Generate new population using selection, crossover, and mutation
+        for _ in range(len(population)):
+            x = random_selection(population, fitness_fn,mtx,ubi)
+            y = random_selection(population, fitness_fn,mtx,ubi)
+            child = crossover(x, y)
+            child = mutate(child,mutation_rate)
+            new_population.append(child)
+        
+        # Apply elitism
+        elite = elitism(population, fitness_fn, elitism_count,mtx,ubi)
+        population = new_population + elite
+        
+        # Termination condition: Check if any individual has fitness value 0
+        best_individual = min(population, key=lambda individual: fitness_fn(individual,mtx,ubi))
+        steps.append(best_individual.tolist())
+        print(fitness_fn(best_individual,mtx,ubi))
+        if fitness_fn(best_individual,mtx,ubi) == 0:
+            return best_individual
+        cont +=1
+        if cont == 20:
+            return 0
+
+# Example rule violation counter (you need to implement the actual rules)
+def count_rule_violations(individual,mtx,ubi):
+    violations = check_cols_ga(individual)
+    violations.extend(check_duplicates_ga(individual))
+    violations.extend(check_rows_ga(individual))
+    violations.extend(enforce_constraints(individual,mtx,ubi))
+    return violations
+
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/')
 def menu():
@@ -353,11 +481,7 @@ def solve_matrix():
 
         num_posiciones = len(row)
         num_hilos = os.cpu_count()
-
-        op = [1 if i < n/2 else 0 for i in range(n)]
-        
-        permutaciones = list(set(permutations(op)))
-        permutaciones = [perm for perm in permutaciones if no_three_consecutive(perm)]
+        permutaciones = list(generate_permutations(n))
         combinaciones = list(permutations(permutaciones, n))
         comb = len(combinaciones)
         chunks = [combinaciones[int(comb*i/num_hilos):int(comb*(i+1)/num_hilos)] for i in range(num_hilos)]
@@ -369,10 +493,12 @@ def solve_matrix():
 
         solutions_count = sum(list(zip(*results))[0])
         solutions = [sol for sublist in list(zip(*results))[1] for sol in sublist]
-
-        return jsonify({'solutions_count': solutions_count, 'solutions': solutions})
+        if len(solutions) == 0:
+            return jsonify({'solution': 0})
+        else:
+            return jsonify({'solution': solutions})
     else:
-        return jsonify({'solutions_count': 0, 'solutions': []})
+        return jsonify({'solution': 0})
 
 @app.route('/solve/solve_backtracking/matrix', methods=['POST'])
 def backtracking1():
@@ -392,6 +518,30 @@ def resolver_sudoku_binario():
         return jsonify({'solution': 1, 'steps': aux})
     else:
         return jsonify({'solution': 0, 'steps': aux})
+
+@app.route('/solve/solve_genetic_algorithm/matrix', methods=['POST'])
+def genetic_algorithm1():
+    MUTATION_RATE = 0.01
+    ELITISM_COUNT = 5
+    POPULATION_SIZE = 100
+    inicial_matrix = np.array(request.json['matrix'], dtype=np.int32)
+    chromosome_length = len(inicial_matrix) # For a 4x4 binary puzzle
+    ubi = []
+    for i in range(chromosome_length):
+        for j in range(chromosome_length): 
+            if inicial_matrix[i][j] != -1:
+                ubi.append((i,j))
+    vectors = list(generate_permutations(chromosome_length))
+    population = [np.vstack(random.sample(vectors, chromosome_length)) for _ in range(POPULATION_SIZE)]
+    # Solve the puzzle using the genetic algorithm
+    solution = genetic_algorithm(population, fitness_fn, MUTATION_RATE, ELITISM_COUNT,inicial_matrix,ubi)
+    aux = steps.copy()
+    print(aux)
+    steps.clear()
+    if isinstance(solution, (int, float)):
+        return jsonify({'solution': 0, 'steps': aux})
+    else:
+        return jsonify({'solution': 1, 'steps': aux})
 
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
