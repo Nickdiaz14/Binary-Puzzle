@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>By Rules Solver</title>
+    <title>Solver</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -11,13 +11,24 @@
 <body>
     <div style="text-align:center; margin-bottom: 8px;"></div>
     <h1 style="text-align:center; margin-bottom: 8px;">Solucionador de 0H H1</h1>
-    <label for="matrix-size" style="font-size: 18px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir método</label>
+    
+    <!-- Botón para mostrar información -->
+    <div style="text-align:center; margin-bottom: 8px;">
+        <label for="matrix-size" style="font-size: 18px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir método</label>
         <select id="algorithm" style="padding: 10px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="updateMatrixOptions()">
             <option value="1" selected>Backtracking</option>
-            <option value="2">Fuerza</option>
-            <option value="3">Reglas</option>
+            <option value="2">Fuerza Bruta</option>
+            <option value="3">Algoritmo Genético</option>
+            <option value="4">Reglas</option>
         </select>
+        <button onclick="toggleInfo()" style="margin-left: 10px; padding: 10px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">Info</button>
     </div>
+
+    <!-- Contenedor para la información del algoritmo -->
+    <div id="algorithm-info" style="text-align: center; margin-top: 10px; display: none; padding: 15px; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 8px;">
+        <!-- Información generada por JavaScript -->
+    </div>
+
     <div style="text-align:center; margin-bottom: 8px;">
         <label for="matrix-size" style="font-size: 18px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
         <select id="matrix-size" style="padding: 10px;margin-top: 20px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
@@ -52,12 +63,10 @@
             // Limpiar las opciones actuales
             matrixSelect.innerHTML = "";
 
-            if (algorithm == 2) {
-                // Si se selecciona "Fuerza", solo mostrar opciones 4x4 y 6x6
+            if (algorithm == 2 || algorithm == 3) {
                 matrixSelect.innerHTML += '<option value="4" selected>4 x 4</option>';
                 matrixSelect.innerHTML += '<option value="6">6 x 6</option>';
             } else {
-                // Si se selecciona "Backtracking", mostrar todas las opciones
                 matrixSelect.innerHTML += '<option value="4" selected>4 x 4</option>';
                 matrixSelect.innerHTML += '<option value="6">6 x 6</option>';
                 matrixSelect.innerHTML += '<option value="8">8 x 8</option>';
@@ -76,6 +85,7 @@
 
         function uploadImage() {
             const fileInput = document.getElementById('image-upload');
+            document.getElementById('image-upload').value = "";
             const file = fileInput.files[0];
             const formData = new FormData();
             formData.append('image', file);
@@ -97,10 +107,7 @@
                                 matrixSize <= 8 ? 'lock-size-30' :
                                 matrixSize <= 10 ? 'lock-size-25' : 'lock-size-20';
 
-            // Remover cualquier clase de tamaño de candado previo
             document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25', 'lock-size-20');
-
-            // Añadir la nueva clase según el tamaño
             document.body.classList.add(lockSizeClass);
         }
 
@@ -116,14 +123,14 @@
                 cell.style.height = `${cellSize}px`;
             });
 
-            adjustLockSize(); // Llamar para ajustar el tamaño del candado
+            adjustLockSize(); 
         }
 
         function createTable(mtx) {
             matrixSize = parseInt(document.getElementById('matrix-size').value);
             matrix = Array.from({ length: matrixSize }, (_, i) => Array.from({ length: matrixSize }, (_, j) => mtx[i][j]));
             const table = document.getElementById('matrix');
-            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            table.innerHTML = ''; 
             for (let i = 0; i < matrixSize; i++) {
                 const row = document.createElement('tr');
                 for (let j = 0; j < matrixSize; j++) {
@@ -134,14 +141,10 @@
                 }
                 table.appendChild(row);
             }
-            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+            adjustCellSize();
         }
 
-
-
-
         function toggleColor(row, col, cell) {
-            // Secuencia de colores: gris -> rojo bloqueado -> azul bloqueado -> gris
             if (cell.className === 'grey') {
                 cell.className = 'red blocked';
                 matrix[row][col] = 0;
@@ -155,74 +158,43 @@
         }
 
         function solveMatrix() {
-            algorithm = parseInt(document.getElementById('algorithm').value);
-            if (algorithm == 1){
-                fetch('/solve/solve_backtracking/matrix', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ matrix: matrix }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.solution != 0) {
-                        alert(`La solución se encontró en ${data.steps.length} pasos.`);
-                        stopSolution = false;
-                        displaySolution(data.steps);
-                    } else {
-                        alert("La condición inicial no tiene solución.");
-                    }
-                });
-            } else if (algorithm == 2){
-                fetch('/solve/solve_fuerza/matrix', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ matrix: matrix }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.solutions_count > 0) {
-                        alert(`La condición inicial tiene ${data.solutions_count} soluciones`);
-                        stopSolution = false;
-                        displaySolution(data.solutions);
-                    } else {
-                        alert("La condición inicial no tiene solución hpta");
-                    }
-                });
-            } else {
-                fetch('/solve/solve_by_rules/matrix', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ matrix: matrix }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.solution != 0) {
-                        alert(`La solución se encontró en ${data.steps.length} pasos.`);
-                        stopSolution = false;
-                        displaySolution(data.steps);
-                    } else {
-                        alert("La condición inicial no tiene solución.");
-                    }
-                });
-            }
+            let algorithm = parseInt(document.getElementById('algorithm').value);
+            let algorithmEndpoints = {
+                1: '/solve/solve_backtracking/matrix',
+                2: '/solve/solve_fuerza/matrix',
+                3: '/solve/solve_genetic_algorithm/matrix',
+                4: '/solve/solve_by_rules/matrix'
+            };
+            
+            let endpoint = algorithmEndpoints[algorithm];
+            
+            fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ matrix: matrix }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.solution != 0) {
+                    let message = algorithm == 2 ? `La condición inicial tiene ${data.solution.length} soluciones` :
+                                  algorithm == 3 ? `La solución se encontró en ${data.steps.length} generaciones.` : 
+                                  `La solución se encontró en ${data.steps.length} pasos.`;
+                    alert(message);
+                    stopSolution = false;
+                    displaySolution(algorithm == 2 ? data.solution : data.steps);
+                } else {
+                    alert("La condición inicial no tiene solución.");
+                }
+            });
         }
 
         function displaySolution(steps) {
-            algorithm = parseInt(document.getElementById('algorithm').value);
-            let sleep_time = 0
-            if (algorithm == 1){
-                sleep_time = 10
-            } else if (algorithm == 2){
-                sleep_time = 1000
-            } else {
-                sleep_time = 800
-            }
+            let algorithm = parseInt(document.getElementById('algorithm').value);
+            let sleep_times = { 1: 10, 2: 1000, 3: 1200, 4: 800 };
+            let sleep_time = sleep_times[algorithm];
+            
             let stepIndex = 0;
             function showStep() {
                 if (stopSolution) return;
@@ -232,22 +204,31 @@
                     for (let i = 0; i < matrixSize; i++) {
                         for (let j = 0; j < matrixSize; j++) {
                             const cell = table.rows[i].cells[j];
-                            if (!cell.classList.contains('blocked')) { // Solo actualizar si no está bloqueada
-                                if (solution[i][j] === 0) {
-                                    cell.className = 'red';
-                                } else if (solution[i][j] === 1) {
-                                    cell.className = 'blue';
-                                } else {
-                                    cell.className = 'grey';
-                                }
+                            if (!cell.classList.contains('blocked')) {
+                                cell.className = solution[i][j] === 0 ? 'red' : 
+                                                solution[i][j] === 1 ? 'blue' : 'grey';
                             }
                         }
                     }
                     stepIndex++;
-                    setTimeout(showStep, sleep_time); // Cambia 500 para ajustar el tiempo entre pasos
+                    setTimeout(showStep, sleep_time);
                 }
             }
             showStep();
+        }
+
+        function toggleInfo() {
+            const infoDiv = document.getElementById('algorithm-info');
+            const algorithm = document.getElementById("algorithm").value;
+            let descriptions = {
+                1: "Backtracking: Una técnica de búsqueda que construye soluciones progresivamente, descartando aquellas que no cumplen con las restricciones.",
+                2: "Fuerza Bruta: Evalúa todas las posibles configuraciones para encontrar la solución correcta.",
+                3: "Algoritmo Genético: Técnica inspirada en la selección natural que usa mutación y cruce de soluciones para optimizar.",
+                4: "Reglas: Un conjunto de reglas específicas que se siguen para resolver el problema."
+            };
+            
+            infoDiv.innerHTML = descriptions[algorithm];
+            infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
         }
 
         createTable(initial);
