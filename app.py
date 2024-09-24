@@ -433,8 +433,6 @@ def genetic_algorithm(population, fitness_fn, mutation_rate, elitism_count,mtx,u
         
         # Termination condition: Check if any individual has fitness value 0
         best_individual = min(population, key=lambda individual: fitness_fn(individual,mtx,ubi))
-        steps.append(best_individual.tolist())
-        print(fitness_fn(best_individual,mtx,ubi))
         if fitness_fn(best_individual,mtx,ubi) == 0:
             return best_individual
         cont +=1
@@ -532,16 +530,17 @@ def genetic_algorithm1():
             if inicial_matrix[i][j] != -1:
                 ubi.append((i,j))
     vectors = list(generate_permutations(chromosome_length))
-    population = [np.vstack(random.sample(vectors, chromosome_length)) for _ in range(POPULATION_SIZE)]
+    num_hilos = os.cpu_count()
+    populations = [[np.vstack(random.sample(vectors, chromosome_length)) for _ in range(POPULATION_SIZE)] for _ in range(num_hilos)]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_hilos) as executor:
+        futures = [executor.submit(genetic_algorithm,population, fitness_fn, MUTATION_RATE, ELITISM_COUNT,inicial_matrix,ubi) for population in populations]
+
+    results = [result.result() for result in concurrent.futures.as_completed(futures)]
     # Solve the puzzle using the genetic algorithm
-    solution = genetic_algorithm(population, fitness_fn, MUTATION_RATE, ELITISM_COUNT,inicial_matrix,ubi)
-    aux = steps.copy()
-    print(aux)
-    steps.clear()
-    if isinstance(solution, (int, float)):
-        return jsonify({'solution': 0, 'steps': aux})
-    else:
-        return jsonify({'solution': 1, 'steps': aux})
+    for solution in results:
+        if not isinstance(solution, (int, float)):
+            return jsonify({'solution': 1, 'steps': solution})
+    return jsonify({'solution': 1, 'steps': aux})
 
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
