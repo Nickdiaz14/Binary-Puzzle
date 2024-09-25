@@ -197,3 +197,18 @@ right: 10px; /* Ajusta la posición horizontal */
 .blue.blocked {
   position: relative; /* Necesario para posicionar el ::before dentro del elemento */
 }
+
+#algorithm-description {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-family: 'Rubik', sans-serif;
+}
+
+#algorithm-description h2 {
+  color: #333;
+}
+
+#algorithm-description p {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #555;
+}
