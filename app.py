@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import concurrent.futures
 from itertools import permutations
+from threading import Lock
 import numpy as np
 import random
 import os
@@ -11,6 +12,15 @@ import io
 
 app = Flask(__name__)
 
+#------------------------------------------------varibles globales-------------------------------------------------------
+upper_blue = np.array([110, 255, 215])
+lower_blue = np.array([95, 190, 160])
+upper_red = np.array([10, 255, 255])
+lower_red = np.array([0, 100, 100])
+result_found = False
+result_matrix = None
+result_lock = Lock()
+steps = []
 #-------------------------------------------------reglas------------------------------------------------------------------
 def check_cond_ini(matrix):
     n = len(matrix)
@@ -106,8 +116,41 @@ def generate_permutations(n):
     # Inicializamos la búsqueda con secuencia vacía, n/2 ceros y n/2 unos
     return backtrack([], n // 2, n // 2, [])
 
+@app.route('/solve/solve_fuerza/matrix', methods=['POST'])
+def solve_matrix():
+    matrix = request.json['matrix']
+    if check_cond_ini(matrix):
+        col = []
+        row = []
+        n = len(matrix)
+        for i in range(n):
+            for j in range(n): 
+                if matrix[i][j] != -1:
+                    row.append(i)
+                    col.append(j)
+
+        num_posiciones = len(row)
+        num_hilos = os.cpu_count()
+        permutaciones = list(generate_permutations(n))
+        combinaciones = list(permutations(permutaciones, n))
+        comb = len(combinaciones)
+        chunks = [combinaciones[int(comb*i/num_hilos):int(comb*(i+1)/num_hilos)] for i in range(num_hilos)]
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=num_hilos) as executor:
+            futures = [executor.submit(has_solution, matrix, chunk, row, col) for chunk in chunks]
+
+        results = [result.result() for result in concurrent.futures.as_completed(futures)]
+
+        solutions_count = sum(list(zip(*results))[0])
+        solutions = [sol for sublist in list(zip(*results))[1] for sol in sublist]
+        if len(solutions) == 0:
+            return jsonify({'solution': 0})
+        else:
+            return jsonify({'solution': solutions})
+    else:
+        return jsonify({'solution': 0})
+
 #---------------------------------------backtracking-------------------------------------------------------
-steps = []
 def backtracking(board, row=0, col=0):
     n = len(board)
 
@@ -142,6 +185,14 @@ def backtracking(board, row=0, col=0):
     aux = [row[:] for row in board]
     steps.append(aux)
     return 0
+
+@app.route('/solve/solve_backtracking/matrix', methods=['POST'])
+def backtracking1():
+    board = request.json['matrix']
+    sol = backtracking(board)
+    aux = steps.copy()
+    steps.clear()
+    return jsonify({'solution': sol, 'steps': aux})
 
 
 #---------------------------------------------cumpliendo reglas-----------------------------------------------------
@@ -288,12 +339,18 @@ def aplicar_reglas_basicas(sudoku):
                             steps.append(sudoku.tolist())
                             cambios = True
 
-#-------------------------------------------renderizar imagen-------------------------------------------------------
+@app.route('/solve/solve_by_rules/matrix', methods=['POST'])
+def resolver_sudoku_binario():
+    sudoku = np.array(request.json['matrix'], dtype=np.int32)
+    aplicar_reglas_basicas(sudoku)
+    aux = steps.copy()
+    steps.clear()
+    if rules([list(row) for row in sudoku]):
+        return jsonify({'solution': 1, 'steps': aux})
+    else:
+        return jsonify({'solution': 0, 'steps': aux})
 
-lower_red = np.array([0, 100, 100])
-upper_red = np.array([10, 255, 255])
-lower_blue = np.array([95, 190, 160])
-upper_blue = np.array([110, 255, 215])
+#-------------------------------------------renderizar imagen-------------------------------------------------------
 
 # Función para procesar la imagen y generar la matriz
 def process_image(image, n):
@@ -381,9 +438,12 @@ def enforce_constraints(individual,mtx,ubi):
 
 # Fitness function example: lower is better (goal is 0 fitness)
 def fitness_fn(individual,mtx,ubi):
-    # Implement fitness function logic here
     violations = count_rule_violations(individual,mtx,ubi)
-    return (10 * violations.count(2) + 5 * violations.count(3) + 2 * violations.count(4) + 5 * violations.count(5)) ** 2
+    # 2: No more than two consecutive zeros and two consecutive ones are allowed
+    # 3: The number of zeros and ones in every row and every column are equal.
+    # 4: Each row has a distinct permutation of n/2 zeros and n/2 ones.
+    # 5: Follows the initial condition.
+    return (10 * violations.count(2) + 8 * violations.count(3) + 5 * violations.count(4) + 5 * violations.count(5)) ** 2
 
 # Function to randomly select an individual based on fitness
 def random_selection(population, fitness_fn,mtx,ubi):
@@ -392,7 +452,7 @@ def random_selection(population, fitness_fn,mtx,ubi):
 
 # Function to perform crossover between two individuals
 def crossover(x, y):
-    if random.random() < 0.5:  # 50% chance to transpose
+    if random.random() < 0.6:  # 50% chance to transpose
         x, y = np.transpose(x), np.transpose(y)
     
     n = len(x)
@@ -414,30 +474,41 @@ def elitism(population, fitness_fn, elitism_count,mtx,ubi):
     return sorted(population, key=lambda individual: fitness_fn(individual,mtx,ubi))[:elitism_count]
 
 # Genetic Algorithm function
-def genetic_algorithm(population, fitness_fn, mutation_rate, elitism_count,mtx,ubi):
+def genetic_algorithm(population, fitness_fn, mutation_rate, elitism_count, mtx, ubi):
+    global result_found, result_matrix
     cont = 0
-    while True:
+    
+    while not result_found:  # Continuar solo si no se ha encontrado una solución
         new_population = []
         
-        # Generate new population using selection, crossover, and mutation
+        # Generar nueva población
         for _ in range(len(population)):
-            x = random_selection(population, fitness_fn,mtx,ubi)
-            y = random_selection(population, fitness_fn,mtx,ubi)
+            x = random_selection(population, fitness_fn, mtx, ubi)
+            y = random_selection(population, fitness_fn, mtx, ubi)
             child = crossover(x, y)
-            child = mutate(child,mutation_rate)
+            child = mutate(child, mutation_rate)
             new_population.append(child)
         
-        # Apply elitism
-        elite = elitism(population, fitness_fn, elitism_count,mtx,ubi)
+        # Aplicar elitismo
+        elite = elitism(population, fitness_fn, elitism_count, mtx, ubi)
         population = new_population + elite
         
-        # Termination condition: Check if any individual has fitness value 0
-        best_individual = min(population, key=lambda individual: fitness_fn(individual,mtx,ubi))
-        if fitness_fn(best_individual,mtx,ubi) == 0:
-            return best_individual
-        cont +=1
-        if cont == 20:
-            return 0
+        # Verificar la mejor solución de la nueva población
+        best_individual = min(population, key=lambda individual: fitness_fn(individual, mtx, ubi))
+        best_fitness = fitness_fn(best_individual, mtx, ubi)
+        
+        # Si se encuentra una solución con fitness 0
+        if best_fitness == 0:
+            with result_lock:  # Proteger el acceso a las variables compartidas
+                if not result_found:
+                    result_found = True
+                    result_matrix = best_individual
+        
+        cont += 1
+        if cont == 20:  # Limitar a 20 iteraciones
+            break
+    
+    return None  # Si no se encuentra una solución válida
 
 # Example rule violation counter (you need to implement the actual rules)
 def count_rule_violations(individual,mtx,ubi):
@@ -446,6 +517,38 @@ def count_rule_violations(individual,mtx,ubi):
     violations.extend(check_rows_ga(individual))
     violations.extend(enforce_constraints(individual,mtx,ubi))
     return violations
+
+@app.route('/solve/solve_genetic_algorithm/matrix', methods=['POST'])
+def genetic_algorithm1():
+    global result_found, result_matrix
+    MUTATION_RATE = 0.01
+    ELITISM_COUNT = 5
+    POPULATION_SIZE = 80
+    inicial_matrix = np.array(request.json['matrix'], dtype=np.int32)
+    chromosome_length = len(inicial_matrix)
+    
+    # Ubicaciones no -1 en la matriz inicial
+    ubi = [(i, j) for i in range(chromosome_length) for j in range(chromosome_length) if inicial_matrix[i][j] != -1]
+    
+    # Generar vectores de permutaciones y dividir la población entre los hilos
+    vectors = list(generate_permutations(chromosome_length))
+    num_hilos = os.cpu_count()
+    populations = [[np.vstack(random.sample(vectors, chromosome_length)) for _ in range(POPULATION_SIZE)] for _ in range(num_hilos)]
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_hilos) as executor:
+        futures = [executor.submit(genetic_algorithm, population, fitness_fn, MUTATION_RATE, ELITISM_COUNT, inicial_matrix, ubi) for population in populations]
+
+        for future in concurrent.futures.as_completed(futures):
+            if result_found:
+                break  # Terminar inmediatamente si se encontró una solución válida
+    
+    if result_matrix is not None:
+        aux = result_matrix.copy()
+        result_found = False
+        result_matrix = None
+        return jsonify({'solution': 1, 'steps': [aux.tolist() for i in range(2)]})
+    else:
+        return jsonify({'solution': 0, 'steps': []})
 
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/')
@@ -463,84 +566,6 @@ def solve_page():
 @app.route('/play')
 def play_page():
     return render_template('play.html')
-
-@app.route('/solve/solve_fuerza/matrix', methods=['POST'])
-def solve_matrix():
-    matrix = request.json['matrix']
-    if check_cond_ini(matrix):
-        col = []
-        row = []
-        n = len(matrix)
-        for i in range(n):
-            for j in range(n): 
-                if matrix[i][j] != -1:
-                    row.append(i)
-                    col.append(j)
-
-        num_posiciones = len(row)
-        num_hilos = os.cpu_count()
-        permutaciones = list(generate_permutations(n))
-        combinaciones = list(permutations(permutaciones, n))
-        comb = len(combinaciones)
-        chunks = [combinaciones[int(comb*i/num_hilos):int(comb*(i+1)/num_hilos)] for i in range(num_hilos)]
-
-        with concurrent.futures.ThreadPoolExecutor(max_workers=num_hilos) as executor:
-            futures = [executor.submit(has_solution, matrix, chunk, row, col) for chunk in chunks]
-
-        results = [result.result() for result in concurrent.futures.as_completed(futures)]
-
-        solutions_count = sum(list(zip(*results))[0])
-        solutions = [sol for sublist in list(zip(*results))[1] for sol in sublist]
-        if len(solutions) == 0:
-            return jsonify({'solution': 0})
-        else:
-            return jsonify({'solution': solutions})
-    else:
-        return jsonify({'solution': 0})
-
-@app.route('/solve/solve_backtracking/matrix', methods=['POST'])
-def backtracking1():
-    board = request.json['matrix']
-    sol = backtracking(board)
-    aux = steps.copy()
-    steps.clear()
-    return jsonify({'solution': sol, 'steps': aux})
-
-@app.route('/solve/solve_by_rules/matrix', methods=['POST'])
-def resolver_sudoku_binario():
-    sudoku = np.array(request.json['matrix'], dtype=np.int32)
-    aplicar_reglas_basicas(sudoku)
-    aux = steps.copy()
-    steps.clear()
-    if rules([list(row) for row in sudoku]):
-        return jsonify({'solution': 1, 'steps': aux})
-    else:
-        return jsonify({'solution': 0, 'steps': aux})
-
-@app.route('/solve/solve_genetic_algorithm/matrix', methods=['POST'])
-def genetic_algorithm1():
-    MUTATION_RATE = 0.01
-    ELITISM_COUNT = 5
-    POPULATION_SIZE = 100
-    inicial_matrix = np.array(request.json['matrix'], dtype=np.int32)
-    chromosome_length = len(inicial_matrix) # For a 4x4 binary puzzle
-    ubi = []
-    for i in range(chromosome_length):
-        for j in range(chromosome_length): 
-            if inicial_matrix[i][j] != -1:
-                ubi.append((i,j))
-    vectors = list(generate_permutations(chromosome_length))
-    num_hilos = os.cpu_count()
-    populations = [[np.vstack(random.sample(vectors, chromosome_length)) for _ in range(POPULATION_SIZE)] for _ in range(num_hilos)]
-    with concurrent.futures.ThreadPoolExecutor(max_workers=num_hilos) as executor:
-        futures = [executor.submit(genetic_algorithm,population, fitness_fn, MUTATION_RATE, ELITISM_COUNT,inicial_matrix,ubi) for population in populations]
-
-    results = [result.result() for result in concurrent.futures.as_completed(futures)]
-    # Solve the puzzle using the genetic algorithm
-    for solution in results:
-        if not isinstance(solution, (int, float)):
-            return jsonify({'solution': 1, 'steps': solution})
-    return jsonify({'solution': 1, 'steps': aux})
 
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
