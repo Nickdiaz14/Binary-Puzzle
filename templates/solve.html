@@ -85,7 +85,6 @@
 
         function uploadImage() {
             const fileInput = document.getElementById('image-upload');
-            document.getElementById('image-upload').value = "";
             const file = fileInput.files[0];
             const formData = new FormData();
             formData.append('image', file);
@@ -99,6 +98,7 @@
             .then(data => {
                 createTable(data);
             });
+            document.getElementById('image-upload').value = "";
         }
 
         function adjustLockSize() {
@@ -178,14 +178,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.solution != 0) {
-                    let message = algorithm == 2 ? `La condición inicial tiene ${data.solution.length} soluciones` :
-                                  algorithm == 3 ? `La solución se encontró en ${data.steps.length} generaciones.` : 
+                    let message = algorithm == 2 ? `La condición inicial tiene ${data.solution.length} soluciones.` :
+                                  algorithm == 3 ? `Solución encontrada.` : 
                                   `La solución se encontró en ${data.steps.length} pasos.`;
                     alert(message);
                     stopSolution = false;
                     displaySolution(algorithm == 2 ? data.solution : data.steps);
                 } else {
-                    alert("La condición inicial no tiene solución.");
+                    let message1 = (algorithm == 3 || algorithm == 4)? 'No se encontró ninguna solución.' : 'La condición inicial no tiene solución.';
+                    alert(message1);
                 }
             });
         }
@@ -222,8 +223,8 @@
             const algorithm = document.getElementById("algorithm").value;
             let descriptions = {
                 1: "Backtracking: Una técnica de búsqueda que construye soluciones progresivamente, descartando aquellas que no cumplen con las restricciones.",
-                2: "Fuerza Bruta: Evalúa todas las posibles configuraciones para encontrar la solución correcta.",
-                3: "Algoritmo Genético: Técnica inspirada en la selección natural que usa mutación y cruce de soluciones para optimizar.",
+                2: "Fuerza: Evalúa todas las posibles configuraciones para encontrar todas las soluciones posibles.",
+                3: "Algoritmo Genético: Técnica inspirada en la selección natural que usa mutación y cruce de soluciones para hallar la solución.",
                 4: "Reglas: Un conjunto de reglas específicas que se siguen para resolver el problema."
             };
             
