@@ -595,11 +595,7 @@ def play_matrix():
 
             num_posiciones = len(row)
             num_hilos = os.cpu_count()
-
-            op = [1 if i < n/2 else 0 for i in range(n)]
-            
-            permutaciones = list(set(permutations(op)))
-            permutaciones = [perm for perm in permutaciones if no_three_consecutive(perm)]
+            permutaciones = list(generate_permutations(n))
             combinaciones = list(permutations(permutaciones, n))
             comb = len(combinaciones)
             chunks = [combinaciones[int(comb*i/num_hilos):int(comb*(i+1)/num_hilos)] for i in range(num_hilos)]
