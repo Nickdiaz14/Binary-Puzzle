@@ -17,9 +17,10 @@
         <label for="matrix-size" style="font-size: 18px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir método</label>
         <select id="algorithm" style="padding: 10px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="updateMatrixOptions()">
             <option value="1" selected>Backtracking</option>
-            <option value="2">Fuerza Bruta</option>
+            <option value="2">Fuerza</option>
             <option value="3">Algoritmo Genético</option>
             <option value="4">Reglas</option>
+            <option value="5">Restricciones</option>
         </select>
         <button onclick="toggleInfo()" style="margin-left: 10px; padding: 10px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">Info</button>
     </div>
@@ -163,7 +164,8 @@
                 1: '/solve/solve_backtracking/matrix',
                 2: '/solve/solve_fuerza/matrix',
                 3: '/solve/solve_genetic_algorithm/matrix',
-                4: '/solve/solve_by_rules/matrix'
+                4: '/solve/solve_by_rules/matrix',
+                5: '/solve/solve_constraint_problem/matrix'
             };
             
             let endpoint = algorithmEndpoints[algorithm];
@@ -178,12 +180,12 @@
             .then(response => response.json())
             .then(data => {
                 if (data.solution != 0) {
-                    let message = algorithm == 2 ? `La condición inicial tiene ${data.solution.length} soluciones.` :
+                    let message = (algorithm == 2 || algorithm == 5) ? `La condición inicial tiene ${data.solution.length} soluciones.` :
                                   algorithm == 3 ? `Solución encontrada.` : 
                                   `La solución se encontró en ${data.steps.length} pasos.`;
                     alert(message);
                     stopSolution = false;
-                    displaySolution(algorithm == 2 ? data.solution : data.steps);
+                    displaySolution((algorithm == 2 || algorithm == 5) ? data.solution : data.steps);
                 } else {
                     let message1 = (algorithm == 3 || algorithm == 4)? 'No se encontró ninguna solución.' : 'La condición inicial no tiene solución.';
                     alert(message1);
@@ -193,7 +195,7 @@
 
         function displaySolution(steps) {
             let algorithm = parseInt(document.getElementById('algorithm').value);
-            let sleep_times = { 1: 10, 2: 1000, 3: 1200, 4: 800 };
+            let sleep_times = { 1: 10, 2: 1000, 3: 1200, 4: 800, 5: 1000};
             let sleep_time = sleep_times[algorithm];
             
             let stepIndex = 0;
@@ -225,7 +227,8 @@
                 1: "Backtracking: Una técnica de búsqueda que construye soluciones progresivamente, descartando aquellas que no cumplen con las restricciones.",
                 2: "Fuerza: Evalúa todas las posibles configuraciones para encontrar todas las soluciones posibles.",
                 3: "Algoritmo Genético: Técnica inspirada en la selección natural que usa mutación y cruce de soluciones para hallar la solución.",
-                4: "Reglas: Un conjunto de reglas específicas que se siguen para resolver el problema."
+                4: "Reglas: Un conjunto de reglas específicas que se siguen para resolver el problema.",
+                5: "Restricciones: El proceso utiliza un enfoque de propagación de restricciones. A medida que se asignan valores a las variables (celdas), las restricciones que hemos definido guían la búsqueda, reduciendo el espacio de búsqueda de forma drástica."
             };
             
             infoDiv.innerHTML = descriptions[algorithm];
