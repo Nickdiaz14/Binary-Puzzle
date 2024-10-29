@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, jsonify
 from itertools import permutations
 from constraint import Problem
-from threading import Lock
 import concurrent.futures
 from PIL import Image
 import numpy as np
+import threading
 import random
 import cv2
 import os
@@ -19,7 +19,7 @@ upper_red = np.array([10, 255, 255])
 lower_red = np.array([0, 100, 100])
 result_found = False
 result_matrix = None
-result_lock = Lock()
+result_lock = threading.Lock()
 steps = []
 #-------------------------------------------------reglas------------------------------------------------------------------
 def check_cond_ini(matrix):
@@ -443,7 +443,7 @@ def fitness_fn(individual,mtx,ubi):
     # 3: The number of zeros and ones in every row and every column are equal.
     # 4: Each row has a distinct permutation of n/2 zeros and n/2 ones.
     # 5: Follows the initial condition.
-    return (10 * violations.count(2) + 8 * violations.count(3) + 5 * violations.count(4) + 5 * violations.count(5)) ** 2
+    return (10 * violations.count(2) + 8 * violations.count(3) + 7 * violations.count(4) + 15 * violations.count(5)) ** 2
 
 # Function to randomly select an individual based on fitness
 def random_selection(population, fitness_fn,mtx,ubi):
@@ -452,21 +452,20 @@ def random_selection(population, fitness_fn,mtx,ubi):
 
 # Function to perform crossover between two individuals
 def crossover(x, y):
-    if random.random() < 0.6:  # 50% chance to transpose
+    if random.random() < 0.6:  # 60% chance to transpose
         x, y = np.transpose(x), np.transpose(y)
     
     n = len(x)
-    start, end = sorted(random.sample(range(n), 2))
-    
-    child = np.vstack((x[:start], y[start:end], x[end:]))
+    point = random.randint(1, n - 1)  # Crossover en un solo punto
+    child = np.vstack((x[:point], y[point:]))
     return child
 
+
 # Function to mutate a child with some probability
-def mutate(child,mutation_rate):
+def mutate(child, mutation_rate):
     if random.random() < mutation_rate:
-        row = random.randint(0, len(child) - 1)
-        col = random.randint(0, len(child[0]) - 1)
-        child[row][col] = 1 - child[row][col]  # Flip the bit (0 <-> 1)
+        row1, row2 = random.sample(range(len(child)), 2)  # Intercambia dos filas
+        child[[row1, row2]] = child[[row2, row1]]
     return child
 
 # Elitism: preserve the top N fittest individuals
@@ -496,7 +495,7 @@ def genetic_algorithm(population, fitness_fn, mutation_rate, elitism_count, mtx,
         # Verificar la mejor solución de la nueva población
         best_individual = min(population, key=lambda individual: fitness_fn(individual, mtx, ubi))
         best_fitness = fitness_fn(best_individual, mtx, ubi)
-        
+        print(f"Gen: {cont}, Hilo: {threading.current_thread().name[-1]}, BFS: {best_fitness} FTS: {count_rule_violations(best_individual,mtx,ubi)}")
         # Si se encuentra una solución con fitness 0
         if best_fitness == 0:
             with result_lock:  # Proteger el acceso a las variables compartidas
@@ -522,8 +521,8 @@ def count_rule_violations(individual,mtx,ubi):
 def genetic_algorithm1():
     global result_found, result_matrix
     MUTATION_RATE = 0.01
-    ELITISM_COUNT = 5
-    POPULATION_SIZE = 80
+    ELITISM_COUNT = 2
+    POPULATION_SIZE = 50
     inicial_matrix = np.array(request.json['matrix'], dtype=np.int32)
     chromosome_length = len(inicial_matrix)
     
