@@ -59,12 +59,24 @@ a {
   display: flex;
   border-radius: 5px;
   justify-content: center;
+  font-family: inherit; /* Asegúrate de que herede la fuente */
+  font-size: inherit;   /* Hereda el tamaño de la fuente */
   align-items: center;
   color: #e8eaee;
   font-weight: bold;
   outline: none;
   border: none;
+  cursor: pointer;      /* Añadido para hacer clic en el <label> */
+  text-align: center;   /* Asegura que el texto esté centrado */
 }
+
+label.resolver {
+  background-color: #f00;  /* Color de fondo del <label> */
+  line-height: 60px;       /* Para alinear verticalmente el texto */
+  padding: 0;              /* Asegura que no tenga padding adicional */
+  display: flex;           /* Para que se alinee igual que los botones */
+}
+
 .resolver.azulito:hover {
   background: linear-gradient(145deg, #0046d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2);
