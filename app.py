@@ -610,7 +610,7 @@ def binary_puzzle_solver(n, matrix, ubi):
             all_solutions.append(solution_grid)
         return all_solutions
     else:
-        return 0
+        return []
 
 @app.route('/solve/solve_constraint_problem/matrix', methods=['POST'])
 def constraint_solver ():
@@ -641,45 +641,36 @@ def play_page():
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
     # Configuración del juego
-    n = 4  # Tamaño de la matriz
+    n = request.json['matrix'] # Tamaño de la matriz
+    if n == 4:
+        cells = 5
+    elif n == 6:
+        cells = 10
+    else:
+        cells = 18
+    cont = 0
     while True:
+        matrix = [[-1] * n for _ in range(n)]  # Matriz para llevar el control de los colores
         cond_ini = []
-        for i in range(5):
+        for i in range(cells):
             while True:
                 a = random.choices(range(n), k=2)
                 if a not in cond_ini:
+                    matrix[a[0]][a[1]] = random.randint(0,1)
                     break
             cond_ini.append(a)
 
-        matrix = [[-1] * n for _ in range(n)]  # Matriz para llevar el control de los colores
-        matrix[cond_ini[0][0]][cond_ini[0][1]], matrix[cond_ini[1][0]][cond_ini[1][1]], matrix[cond_ini[2][0]][cond_ini[2][1]] = 0, 0, 0
-        matrix[cond_ini[3][0]][cond_ini[3][1]], matrix[cond_ini[4][0]][cond_ini[4][1]] = 1, 1
         if check_cond_ini(matrix):
-            col = []
-            row = []
-            n = len(matrix)
-            for i in range(n):
-                for j in range(n):
-                    if matrix[i][j] != -1:
-                        row.append(i)
-                        col.append(j)
-
-            num_posiciones = len(row)
-            num_hilos = os.cpu_count()
-            permutaciones = list(generate_permutations(n))
-            combinaciones = list(permutations(permutaciones, n))
-            comb = len(combinaciones)
-            chunks = [combinaciones[int(comb*i/num_hilos):int(comb*(i+1)/num_hilos)] for i in range(num_hilos)]
-
-            with concurrent.futures.ThreadPoolExecutor(max_workers=num_hilos) as executor:
-                futures = [executor.submit(has_solution, matrix, chunk, row, col) for chunk in chunks]
-
-            results = [result.result() for result in concurrent.futures.as_completed(futures)]
-
-            if sum(list(zip(*results))[0]) == 1:
+            ubi = [(i, j) for i in range(n) for j in range(n) if matrix[i][j] != -1]
+            solutions = binary_puzzle_solver(n, matrix, ubi)
+            if len(solutions) == 1:
+                for row in matrix:
+                    print(row)
+                print(cont)
                 break
+        cont += 1
 
-    return jsonify({'matrix': matrix})
+    return jsonify({'matrix': matrix, 'sol': solutions[0]})
 
 if __name__ == "__main__":
     app.run(debug=True)
