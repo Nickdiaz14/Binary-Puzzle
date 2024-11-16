@@ -6,6 +6,7 @@ from PIL import Image
 import numpy as np
 import threading
 import random
+import json
 import cv2
 import os
 import io
@@ -466,6 +467,8 @@ def mutate(child, mutation_rate):
     if random.random() < mutation_rate:
         row1, row2 = random.sample(range(len(child)), 2)  # Intercambia dos filas
         child[[row1, row2]] = child[[row2, row1]]
+    a = random.choices(range(len(child)),k=2)
+    child[a[0]][a[1]] = 1 - random.randint(0,1)
     return child
 
 # Elitism: preserve the top N fittest individuals
@@ -638,39 +641,30 @@ def solve_page():
 def play_page():
     return render_template('play.html')
 
+@app.route('/levels')
+def levels_page():
+    return render_template('levels.html')
+
+@app.route('/display_level')
+def display_levels_page():
+    level = int(request.args.get('level'))
+    n = int(request.args.get('n'))
+    with open(f'C:/Users/elkin/Desktop/PROYECTO_FINAL/retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
+        lineas = file.readlines()
+        linea_especifica = lineas[level - 1].strip()  # Remueve espacios en blanco y saltos de línea
+    matrix = eval(linea_especifica)
+    return render_template('display_level.html', matrix=json.dumps(matrix), n=n, level = level)
+
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
     # Configuración del juego
     n = request.json['matrix'] # Tamaño de la matriz
-    if n == 4:
-        cells = 5
-    elif n == 6:
-        cells = 10
-    else:
-        cells = 18
-    cont = 0
-    while True:
-        matrix = [[-1] * n for _ in range(n)]  # Matriz para llevar el control de los colores
-        cond_ini = []
-        for i in range(cells):
-            while True:
-                a = random.choices(range(n), k=2)
-                if a not in cond_ini:
-                    matrix[a[0]][a[1]] = random.randint(0,1)
-                    break
-            cond_ini.append(a)
+    with open(f'C:/Users/elkin/Desktop/PROYECTO_FINAL/retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
+        lineas = file.readlines()
+        linea_especifica = lineas[random.randint(0, len(lineas)-1)].strip()  # Remueve espacios en blanco y saltos de línea
+    matrix = eval(linea_especifica)
 
-        if check_cond_ini(matrix):
-            ubi = [(i, j) for i in range(n) for j in range(n) if matrix[i][j] != -1]
-            solutions = binary_puzzle_solver(n, matrix, ubi)
-            if len(solutions) == 1:
-                for row in matrix:
-                    print(row)
-                print(cont)
-                break
-        cont += 1
-
-    return jsonify({'matrix': matrix, 'sol': solutions[0]})
+    return jsonify({'matrix': matrix})
 
 if __name__ == "__main__":
     app.run(debug=True)
