@@ -5,6 +5,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
+  padding: 0;
   margin: 0;
   background-color: #000000; /* Fondo negro */
   box-sizing: border-box;
@@ -36,18 +37,17 @@ tr {
   border-radius: 5px;
 }
 
-td {
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  font-size: 24px;
-  padding: 10px;
-  background-color: rgba(228, 228, 228, 0.1);
-  box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.7), inset 2px 2px 5px rgba(255, 255, 255, 0.1);
-  border: 3px solid #1f1f1f;
-  border-radius: 5px;
-  transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
-}
+  td {
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: rgba(228, 228, 228, 0.1);
+    box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.7), inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+    border: 3px solid #1f1f1f;
+    aspect-ratio: 1 / 1;
+    transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
+    padding: 5px;
+  }
 
 a {
   text-decoration: none;
@@ -77,6 +77,23 @@ label.resolver {
   display: flex;           /* Para que se alinee igual que los botones */
 }
 
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0 auto;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 5 columnas */
+  gap: 10px; /* Espacio entre los botones */
+  justify-items: center;
+  max-width: 10000px; /* Ajusta según necesidad */
+  padding: 5px;
+}
+
 .resolver.azulito:hover {
   background: linear-gradient(145deg, #0046d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2);
@@ -84,9 +101,6 @@ label.resolver {
 }
 .resolver.azulito:active {
   background-color: #0036a3;
-}
-.resolver.rojito {
-  margin-bottom: 20px;
 }
 .resolver.rojito:hover {
   background: linear-gradient(145deg, #d70505, #ff0606);
@@ -223,4 +237,84 @@ right: 10px; /* Ajusta la posición horizontal */
   font-size: 16px;
   line-height: 1.5;
   color: #555;
+}
+
+@media (max-width: 1024px) {
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0 auto;
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 0.3fr); /* 5 columnas */
+    gap: 10px; /* Espacio entre los botones */
+    justify-items: center;
+    max-width: 1000px; /* Ajusta según necesidad */
+    padding: 5px;
+  }
+  .resolver.azulito:hover {
+    background: linear-gradient(145deg, #0046d4, #0053fb);
+    box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+  .resolver.azulito:active {
+    background-color: #0036a3;
+  }
+  .resolver.rojito:hover {
+    background: linear-gradient(145deg, #d70505, #ff0606);
+    box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+  .resolver.rojito:active {
+    background: #ef0606;
+    box-shadow: inset 6px 6px 12px #aa0404, inset -6px -6px 12px #ff0808;
+  }
+  .resolver.inicio {
+    width: 80px;
+    height: 20px;
+  }
+  .resolver.inicio:hover {
+    background: linear-gradient(145deg, #d70505, #ff0606);
+    box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+  .resolver.evaluar {
+    width: 120px;
+    height: 40px;
+  }
+  .resolver.evaluar:hover {
+    background: linear-gradient(145deg, #0046d4, #0053fb);
+    box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+  
+  .azulito, .rojito, .inicio, .evaluar {
+    background: linear-gradient(145deg, #3a3a3a, #5a5a5a); /* Ajuste de fondo más oscuro */
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2), inset -3px -3px 10px rgba(0, 0, 0, 0.5), inset 2px 2px 10px rgba(255, 255, 255, 0.1);
+  }
+  
+  .red {
+    color: #ffffff;
+    background: linear-gradient(145deg, #d70505, #ff0606);
+    box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
+  }
+  
+  .blue {
+    color: #ffffff;
+    background: linear-gradient(145deg, #0046d4, #0053fb);
+    box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
+  }
+  
+  .botones {
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-between;
+  }
+  .botones button {
+    margin: 0 12px;
+  }
 }
