@@ -8,6 +8,7 @@ import threading
 import random
 import json
 import cv2
+import ast
 import os
 import io
 
@@ -644,6 +645,37 @@ def play_page():
 @app.route('/levels')
 def levels_page():
     return render_template('levels.html')
+
+#----------------------------------------------------------------------------------------------------------------------------------------
+def update_leaderboard(leaderboard, board, new_entry):
+    trampa = True
+    for record in leaderboard[board]:
+        if record == new_entry:
+            trampa = False
+    if new_entry[1] == 0:
+        trampa = False
+    if trampa:
+        # Agregar la nueva entrada al tablero correspondiente
+        leaderboard[board].append(new_entry)
+        # Ordenar por tiempo (ascendente) y mantener solo las 5 mejores entradas
+        leaderboard[board] = sorted(leaderboard[board], key=lambda x: x[1])[:10]
+    
+    return leaderboard
+
+@app.route('/leaderboard')
+def leader_page():
+    tsecs = int(request.args.get('tsecs'))
+    nom = str(request.args.get('nom'))
+    n = int(request.args.get('n'))
+    board = f'T{n}'
+    with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'r') as file:
+        contenido = file.read()
+        leaderboard = ast.literal_eval(contenido)
+    updated_leaderboard = update_leaderboard(leaderboard, board, [nom,tsecs])
+    with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'w') as file:
+        file.write(str(leaderboard))
+    return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(leaderboard[board]))
+
 
 @app.route('/display_level')
 def display_levels_page():
