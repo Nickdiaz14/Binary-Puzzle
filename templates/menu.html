@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -13,8 +11,9 @@
     <div style="text-align:center;">
         <h1>0H H1</h1>
         <h3>Nicolás Diaz</h3>
-        <button onclick="location.href='/solve'" class="resolver rojito">Solucionar</button>
-        <button onclick="location.href='/play'" class="resolver azulito">Jugar</button>
+        <button onclick="location.href='/solve'" class="resolver rojito" style="margin-top: 10px;">Solucionar</button>
+        <button onclick="location.href='/play'" class="resolver azulito" style="margin-top: 10px;">Jugar</button>
+        <button onclick="location.href='/levels'" class="resolver rojito" style="margin-top: 10px;">Niveles</button>
     </div>
 </body>
 </html>
