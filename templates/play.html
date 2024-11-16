@@ -161,8 +161,10 @@
 
         function evaluateMatrix() {
             if (rules_final(matrix)) {
-                stopTimer(); // Detener el cronómetro si el jugador gana
+                const tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
                 alert("¡Felicidades, has ganado!");
+                const userName = prompt("Ingrese su nombre:");
+                window.location.href = `/leaderboard?tsecs=${tiempo.totalSeconds}&nom=${userName}&n=${matrixSize}`; // Redirige si todo está bien
             }
         }
 

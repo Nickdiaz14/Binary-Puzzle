@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.6, user-scale=no, maximum-scale=0.9">
+        <title>Leaderboard de {{ board }}</title>
+        <style>
+            body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 0;
+            margin: 0;
+            background-color: #000000;
+            box-sizing: border-box;
+            font-family: "Rubik", sans-serif;
+            }
+
+            h1 {
+            margin-bottom: 20px;
+            color: #ffffff;
+            }
+
+            .game-board {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            }
+
+            table.leaderboard {
+            border-collapse: collapse;
+            width: 80%;
+            max-width: 600px;
+            background-color: #1f1f1f;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            }
+
+            th, td {
+            text-align: center;
+            padding: 12px;
+            color: #e8eaee;
+            border-bottom: 1px solid #333;
+            }
+
+            th {
+            background-color: #2e2e2f; /* Azul profundo */
+            color: #ffffff;
+            font-weight: bold;
+            }
+
+            td {
+            background-color: rgba(228, 228, 228, 0.1);
+            box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.7), inset 2px 2px 5px rgba(255, 255, 255, 0.1);
+            }
+
+            tr:nth-child(even) td {
+            background-color: #000000; /* Rojo oscuro */
+            }
+
+
+            tr.locked td {
+            pointer-events: none;
+            opacity: 0.6;
+            }
+            .locked::before {
+            content: "\1F512"; /* Unicode for lock icon */
+            position: absolute;
+            opacity: 0.6;
+            font-size: 20px;
+            margin-right: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <h1>Leaderboard de {{ board }}</h1>
+            <div id="leaderboard"></div>
+        </div>
+    
+        <script>
+            // Obtener los datos del leaderboard pasado desde el backend
+            const data = JSON.parse('{{ data | safe }}');
+            const board = '{{ board }}';
+    
+            let leaderboardDiv = document.getElementById('leaderboard');
+            let table = document.createElement('table');
+    
+            // Crear encabezados de la tabla
+            table.innerHTML = `
+                <tr>
+                    <th>Posición</th>
+                    <th>Nombre</th>
+                    <th>Tiempo</th>
+                </tr>
+            `;
+    
+            // Mostrar las entradas del leaderboard
+            data.forEach((entry, index) => {
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="rank">${index + 1}</td>
+                    <td>${entry[0]}</td>
+                    <td>${entry[1]} seg</td>
+                `;
+                table.appendChild(row);
+            });
+    
+            leaderboardDiv.appendChild(table);
+        </script>
+    </body>
+    </html>
