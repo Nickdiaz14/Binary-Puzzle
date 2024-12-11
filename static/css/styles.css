@@ -10,6 +10,8 @@ body {
   background-color: #000000; /* Fondo negro */
   box-sizing: border-box;
   font-family: "Rubik", sans-serif;
+  touch-action: manipulation; /* Limita gestos de zoom */
+  user-select: none;
 }
 
 table {
@@ -137,13 +139,13 @@ label.resolver {
 
 .red {
   color: #ffffff;
-  background: linear-gradient(145deg, #d70505, #ff0606);
+  background: linear-gradient(145deg, #620101, #fd1d1d);
   box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 
 .blue {
   color: #ffffff;
-  background: linear-gradient(145deg, #0046d4, #0053fb);
+  background: linear-gradient(145deg, #200070, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
 }
 
@@ -162,12 +164,12 @@ label.resolver {
 
 .blue.blocked {
   color: #ffffff;
-  background: linear-gradient(145deg, #0046d4, #0053fb);
+  background: linear-gradient(145deg, #200070, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
 }
 .red.blocked {
   color: #ffffff;
-  background: linear-gradient(145deg, #d70505, #ff0606);
+  background: linear-gradient(145deg, #620101, #fd1d1d);
   box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 .red.blocked::before, .blue.blocked::before {
@@ -299,13 +301,13 @@ right: 10px; /* Ajusta la posición horizontal */
   
   .red {
     color: #ffffff;
-    background: linear-gradient(145deg, #d70505, #ff0606);
+    background: linear-gradient(145deg, #620101, #fd1d1d);
     box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
   }
   
   .blue {
     color: #ffffff;
-    background: linear-gradient(145deg, #0046d4, #0053fb);
+    background: linear-gradient(145deg, #200070, #0053fb);
     box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   }
   
