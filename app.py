@@ -15,10 +15,6 @@ import io
 app = Flask(__name__)
 
 #------------------------------------------------varibles globales-------------------------------------------------------
-upper_blue = np.array([110, 255, 215])
-lower_blue = np.array([95, 190, 160])
-upper_red = np.array([10, 255, 255])
-lower_red = np.array([0, 100, 100])
 result_found = False
 result_matrix = None
 result_lock = threading.Lock()
@@ -352,48 +348,6 @@ def resolver_sudoku_binario():
     else:
         return jsonify({'solution': 0, 'steps': aux})
 
-#-------------------------------------------renderizar imagen-------------------------------------------------------
-
-# Función para procesar la imagen y generar la matriz
-def process_image(image, n):
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    red_mask = cv2.inRange(hsv, lower_red, upper_red)
-    blue_mask = cv2.inRange(hsv, lower_blue, upper_blue)
-
-    matrix = []
-    height, width, _ = image.shape
-    cell_height = height // n
-    cell_width = width // n
-
-    for i in range(n):
-        row = []
-        for j in range(n):
-            red_count = cv2.countNonZero(red_mask[i * cell_height: (i + 1) * cell_height, j * cell_width: (j + 1) * cell_width])
-            blue_count = cv2.countNonZero(blue_mask[i * cell_height: (i + 1) * cell_height, j * cell_width: (j + 1) * cell_width])
-
-            if red_count > blue_count and red_count > 100:
-                row.append(0)
-            elif blue_count > red_count and blue_count > 100:
-                row.append(1)
-            else:
-                row.append(-1)
-        matrix.append(row)
-
-    return matrix
-
-# Ruta para procesar la imagen y devolver la matriz
-@app.route('/process_image', methods=['POST'])
-def process_image_route():
-    file = request.files['image']
-    n = int(request.form['matrix_size'])
-
-    img = Image.open(file.stream)
-    img = img.convert('RGB')
-    open_cv_image = np.array(img)
-    open_cv_image = open_cv_image[:, :, ::-1].copy()  # Convertir de RGB a BGR
-
-    matrix = process_image(open_cv_image, n)
-    return jsonify(matrix)
 
 #------------------------------------------------algoritmo genetico-------------------------------------------------------
 
@@ -649,33 +603,40 @@ def levels_page():
 #----------------------------------------------------------------------------------------------------------------------------------------
 def update_leaderboard(leaderboard, board, new_entry):
     trampa = True
-    for record in leaderboard[board]:
-        if record == new_entry:
+    for index,record in enumerate(leaderboard[board]):
+        if record[0] == new_entry[0]:
+            if record[2] > new_entry[2]:
+                leaderboard[board][index][2] = new_entry[2]
+                leaderboard[board][index][1] = new_entry[1]
             trampa = False
-    if new_entry[1] == 0:
+    if new_entry[2] == 0 or new_entry[0] == "NULL":
         trampa = False
     if trampa:
-        # Agregar la nueva entrada al tablero correspondiente
         leaderboard[board].append(new_entry)
-        # Ordenar por tiempo (ascendente) y mantener solo las 5 mejores entradas
-        leaderboard[board] = sorted(leaderboard[board], key=lambda x: x[1])[:10]
+    leaderboard[board] = sorted(leaderboard[board], key=lambda x: x[2])[:10]
     
     return leaderboard
 
 @app.route('/leaderboard')
 def leader_page():
-    tsecs = int(request.args.get('tsecs'))
-    nom = str(request.args.get('nom'))
+    tsecs = int(request.args.get('totaltime'))
+    nom = str(request.args.get('nom')).upper()
     n = int(request.args.get('n'))
     board = f'T{n}'
     with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'r') as file:
         contenido = file.read()
         leaderboard = ast.literal_eval(contenido)
-    updated_leaderboard = update_leaderboard(leaderboard, board, [nom,tsecs])
+    updated_leaderboard = update_leaderboard(leaderboard, board, [nom,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}',tsecs])
     with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'w') as file:
         file.write(str(leaderboard))
     return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(leaderboard[board]))
 
+@app.route('/leaderboards')
+def leaders_page():
+    with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'r') as file:
+        contenido = file.read()
+        leaderboard = ast.literal_eval(contenido)
+    return render_template('leaderboards.html', data=json.dumps(leaderboard))
 
 @app.route('/display_level')
 def display_levels_page():
@@ -689,7 +650,6 @@ def display_levels_page():
 
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
-    # Configuración del juego
     n = request.json['matrix'] # Tamaño de la matriz
     with open(f'C:/Users/elkin/Desktop/PROYECTO_FINAL/retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
         lineas = file.readlines()
