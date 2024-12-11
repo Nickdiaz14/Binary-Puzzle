@@ -2,18 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, user-scale=no, maximum-scale=0.6">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6, user-scalable=no">
     <title>Matrix Game</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1 style="text-align:center;">Tableros aleatorios</h1>
+    <div style="text-align:center; margin: 20px;">
+        <span id="title" style="font-size: 50px; font-weight: bold; color: #ffffff;">Tablero aleatorio</span>
+    </div>
+    <div style="text-align:center; margin: 20px;">
+        <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
+    </div>
     <button onclick="toggleInfo()" style="margin-bottom: 20px; margin-left: 10px; padding: 10px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">Reglas</button>
     <div id="algorithm-info" style="text-align: center; margin-bottom: 15px; display: none; padding: 15px; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 8px;"></div>
     <div style="text-align:center; margin-bottom: 8px;">
-        <label for="matrix-size" style="font-size: 18px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
+        <label for="matrix-size" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
         <select id="matrix-size" style="padding: 10px;margin-top: 20px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
             <option value="4" selected>4 x 4</option>
             <option value="6">6 x 6</option>
@@ -23,45 +28,48 @@
     </div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
-        <span id="timer" style="font-size: 24px; font-weight: bold; color: #333;">00:00</span>
+        <span id="timer" style="font-size: 24px; font-weight: bold; color: #333;">00:00.00</span>
     </div>
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
-    <div style="text-align:center;" class="botones">
+    <div style="text-align:center; margin-top: 20px;" class="botones">
         <button onclick="startGame()" class="resolver evaluar">Iniciar</button>
-        <button onclick="evaluateMatrix()" class="resolver evaluar">Evaluar</button>
     </div>
     <script>
+        document.getElementById("title_part").textContent = '';
+        let gameFinished = false; // Indica si el juego ya ha terminado
         let matrixSize = 4; // Tamaño de la matriz
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         
         // Variables para el cronómetro
         let timerInterval;
-        let secondsElapsed = 0;
+        let centisecondsElapsed = 0;
 
         function startTimer() {
             clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
-            secondsElapsed = 0;
+            centisecondsElapsed = 0;
             updateTimerDisplay();
 
             timerInterval = setInterval(() => {
-                secondsElapsed++;
+                centisecondsElapsed++; // Incrementar en 10 ms
                 updateTimerDisplay();
-            }, 1000);
+            }, 10); // Actualizar cada 10 ms (centésima de segundo)
         }
 
         function stopTimer() {
             clearInterval(timerInterval);
-            const minutes = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-            const seconds = (secondsElapsed % 60).toString().padStart(2, '0');
-            return { minutes, seconds, totalSeconds: secondsElapsed };
-        }
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
+            return { minutes, seconds, centiseconds, totalCentiseconds: centisecondsElapsed };
+}
 
         function updateTimerDisplay() {
-            const minutes = Math.floor(secondsElapsed / 60).toString().padStart(2, '0');
-            const seconds = (secondsElapsed % 60).toString().padStart(2, '0');
-            document.getElementById("timer").textContent = `${minutes}:${seconds}`;
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
         }
         function adjustLockSize() {
             const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
@@ -77,7 +85,8 @@
         }
         
         function reset(){
-            stopSolution = true; // Activar bandera para detener la animación
+            document.getElementById("timer").textContent = `00:00.00`;
+            gameFinished = false; // Reiniciar la bandera
             matrixSize = parseInt(document.getElementById('matrix-size').value);
             initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
             createTable(initial);
@@ -88,7 +97,7 @@
                             matrixSize <= 6 ? 80 :
                             matrixSize <= 8 ? 60 :
                             matrixSize <= 10 ? 50 : 40;
-            
+            stopTimer();
             const cells = document.querySelectorAll('td');
             cells.forEach(cell => {
                 cell.style.width = `${cellSize}px`;
@@ -128,6 +137,11 @@
                 cell.className = 'grey';
                 matrix[row][col] = -1;
             }
+            setTimeout(() => {
+                if (all(matrix)) {
+                    evaluateMatrix();
+                }
+            }, 1000);
         }
 
         function startGame() {
@@ -160,11 +174,19 @@
         }
 
         function evaluateMatrix() {
+            if (gameFinished) return; // Si el juego ya terminó, no hacer nada
+
             if (rules_final(matrix)) {
-                const tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
-                alert("¡Felicidades, has ganado!");
-                const userName = prompt("Ingrese su nombre:");
-                window.location.href = `/leaderboard?tsecs=${tiempo.totalSeconds}&nom=${userName}&n=${matrixSize}`; // Redirige si todo está bien
+                gameFinished = true; // Marcar el juego como terminado
+                let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
+                document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
+                setTimeout(() => {}, 5000);
+                const userName = prompt("Ingrese las iniciales de su nombre:");
+                if (userName) { // Asegurarse de que se ingresó algo
+                    window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&nom=${userName}&n=${matrixSize}`;
+                } else {
+                    gameFinished = false; // Permitir que el juego continúe si no se ingresó un nombre
+                }
             }
         }
 
@@ -176,12 +198,12 @@
                 for (let i = 0; i < n; i++) {
                     for (let j = 0; j < n - 2; j++) {
                         if (matrix[i][j] === matrix[i][j + 1] && matrix[i][j] === matrix[i][j + 2]) {
-                            alert(`Hay 3 en línea en la fila ${i + 1}`);
+                            document.getElementById("title_part").textContent = `Hay 3 en línea en la fila ${i + 1}`;
                             control = false;
                             return control;
                         }
                         if (matrix[j][i] === matrix[j + 1][i] && matrix[j][i] === matrix[j + 2][i]) {
-                            alert(`Hay 3 en línea en la columna ${i + 1}`);
+                            document.getElementById("title_part").textContent = `Hay 3 en línea en la columna ${i + 1}`;
                             control = false;
                             return control;
                         }
@@ -189,24 +211,24 @@
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrix[i]) < (n) / 2) {
-                        alert(`Hay más rojos que azules en la fila ${i + 1}`);
+                        document.getElementById("title_part").textContent = `Hay más rojos que azules en la fila ${i + 1}`;
                         control = false;
                         return control;
                     }
                     if (sum(matrix[i]) > (n) / 2) {
-                        alert(`Hay más azules que rojos en la fila ${i + 1}`);
+                        document.getElementById("title_part").textContent = `Hay más azules que rojos en la fila ${i + 1}`;
                         control = false;
                         return control;
                     }
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrixt[i]) < (n) / 2) {
-                        alert(`Hay más rojos que azules en la columna ${i + 1}`);
+                        document.getElementById("title_part").textContent = `Hay más rojos que azules en la columna ${i + 1}`;
                         control = false;
                         return control;
                     }
                     if (sum(matrixt[i]) > (n) / 2) {
-                        alert(`Hay más azules que rojos en la columna ${i + 1}`);
+                        document.getElementById("title_part").textContent = `Hay más azules que rojos en la columna ${i + 1}`;
                         control = false;
                         return control;
                     }
@@ -214,12 +236,12 @@
                 for (let i = 0; i < n; i++) {
                     for (let j = i + 1; j < n; j++) {
                         if (arraysEqual(matrix[i], matrix[j])) {
-                            alert(`Las filas ${i + 1} y ${j + 1} son iguales`);
+                            document.getElementById("title_part").textContent = `Las filas ${i + 1} y ${j + 1} son iguales`;
                             control = false;
                             return control;
                         }
                         if (arraysEqual(matrixt[i], matrixt[j])) {
-                            alert(`Las columnas ${i + 1} y ${j + 1} son iguales`);
+                            document.getElementById("title_part").textContent = `Las columnas ${i + 1} y ${j + 1} son iguales`;
                             control = false;
                             return control;
                         }

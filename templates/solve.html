@@ -37,7 +37,6 @@
             <option value="6">6 x 6</option>
             <option value="8">8 x 8</option>
             <option value="10">10 x 10</option>
-            <option value="12">12 x 12</option>
         </select>
     </div>
 
@@ -47,8 +46,7 @@
     <div style="text-align:center;">
         <button onclick="solveMatrix()" class="resolver rojito" style="margin-top: 20px;">Encontrar Solución</button>
         <button onclick="reset()" class="resolver azulito" style="margin-top: 20px;">Reiniciar</button>
-        <label for="image-upload" class="resolver rojito" style="margin-top: 20px;">Procesar imagen</label>
-        <input type="file" id="image-upload" accept="image/*" style="display: none;" onchange="uploadImage()">
+        <button onclick="uploadImage()" class="resolver azulito" style="margin-top: 20px;">aleatorio</button>
     </div>
 
     <script>
@@ -72,7 +70,6 @@
                 matrixSelect.innerHTML += '<option value="6">6 x 6</option>';
                 matrixSelect.innerHTML += '<option value="8">8 x 8</option>';
                 matrixSelect.innerHTML += '<option value="10">10 x 10</option>';
-                matrixSelect.innerHTML += '<option value="12">12 x 12</option>';
             }
             reset();
         }
@@ -85,21 +82,31 @@
         }
 
         function uploadImage() {
-            const fileInput = document.getElementById('image-upload');
-            const file = fileInput.files[0];
-            const formData = new FormData();
-            formData.append('image', file);
-            formData.append('matrix_size', document.getElementById('matrix-size').value);
-
-            fetch('/process_image', {
+            fetch('/play/matrix', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ matrix: matrixSize}),
             })
             .then(response => response.json())
             .then(data => {
-                createTable(data);
+                const gameMatrix = data.matrix;
+                const table = document.getElementById('matrix');
+                matrix = Array.from({ length: gameMatrix.length }, (_, i) => Array.from({ length: gameMatrix[i].length }, (_, j) => gameMatrix[i][j]));
+                for (let i = 0; i < gameMatrix.length; i++) {
+                    for (let j = 0; j < gameMatrix[i].length; j++) {
+                        const cell = table.rows[i].cells[j];
+                        if (gameMatrix[i][j] === 0) {
+                            cell.className = 'red blocked';
+                        } else if (gameMatrix[i][j] === 1) {
+                            cell.className = 'blue blocked';
+                        } else {
+                            cell.className = 'grey';
+                        }
+                    }
+                }
             });
-            document.getElementById('image-upload').value = "";
         }
 
         function adjustLockSize() {

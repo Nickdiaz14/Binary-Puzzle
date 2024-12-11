@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=0.9, user-scale=no, maximum-scale=0.9">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-        <title>Leaderboard de {{ board }}</title>
+        <title>Leaderboards</title>
         <style>
             body {
             font-family: Arial, sans-serif;
@@ -79,40 +79,52 @@
     </head>
     <body>
         <div style="text-align: center;">
-            <h1>Leaderboard de {{ board }}</h1>
+            <div style="text-align:center; margin-bottom: 8px;">
+                <label for="matrix-size" style="font-size: 30px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Leaderboard de </label>
+                <select id="matrix-size" style="padding: 10px;margin-top: 20px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
+                    <option value="4" selected>4 x 4</option>
+                    <option value="6">6 x 6</option>
+                    <option value="8">8 x 8</option>
+                    <option value="10">10 x 10</option>
+                </select>
+            </div>
             <div id="leaderboard" style="text-align: center;"></div>
-            <button onclick="location.href='/play'" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
+            <button onclick="location.href='/'" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
         </div>
     
         <script>
             // Obtener los datos del leaderboard pasado desde el backend
             const data = JSON.parse('{{ data | safe }}');
-            const board = '{{ board }}';
-    
-            let leaderboardDiv = document.getElementById('leaderboard');
-            let table = document.createElement('table');
-    
-            // Crear encabezados de la tabla
-            table.innerHTML = `
-                <tr>
-                    <th>Posición</th>
-                    <th>Nombre</th>
-                    <th>Tiempo</th>
-                </tr>
-            `;
-    
-            // Mostrar las entradas del leaderboard
-            data.forEach((entry, index) => {
-                let row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="rank">${index + 1}</td>
-                    <td>${entry[0]}</td>
-                    <td>${entry[1]}</td>
+
+            function reset() {
+                let leaderboardDiv = document.getElementById('leaderboard');
+                leaderboardDiv.innerHTML = '';
+                let table = document.createElement('table');
+                let n = parseInt(document.getElementById('matrix-size').value);
+        
+                // Crear encabezados de la tabla
+                table.innerHTML = `
+                    <tr>
+                        <th>Posición</th>
+                        <th>Nombre</th>
+                        <th>Tiempo</th>
+                    </tr>
                 `;
-                table.appendChild(row);
-            });
-    
-            leaderboardDiv.appendChild(table);
+        
+                // Mostrar las entradas del leaderboard
+                data[`T${n}`].forEach((entry, index) => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="rank">${index + 1}</td>
+                        <td>${entry[0]}</td>
+                        <td>${entry[1]}</td>
+                    `;
+                    table.appendChild(row);
+                });
+        
+                leaderboardDiv.appendChild(table);
+            }
+            reset();
         </script>
     </body>
     </html>

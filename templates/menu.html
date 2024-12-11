@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
     <title>Menu</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
@@ -11,9 +11,14 @@
     <div style="text-align:center;">
         <h1>0H H1</h1>
         <h3>Nicolás Diaz</h3>
-        <button onclick="location.href='/leaderboard'" class="resolver rojito" style="margin-top: 10px;">Solucionar</button>
-        <button onclick="location.href='/play'" class="resolver azulito" style="margin-top: 10px;">Jugar</button>
-        <button onclick="location.href='/levels'" class="resolver rojito" style="margin-top: 10px;">Niveles</button>
+        <div style="text-align:center;" class="botones">
+            <button onclick="location.href='/solve'" class="resolver rojito">Solucionador</button>
+            <button onclick="location.href='/play'" class="resolver azulito">Jugar</button>
+        </div>
+        <div style="text-align:center;" class="botones">
+            <button onclick="location.href='/levels'" class="resolver azulito">Niveles</button>
+            <button onclick="location.href='/leaderboards'" class="resolver rojito">Leaderboard</button>
+        </div>
     </div>
 </body>
 </html>
