@@ -2,12 +2,10 @@ from flask import Flask, render_template, request, jsonify
 from itertools import permutations
 from constraint import Problem
 import concurrent.futures
-from PIL import Image
 import numpy as np
 import threading
 import random
 import json
-import cv2
 import ast
 import os
 import io
