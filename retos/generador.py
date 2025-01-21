@@ -274,7 +274,7 @@ for ii in range(2,6):
             aplicar_reglas_basicas(matrix_solution)
             if rules([list(row) for row in matrix_solution]):
                 level = ""
-                with open(f'C:/Users/elkin/Desktop/PROYECTO_FINAL/retos/aleatorios{n}.txt', 'a', encoding='utf-8') as file:
+                with open(f'retos/aleatorios{n}.txt', 'a', encoding='utf-8') as file:
                     for row in matrix:
                         level += str(row) + ","
                     # Agrega información al archivo
