@@ -620,17 +620,17 @@ def leader_page():
     nom = str(request.args.get('nom')).upper()
     n = int(request.args.get('n'))
     board = f'T{n}'
-    with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'r') as file:
+    with open('leaderboard.txt', 'r') as file:
         contenido = file.read()
         leaderboard = ast.literal_eval(contenido)
     updated_leaderboard = update_leaderboard(leaderboard, board, [nom,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}',tsecs])
-    with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'w') as file:
+    with open('leaderboard.txt', 'w') as file:
         file.write(str(leaderboard))
     return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(leaderboard[board]))
 
 @app.route('/leaderboards')
 def leaders_page():
-    with open('C:/Users/elkin/Desktop/PROYECTO_FINAL/leaderboard.txt', 'r') as file:
+    with open('leaderboard.txt', 'r') as file:
         contenido = file.read()
         leaderboard = ast.literal_eval(contenido)
     return render_template('leaderboards.html', data=json.dumps(leaderboard))
@@ -639,7 +639,7 @@ def leaders_page():
 def display_levels_page():
     level = int(request.args.get('level'))
     n = int(request.args.get('n'))
-    with open(f'C:/Users/elkin/Desktop/PROYECTO_FINAL/retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
+    with open(f'retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
         lineas = file.readlines()
         linea_especifica = lineas[level - 1].strip()  # Remueve espacios en blanco y saltos de línea
     matrix = eval(linea_especifica)
@@ -648,7 +648,7 @@ def display_levels_page():
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
     n = request.json['matrix'] # Tamaño de la matriz
-    with open(f'C:/Users/elkin/Desktop/PROYECTO_FINAL/retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
+    with open(f'retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
         lineas = file.readlines()
         linea_especifica = lineas[random.randint(0, len(lineas)-1)].strip()  # Remueve espacios en blanco y saltos de línea
     matrix = eval(linea_especifica)
