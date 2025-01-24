@@ -89,7 +89,7 @@ label.resolver {
 }
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(6, 1fr); /* 5 columnas */
+  grid-template-columns: repeat(5, 1fr); /* 5 columnas */
   gap: 10px; /* Espacio entre los botones */
   justify-items: center;
   max-width: 10000px; /* Ajusta según necesidad */
@@ -102,25 +102,26 @@ label.resolver {
   color: #ffffff;
 }
 .resolver.azulito:active {
-  background-color: #0036a3;
+  background: #3f016f;
+  box-shadow: inset 6px 6px 12px #2f0045, inset -6px -6px 12px #5a028d;
 }
 .resolver.rojito:hover {
-  background: linear-gradient(145deg, #d3d705, #fbff06);
-  box-shadow: inset -3px -3px 10px rgb(255, 242, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   color: #000000;
+  background: linear-gradient(145deg, #ffff00, #ff9306);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
 }
 .resolver.rojito:active {
-  background: #ef0606;
-  box-shadow: inset 6px 6px 12px #aa0404, inset -6px -6px 12px #ff0808;
+  background: #ef9606;
+  box-shadow: inset 6px 6px 12px #aa5704, inset -6px -6px 12px #ff9008;
 }
 .resolver.inicio {
   width: 120px;
   height: 40px;
 }
 .resolver.inicio:hover {
-  background: linear-gradient(145deg, #d70505, #ff0606);
-  box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   color: #ffffff;
+  background: linear-gradient(145deg, #ffff00, #ff9306);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
 }
 .resolver.evaluar {
   width: 120px;
@@ -134,19 +135,19 @@ label.resolver {
 
 .azulito, .rojito, .inicio, .evaluar {
   background: linear-gradient(145deg, #3a3a3a, #5a5a5a); /* Ajuste de fondo más oscuro */
-  box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2), inset -3px -3px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.7), inset -3px -3px 10px rgba(0, 0, 0, 0.5);
 }
 
 .red {
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 8px 12px rgba(0, 0, 0, 0.7);
 }
 
 .blue {
+  background: linear-gradient(145deg, #5800d4, #9b00fb);
+  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   color: #ffffff;
-  background: linear-gradient(145deg, #4C1F8C, #511E94);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(178, 90, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
 }
 
 .botones {
@@ -163,14 +164,14 @@ label.resolver {
 }
 
 .blue.blocked {
+  background: linear-gradient(145deg, #5800d4, #9b00fb);
+  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   color: #ffffff;
-  background: linear-gradient(145deg, #200070, #0053fb);
-  box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
 }
 .red.blocked {
   color: #ffffff;
-  background: linear-gradient(145deg, #620101, #fd1d1d);
-  box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
+  background: linear-gradient(145deg, #ffff00, #ff9306);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 8px 12px rgba(0, 0, 0, 0.7);
 }
 .red.blocked::before, .blue.blocked::before {
   content: "";
@@ -256,25 +257,26 @@ right: 5px; /* Ajusta la posición horizontal */
     color: #ffffff;
   }
   .resolver.azulito:active {
-    background-color: #0036a3;
+    background: #3f016f;
+    box-shadow: inset 6px 6px 12px #2f0045, inset -6px -6px 12px #5a028d;
   }
   .resolver.rojito:hover {
-    background: linear-gradient(145deg, #d3d705, #fbff06);
-    box-shadow: inset -3px -3px 10px rgb(255, 242, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
     color: #000000;
+    background: linear-gradient(145deg, #ffff00, #ff9306);
+    box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   }
   .resolver.rojito:active {
-    background: #ef0606;
-    box-shadow: inset 6px 6px 12px #aa0404, inset -6px -6px 12px #ff0808;
+    background: #ef9606;
+    box-shadow: inset 6px 6px 12px #aa5704, inset -6px -6px 12px #ff9008;
   }
   .resolver.inicio {
     width: 120px;
     height: 40px;
   }
   .resolver.inicio:hover {
-    background: linear-gradient(145deg, #d70505, #ff0606);
-    box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
     color: #ffffff;
+    background: linear-gradient(145deg, #ffff00, #ff9306);
+    box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   }
   .resolver.evaluar {
     width: 120px;
@@ -288,19 +290,19 @@ right: 5px; /* Ajusta la posición horizontal */
   
   .azulito, .rojito, .inicio, .evaluar {
     background: linear-gradient(145deg, #3a3a3a, #5a5a5a); /* Ajuste de fondo más oscuro */
-    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.7), -6px -6px 12px rgba(255, 255, 255, 0.2), inset -3px -3px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.7), inset -3px -3px 10px rgba(0, 0, 0, 0.5);
   }
   
   .red {
     color: #ffffff;
     background: linear-gradient(145deg, #ffff00, #ff9306);
-    box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+    box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 8px 12px rgba(0, 0, 0, 0.7);
   }
   
   .blue {
+    background: linear-gradient(145deg, #5800d4, #9b00fb);
+    box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
     color: #ffffff;
-    background: linear-gradient(145deg, #4C1F8C, #511E94);
-    box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(178, 90, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   }
   
   .botones {
