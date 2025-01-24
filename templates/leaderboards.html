@@ -7,17 +7,19 @@
         <title>Leaderboards</title>
         <style>
             body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            padding: 0;
-            margin: 0;
-            background-color: #000000;
-            box-sizing: border-box;
-            font-family: "Rubik", sans-serif;
+                font-family: Arial, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                padding: 0;
+                margin: 0;
+                background-color: #190e30; /* Fondo negro */
+                box-sizing: border-box;
+                font-family: "Rubik", sans-serif;
+                touch-action: manipulation; /* Limita gestos de zoom */
+                user-select: none;
             }
 
             h1 {
@@ -38,7 +40,7 @@
             background-color: #1f1f1f;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 8px rgba(191, 14, 204, 0.5);
             }
 
             th, td {
@@ -88,8 +90,8 @@
                     <option value="10">10 x 10</option>
                 </select>
             </div>
-            <div id="leaderboard" style="text-align: center;"></div>
-            <button onclick="location.href='/'" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
+            <div id="leaderboard" style="text-align: center;margin-top: 20px;margin-left: 30px"></div>
+            <button onclick="location.href='/'" class="resolver azulito" style="margin-top: 20px;margin-left: 80px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
         </div>
     
         <script>
