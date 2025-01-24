@@ -25,16 +25,13 @@
         </div>
     </div>
     <script>
-        function toggleInfo() {
-            const infoDiv = document.getElementById('algorithm-info');
-            let description = `
-                1. Todo el tablero debe estar lleno. <br>
-                2. En cada fila y columna debe haber tantas celdas moradas como amarillas. <br>
-                3. No puede haber tres celdas consecutivas del mismo color. <br>
-                4. No puede haber dos filas o columnas idénticas.`
-            infoDiv.innerHTML = description;
-            infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
-        }
+        const infoDiv = document.getElementById('algorithm-info');
+        let description = `
+            1. Todo el tablero debe estar lleno. <br>
+            2. En cada fila y columna debe haber tantas celdas moradas como amarillas. <br>
+            3. No puede haber tres celdas consecutivas del mismo color. <br>
+            4. No puede haber dos filas o columnas idénticas.`
+        infoDiv.innerHTML = description;
     </script>
 </body>
 </html>
