@@ -12,6 +12,7 @@
     <div style="text-align:center; margin: 20px;">
         <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">Tablero aleatorio</span>
     </div>
+    <div id="algorithm-info" style="text-align: left; display: block; font-size: 14px; padding: 15px; background-color: #261929a9; color: #d3d3d3; border: 1px solid #000000; border-radius: 8px;"></div>
     <div style="text-align:center;">
         <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
     </div>
@@ -36,6 +37,15 @@
         <button onclick="location.href='/'" class="resolver evaluar">Volver</button>
     </div>
     <script>
+        const infoDiv = document.getElementById('algorithm-info');
+        let description = `
+            REGLAS DE JUEGO <br>
+            1. Todo el tablero debe estar lleno. <br>
+            2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
+            3. No puede haber tres celdas consecutivas del mismo color. <br>
+            4. No puede haber dos filas o columnas idénticas.`
+        infoDiv.innerHTML = description;
+
         document.getElementById("title_part").textContent = '';
         let gameFinished = false; // Indica si el juego ya ha terminado
         let matrixSize = 4; // Tamaño de la matriz

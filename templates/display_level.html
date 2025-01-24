@@ -10,6 +10,7 @@
 </head>
 <body>
     <h1 style="text-align:center;">Nivel {{ level }}</h1>
+    <div id="algorithm-info" style="text-align: left; display: block; font-size: 14px; padding: 15px; background-color: #261929a9; color: #d3d3d3; border: 1px solid #000000; border-radius: 8px;"></div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
         <span id="timer" style="font-size: 24px; font-weight: bold; color: #eaeaea;">00:00</span>
@@ -22,6 +23,15 @@
         <button onclick="evaluateMatrix()" class="resolver evaluar">Evaluar</button>
     </div>
     <script>
+        const infoDiv = document.getElementById('algorithm-info');
+        let description = `
+            REGLAS DE JUEGO <br>
+            1. Todo el tablero debe estar lleno. <br>
+            2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
+            3. No puede haber tres celdas consecutivas del mismo color. <br>
+            4. No puede haber dos filas o columnas idénticas.`
+        infoDiv.innerHTML = description;
+
         let matrixSize = "{{ n }}"; // Tamaño de la matriz
         let matrix = JSON.parse('{{ matrix|safe }}');
         const level = JSON.parse('{{ matrix|safe }}');

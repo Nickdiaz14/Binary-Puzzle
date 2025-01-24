@@ -18,21 +18,6 @@
             <button onclick="location.href='/solve'" class="resolver rojito">Solucionador</button>
             <button onclick="location.href='/leaderboards'" class="resolver azulito ">Leaderboard</button>
         </div>
-        
-        <div id="algorithm-info" style="text-align: center; margin-top: 20px; display: block; font-size: 16px; padding: 15px; background-color: #261929a9; color: #d3d3d3; border: 1px solid #000000; border-radius: 8px;"></div>
-        <div style="text-align:center;">
-            <span id="title_part" style="font-size: 16px; font-weight: bold; color: #a49e9e;"></span>
-        </div>
     </div>
-    <script>
-        const infoDiv = document.getElementById('algorithm-info');
-        let description = `
-            REGLAS DE JUEGO <br>
-            1. Todo el tablero debe estar lleno. <br>
-            2. En cada fila y columna debe haber tantas celdas moradas como amarillas. <br>
-            3. No puede haber tres celdas consecutivas del mismo color. <br>
-            4. No puede haber dos filas o columnas idénticas.`
-        infoDiv.innerHTML = description;
-    </script>
 </body>
 </html>
