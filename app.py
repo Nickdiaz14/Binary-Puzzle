@@ -656,4 +656,4 @@ def play_matrix():
     return jsonify({'matrix': matrix})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
