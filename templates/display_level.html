@@ -158,24 +158,24 @@
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrix[i]) < (n) / 2) {
-                        alert(`Hay más rojos que azules en la fila ${i + 1}`);
+                        alert(`Hay más amarillos que morados en la fila ${i + 1}`);
                         control = false;
                         return control;
                     }
                     if (sum(matrix[i]) > (n) / 2) {
-                        alert(`Hay más azules que rojos en la fila ${i + 1}`);
+                        alert(`Hay más morados que amarillos en la fila ${i + 1}`);
                         control = false;
                         return control;
                     }
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrixt[i]) < (n) / 2) {
-                        alert(`Hay más rojos que azules en la columna ${i + 1}`);
+                        alert(`Hay más amarillos que morados en la columna ${i + 1}`);
                         control = false;
                         return control;
                     }
                     if (sum(matrixt[i]) > (n) / 2) {
-                        alert(`Hay más azules que rojos en la columna ${i + 1}`);
+                        alert(`Hay más morados que amarillos en la columna ${i + 1}`);
                         control = false;
                         return control;
                     }
@@ -209,17 +209,6 @@
 
         function arraysEqual(a, b) {
             return JSON.stringify(a) === JSON.stringify(b);
-        }
-
-        function toggleInfo() {
-            const infoDiv = document.getElementById('algorithm-info');
-            let description = `
-                1. Todo el tablero debe estar lleno. <br>
-                2. Debe haber tantas celdas azules como rojas. <br>
-                3. No puede haber tres celdas consecutivas del mismo color. <br>
-                4. No puede haber dos filas o columnas idénticas.`
-            infoDiv.innerHTML = description;
-            infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
         }
         createTable();
     </script>

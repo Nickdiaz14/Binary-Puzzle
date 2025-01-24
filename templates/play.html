@@ -210,24 +210,24 @@
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrix[i]) < (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más rojos que azules en la fila ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más amarillos que morados en la fila ${i + 1}`;
                         control = false;
                         return control;
                     }
                     if (sum(matrix[i]) > (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más azules que rojos en la fila ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más morados que amarillos en la fila ${i + 1}`;
                         control = false;
                         return control;
                     }
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrixt[i]) < (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más rojos que azules en la columna ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más amarillos que morados en la columna ${i + 1}`;
                         control = false;
                         return control;
                     }
                     if (sum(matrixt[i]) > (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más azules que rojos en la columna ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más morados que amarillos en la columna ${i + 1}`;
                         control = false;
                         return control;
                     }
