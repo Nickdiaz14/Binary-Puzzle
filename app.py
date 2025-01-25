@@ -700,7 +700,6 @@ def leader_page():
 @app.route('/leaderboards')
 def leaders_page():
     dictionary = {'T4':list(get_top_scores('T4')),'T6':list(get_top_scores('T6')),'T8':list(get_top_scores('T8')),'T10':list(get_top_scores('T10'))}
-    print(dictionary)
     return render_template('leaderboards.html', data=json.dumps(dictionary))
 
 @app.route('/display_level')
