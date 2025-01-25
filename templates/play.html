@@ -123,8 +123,8 @@
         }
 
         function toggleColor(row, col, cell) {
-            if (cell.classList.contains('locked')) {
-                return; // Do nothing if the cell is locked
+            if (cell.classList.contains('blocked')) {
+                return; // Do nothing if the cell is blocked
             }
             if (cell.className === 'grey') {
                 cell.className = 'red';
@@ -139,6 +139,9 @@
             setTimeout(() => {
                 if (all(matrix)) {
                     evaluateMatrix();
+                }
+                else{
+                    document.getElementById("title_part").textContent = "";
                 }
             }, 1000);
         }
@@ -161,9 +164,9 @@
                     for (let j = 0; j < gameMatrix[i].length; j++) {
                         const cell = table.rows[i].cells[j];
                         if (gameMatrix[i][j] === 0) {
-                            cell.className = 'red locked';
+                            cell.className = 'red blocked';
                         } else if (gameMatrix[i][j] === 1) {
-                            cell.className = 'blue locked';
+                            cell.className = 'blue blocked';
                         } else {
                             cell.className = 'grey';
                         }
