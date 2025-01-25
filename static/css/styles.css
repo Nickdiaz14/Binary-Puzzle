@@ -176,41 +176,40 @@ label.resolver {
 .red.blocked::before, .blue.blocked::before {
   content: "";
   position: absolute;
-  background-image: url('https://openclipart.org/image/800px/184625'); /* Imagen del candado */
+  background-image: url('logo_M&B.png'); /* Imagen del candado */
   background-size: cover;
-  filter: invert(1);
   opacity: 0.1;
 }
 
 .lock-size-40 .red.blocked::before,
 .lock-size-40 .blue.blocked::before {
 width: 90px;
-height: 83px;
-top: 15px; /* Ajusta la posición vertical para centrar la imagen */
+height: 90px;
+top: 10px; /* Ajusta la posición vertical para centrar la imagen */
 right: 9px; /* Ajusta la posición horizontal */
 }
 
 .lock-size-35 .red.blocked::before,
 .lock-size-35 .blue.blocked::before {
 width: 75px;
-height: 70px;
-top: 10px; /* Ajusta la posición vertical para centrar la imagen */
-right: 9px; /* Ajusta la posición horizontal */
+height: 75px;
+top: 8px; /* Ajusta la posición vertical para centrar la imagen */
+right: 8px; /* Ajusta la posición horizontal */
 }
 
 .lock-size-30 .red.blocked::before,
 .lock-size-30 .blue.blocked::before {
 width: 60px;
-height: 55px;
-top: 8px; /* Ajusta la posición vertical para centrar la imagen */
-right: 7px; /* Ajusta la posición horizontal */
+height: 60px;
+top: 6px; /* Ajusta la posición vertical para centrar la imagen */
+right: 5px; /* Ajusta la posición horizontal */
 }
 
 .lock-size-25 .red.blocked::before,
 .lock-size-25 .blue.blocked::before {
 width: 50px;
-height: 46px;
-top: 7px; /* Ajusta la posición vertical para centrar la imagen */
+height: 50px;
+top: 6px; /* Ajusta la posición vertical para centrar la imagen */
 right: 5px; /* Ajusta la posición horizontal */
 }
 
