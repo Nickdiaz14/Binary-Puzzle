@@ -4,6 +4,7 @@ from constraint import Problem
 import concurrent.futures
 import numpy as np
 import threading
+import psycopg2
 import random
 import json
 import ast
@@ -598,21 +599,94 @@ def levels_page():
     return render_template('levels.html')
 
 #----------------------------------------------------------------------------------------------------------------------------------------
-def update_leaderboard(leaderboard, board, new_entry):
-    trampa = True
-    for index,record in enumerate(leaderboard[board]):
-        if record[0] == new_entry[0]:
-            if record[2] > new_entry[2]:
-                leaderboard[board][index][2] = new_entry[2]
-                leaderboard[board][index][1] = new_entry[1]
-            trampa = False
-    if new_entry[2] == 0 or new_entry[0] == "NULL":
-        trampa = False
-    if trampa:
-        leaderboard[board].append(new_entry)
-    leaderboard[board] = sorted(leaderboard[board], key=lambda x: x[2])[:10]
+# Conectar a Supabase
+def connect_db():
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        port="5432"
+    )
+
+# Insertar o actualizar un registro en la base de datos
+def update_leaderboard(board, name, time_string, total_time):
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT COUNT(*) FROM leaderboard WHERE board = %s;
+    """, (board,))
+    count = cursor.fetchone()[0]
+
+    # Comprobar si el registro con el mismo nombre ya existe
+    cursor.execute("""
+    SELECT total_time FROM leaderboard WHERE board = %s AND name = %s;
+    """, (board, name))
+
+    existing_entry = cursor.fetchone()      
+
+    if existing_entry:
+        # Si ya existe, comparar el total_time
+        existing_time = existing_entry[0]
+        if total_time < existing_time:
+            # Si el nuevo total_time es menor, actualiza el registro
+            cursor.execute("""
+            UPDATE leaderboard
+            SET time_string = %s, total_time = %s
+            WHERE board = %s AND name = %s;
+            """, (time_string, total_time, board, name))
+    else:
+        if count >= 10:
+            cursor.execute("""
+            SELECT id, total_time FROM leaderboard WHERE board = %s ORDER BY total_time DESC LIMIT 1;
+            """, (board,))
+            max_entry = cursor.fetchone()
+
+            # Si el nuevo tiempo es menor que el máximo, reemplazar el registro con el tiempo más alto
+            if total_time < max_entry[1]:
+                cursor.execute("""
+                DELETE FROM leaderboard WHERE id = %s;
+                """, (max_entry[0],))
+
+                # Insertar el nuevo registro
+                cursor.execute("""
+                INSERT INTO leaderboard (board, name, time_string, total_time)
+                VALUES (%s, %s, %s, %s);
+                """, (board, name, time_string, total_time))
+        else:
+            # Si no existe, insertar un nuevo registro
+            cursor.execute("""
+            INSERT INTO leaderboard (board, name, time_string, total_time)
+            VALUES (%s, %s, %s, %s);
+            """, (board, name, time_string, total_time))
+            print(f"Nuevo registro insertado: {name} - {time_string}")
+
+    # Guardar los cambios en la base de datos
+    connection.commit()
+
+    # Cerrar la conexión
+    cursor.close()
+    connection.close()
+
+# Ejemplo de uso
+
+def get_top_scores(board):
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    # Consultar los 5 mejores registros
+    cursor.execute("""
+    SELECT name, time_string FROM leaderboard
+    WHERE board = %s ORDER BY total_time ASC LIMIT 10;
+    """, (board,))
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
     
-    return leaderboard
+    return results
 
 @app.route('/leaderboard')
 def leader_page():
@@ -620,20 +694,14 @@ def leader_page():
     nom = str(request.args.get('nom')).upper()
     n = int(request.args.get('n'))
     board = f'T{n}'
-    with open('leaderboard.txt', 'r') as file:
-        contenido = file.read()
-        leaderboard = ast.literal_eval(contenido)
-    updated_leaderboard = update_leaderboard(leaderboard, board, [nom,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}',tsecs])
-    with open('leaderboard.txt', 'w') as file:
-        file.write(str(leaderboard))
-    return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(leaderboard[board]))
+    update_leaderboard(board, nom,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
+    return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)))
 
 @app.route('/leaderboards')
 def leaders_page():
-    with open('leaderboard.txt', 'r') as file:
-        contenido = file.read()
-        leaderboard = ast.literal_eval(contenido)
-    return render_template('leaderboards.html', data=json.dumps(leaderboard))
+    dictionary = {'T4':list(get_top_scores('T4')),'T6':list(get_top_scores('T6')),'T8':list(get_top_scores('T8')),'T10':list(get_top_scores('T10'))}
+    print(dictionary)
+    return render_template('leaderboards.html', data=json.dumps(dictionary))
 
 @app.route('/display_level')
 def display_levels_page():
