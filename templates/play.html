@@ -33,7 +33,7 @@
     </table>
     <div style="text-align:center; margin-top: 20px;" class="botones">
         <button onclick="startGame()" class="resolver evaluar">Iniciar</button>
-        <button onclick="location.href='/'" class="resolver evaluar">Volver</button>
+        <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar">Volver</button>
     </div>
     <script>
         document.getElementById("title_part").textContent = '';
@@ -182,13 +182,20 @@
                 gameFinished = true; // Marcar el juego como terminado
                 let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
-                setTimeout(() => {}, 5000);
-                const userName = prompt("Ingrese las iniciales de su nombre:");
-                if (userName) { // Asegurarse de que se ingresó algo
-                    window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&nom=${userName}&n=${matrixSize}`;
-                } else {
-                    gameFinished = false; // Permitir que el juego continúe si no se ingresó un nombre
-                }
+                setTimeout(() => {
+                    fetch('/getname', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ userID: localStorage.getItem('userId')}),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const userName = data.name
+                        window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&nom=${userName}&n=${matrixSize}`;
+                    });
+                }, 200);
             }
         }
 

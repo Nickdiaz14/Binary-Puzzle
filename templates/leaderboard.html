@@ -83,7 +83,7 @@
         <div style="text-align: center;">
             <h1>Leaderboard de {{ board }}</h1>
             <div id="leaderboard" style="text-align: center;margin-top: 20px;margin-left: 30px"></div>
-            <button onclick="location.href='/'" class="resolver azulito" style="margin-top: 20px;margin-left: 80px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
+            <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver azulito" style="margin-top: 20px;margin-left: 80px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
         </div>
     
         <script>

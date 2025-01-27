@@ -7,7 +7,9 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1 style="text-align:center;">Menú Principal</h1>
+    <div style="text-align:center; margin: 20px;">
+        <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">¡Hola {{ nickname }}!</span>
+    </div>
     <div style="text-align:center;">
         <h1>0H H1</h1>
         <button onclick="toggleInfo()" style="margin-bottom: 10px; margin-left: 10px; padding: 15px 30px; font-size: 20px; border-radius: 12px; border: 2px solid #ffffff; background-color: #653d6c; color: #ffffff; cursor: pointer; box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);">Reglas</button>
@@ -22,6 +24,9 @@
         <div style="text-align:center;" class="botones">
             <button onclick="location.href='/solve'" class="resolver rojito">Solucionador</button>
             <button onclick="location.href='/leaderboards'" class="resolver azulito ">Leaderboard</button>
+        </div>
+        <div style="text-align:center; margin-left: 130px;" class="botones">
+            <button onclick="location.href = '/?ch=si'" class="resolver azulito">Cambiar nombre</button>
         </div>
     </div>
     <script>

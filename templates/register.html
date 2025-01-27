@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <title>Menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <label for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px; color: #f9f9f9">¡Bienvenido a Math & Beer!</label>
+    <label style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Ingresa tu nickname:</label>
+    <label for="matrix-size" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</label>
+    <input type="text" id="nickname" name="nickname" required style="margin-top: 15px; padding: 10px; border: 2px solid #007BFF; border-radius: 5px; font-size: 16px;">
+    <button onclick="startGame()" style="margin-top: 15px;" class="resolver evaluar">Empezar</button>
+
+    <script>
+        function startGame() {
+            const nickname = document.getElementById('nickname').value;
+            const userId = localStorage.getItem('userId');
+            const ind = '{{ ind }}'
+            if (nickname) {
+                if (userId) {
+                    if (ind.toString() === "si") {
+                        window.location.href = `/menu?nickname=${nickname}&userID=${userId}&ch=si`
+                    } else {
+                        window.location.href = `/menu?userID=${userId}`
+                    }
+                } else {
+                    const new_userId = crypto.randomUUID();
+                    localStorage.setItem('userId', new_userId);
+                    window.location.href = `/menu?nickname=${nickname}&userID=${new_userId}`
+                };
+            };
+        }
+    </script>
+</body>
+</html>
