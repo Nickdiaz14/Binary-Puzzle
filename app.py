@@ -577,14 +577,25 @@ def constraint_solver ():
     solutions = binary_puzzle_solver(n, matrix, ubi)
     return jsonify({'solution': solutions})
 
+@app.route('/getname', methods=['POST'])
+def getname ():
+    id = request.json['userID']
+
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT nickname FROM nickname WHERE userid = %s;
+    """, (id,))
+    final_nom = cursor.fetchone()[0]
+    return jsonify({'name': final_nom})
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/')
-def menu():
-    return render_template('menu.html')
-
-@app.route('/index')
 def index():
-    return render_template('index.html')
+    ch = request.args.get('ch')
+    if ch:
+        return render_template('register.html', ind = "si")
+    return render_template('register.html')
 
 @app.route('/solve')
 def solve_page():
@@ -598,6 +609,54 @@ def play_page():
 def levels_page():
     return render_template('levels.html')
 
+@app.route('/menu')
+def menu():
+    id = request.args.get('userID')
+    nom = request.args.get('nickname')
+    ch = request.args.get('ch')
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT userid FROM nickname WHERE userid = %s;
+    """,(id,))
+    flag = cursor.fetchone()
+
+    if flag:
+        if ch:
+            cursor.execute("""
+            SELECT nickname FROM nickname WHERE nickname = %s AND userid != %s;
+            """, (nom,id))
+            prueba = cursor.fetchone()
+
+            if prueba:
+                return render_template('register.html',message = "Este nombre de usuario ya está en uso", ind = "si")
+            
+            cursor.execute("""
+            UPDATE nickname
+            SET nickname = %s
+            WHERE userid = %s;
+            """, (nom,id))
+
+        cursor.execute("""
+        SELECT nickname FROM nickname WHERE userid = %s;
+        """, (id,))
+        final_nom = cursor.fetchone()[0]
+    else:
+        cursor.execute("""
+        INSERT INTO nickname (userid, nickname)
+        VALUES (%s, %s);
+        """, (id, nom))
+        final_nom = nom
+
+    # Guardar los cambios en la base de datos
+    connection.commit()
+
+    # Cerrar la conexión
+    cursor.close()
+    connection.close()
+
+    return render_template('menu.html', nickname = final_nom)
 #----------------------------------------------------------------------------------------------------------------------------------------
 # Conectar a Supabase
 def connect_db():
@@ -660,7 +719,6 @@ def update_leaderboard(board, name, time_string, total_time):
             INSERT INTO leaderboard (board, name, time_string, total_time)
             VALUES (%s, %s, %s, %s);
             """, (board, name, time_string, total_time))
-            print(f"Nuevo registro insertado: {name} - {time_string}")
 
     # Guardar los cambios en la base de datos
     connection.commit()
