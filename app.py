@@ -722,10 +722,7 @@ def get_top_scores(board):
 
     # Consultar los 5 mejores registros
     cursor.execute("""
-    SELECT b.nickname, a.time_string
-    FROM nickname b
-    INNER JOIN leaderboard a
-    ON b.userid = a.userid
+    SELECT nickname,time_string FROM public.leader_final_view
     WHERE board = %s ORDER BY total_time ASC LIMIT 10;
     """, (board,))
 
