@@ -32,6 +32,13 @@
                 };
             };
         }
+        const ind = '{{ ind }}'
+        const user = localStorage.getItem('userId');
+        if (user) {
+            if (ind.toString() !== "si") {
+                window.location.href = `/menu?userID=${user}`
+            }
+        }
     </script>
 </body>
 </html>

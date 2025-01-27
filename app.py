@@ -612,12 +612,12 @@ def menu():
     if flag:
         if ch:
             cursor.execute("""
-            SELECT nickname FROM nickname WHERE nickname = %s AND userid != %s;
-            """, (nom,id))
+            SELECT nickname FROM nickname WHERE LOWER(nickname) = %s AND userid != %s;
+            """, (nom.lower(),id))
             prueba = cursor.fetchone()
-
             if prueba:
-                return render_template('register.html',message = "Este nombre de usuario ya está en uso", ind = "si")
+                if prueba[0].lower() == nom.lower():
+                    return render_template('register.html',message = "Este nombre de usuario ya está en uso", ind = "si")
             
             cursor.execute("""
             UPDATE nickname
