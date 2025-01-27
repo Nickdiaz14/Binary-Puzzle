@@ -183,18 +183,7 @@
                 let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
                 setTimeout(() => {
-                    fetch('/getname', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ userID: localStorage.getItem('userId')}),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        const userName = data.name
-                        window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&nom=${userName}&n=${matrixSize}`;
-                    });
+                    window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&userID=${localStorage.getItem('userId')}&n=${matrixSize}`;
                 }, 200);
             }
         }

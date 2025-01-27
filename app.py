@@ -576,19 +576,6 @@ def constraint_solver ():
     ubi = [(i, j) for i in range(n) for j in range(n) if matrix[i][j] != -1]
     solutions = binary_puzzle_solver(n, matrix, ubi)
     return jsonify({'solution': solutions})
-
-@app.route('/getname', methods=['POST'])
-def getname ():
-    id = request.json['userID']
-
-    connection = connect_db()
-    cursor = connection.cursor()
-
-    cursor.execute("""
-    SELECT nickname FROM nickname WHERE userid = %s;
-    """, (id,))
-    final_nom = cursor.fetchone()[0]
-    return jsonify({'name': final_nom})
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/')
 def index():
@@ -669,7 +656,7 @@ def connect_db():
     )
 
 # Insertar o actualizar un registro en la base de datos
-def update_leaderboard(board, name, time_string, total_time):
+def update_leaderboard(board, userid, time_string, total_time):
     connection = connect_db()
     cursor = connection.cursor()
 
@@ -680,8 +667,8 @@ def update_leaderboard(board, name, time_string, total_time):
 
     # Comprobar si el registro con el mismo nombre ya existe
     cursor.execute("""
-    SELECT total_time FROM leaderboard WHERE board = %s AND name = %s;
-    """, (board, name))
+    SELECT total_time FROM leaderboard WHERE board = %s AND userid = %s;
+    """, (board, userid))
 
     existing_entry = cursor.fetchone()      
 
@@ -693,8 +680,8 @@ def update_leaderboard(board, name, time_string, total_time):
             cursor.execute("""
             UPDATE leaderboard
             SET time_string = %s, total_time = %s
-            WHERE board = %s AND name = %s;
-            """, (time_string, total_time, board, name))
+            WHERE board = %s AND userid = %s;
+            """, (time_string, total_time, board, userid))
     else:
         if count >= 10:
             cursor.execute("""
@@ -710,15 +697,15 @@ def update_leaderboard(board, name, time_string, total_time):
 
                 # Insertar el nuevo registro
                 cursor.execute("""
-                INSERT INTO leaderboard (board, name, time_string, total_time)
+                INSERT INTO leaderboard (board, userid, time_string, total_time)
                 VALUES (%s, %s, %s, %s);
-                """, (board, name, time_string, total_time))
+                """, (board, userid, time_string, total_time))
         else:
             # Si no existe, insertar un nuevo registro
             cursor.execute("""
-            INSERT INTO leaderboard (board, name, time_string, total_time)
+            INSERT INTO leaderboard (board, userid, time_string, total_time)
             VALUES (%s, %s, %s, %s);
-            """, (board, name, time_string, total_time))
+            """, (board, userid, time_string, total_time))
 
     # Guardar los cambios en la base de datos
     connection.commit()
@@ -735,7 +722,10 @@ def get_top_scores(board):
 
     # Consultar los 5 mejores registros
     cursor.execute("""
-    SELECT name, time_string FROM leaderboard
+    SELECT b.nickname, a.time_string
+    FROM nickname b
+    INNER JOIN leaderboard a
+    ON b.userid = a.userid
     WHERE board = %s ORDER BY total_time ASC LIMIT 10;
     """, (board,))
 
@@ -749,10 +739,10 @@ def get_top_scores(board):
 @app.route('/leaderboard')
 def leader_page():
     tsecs = int(request.args.get('totaltime'))
-    nom = str(request.args.get('nom')).upper()
+    id = request.args.get('userID')
     n = int(request.args.get('n'))
     board = f'T{n}'
-    update_leaderboard(board, nom,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
+    update_leaderboard(board, id,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
     return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)))
 
 @app.route('/leaderboards')
