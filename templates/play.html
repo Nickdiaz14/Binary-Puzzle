@@ -179,6 +179,7 @@
             if (gameFinished) return; // Si el juego ya terminó, no hacer nada
 
             if (rules_final(matrix)) {
+                stopTimer();
                 gameFinished = true; // Marcar el juego como terminado
                 let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
