@@ -1,3 +1,4 @@
+#%%
 import random
 import numpy as np
 from constraint import Problem
@@ -274,11 +275,33 @@ for ii in range(2,6):
             aplicar_reglas_basicas(matrix_solution)
             if rules([list(row) for row in matrix_solution]):
                 level = ""
-                with open(f'retos/aleatorios{n}.txt', 'a', encoding='utf-8') as file:
+                with open(f'aleatorios{n}.txt', 'a', encoding='utf-8') as file:
                     for row in matrix:
                         level += str(row) + ","
                     # Agrega información al archivo
                     file.write(f'{level[:-1]}\n')
                 cont += 1
-        if cont == 100:
+        if cont == 400:
             break
+
+#%%
+for ii in range(2,6):
+    n = ii*2
+    output_file = f"aleatorios{n}.txt"
+
+    # Usar un conjunto para eliminar duplicados
+    lineas_unicas = set()
+
+    # Leer archivo y almacenar líneas únicas
+    with open(output_file, "r") as archivo:
+        for linea in archivo:
+            lineas_unicas.add(linea)
+
+    # Escribir líneas únicas en el nuevo archivo
+    with open(output_file, "w") as archivo:
+        archivo.writelines(sorted(lineas_unicas))  # Puedes usar sorted si quieres que las líneas estén ordenadas
+
+    print(f"Archivo sin duplicados guardado como {output_file}")
+
+# %%
+
