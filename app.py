@@ -657,6 +657,7 @@ def connect_db():
 
 # Insertar o actualizar un registro en la base de datos
 def update_leaderboard(board, userid, time_string, total_time):
+    better = False
     connection = connect_db()
     cursor = connection.cursor()
 
@@ -676,6 +677,7 @@ def update_leaderboard(board, userid, time_string, total_time):
         # Si ya existe, comparar el total_time
         existing_time = existing_entry[0]
         if total_time < existing_time:
+            better = True
             # Si el nuevo total_time es menor, actualiza el registro
             cursor.execute("""
             UPDATE leaderboard
@@ -713,6 +715,7 @@ def update_leaderboard(board, userid, time_string, total_time):
     # Cerrar la conexión
     cursor.close()
     connection.close()
+    return better
 
 # Ejemplo de uso
 
@@ -739,8 +742,11 @@ def leader_page():
     id = request.args.get('userID')
     n = int(request.args.get('n'))
     board = f'T{n}'
-    update_leaderboard(board, id,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
-    return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)))
+    better = update_leaderboard(board, id,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
+    if better:
+        return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better, message = "¡Felicidades, superaste tu marca personal!")
+    else:
+        return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better)
 
 @app.route('/leaderboards')
 def leaders_page():
