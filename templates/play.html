@@ -37,6 +37,7 @@
     </div>
     <script>
         document.getElementById("title_part").textContent = '';
+        let gameStarted = false;
         let gameFinished = false; // Indica si el juego ya ha terminado
         let matrixSize = 4; // Tamaño de la matriz
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
@@ -46,6 +47,7 @@
         let centisecondsElapsed = 0;
 
         function startTimer() {
+            gameStarted = true;
             clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
             centisecondsElapsed = 0;
             updateTimerDisplay();
@@ -137,13 +139,15 @@
                 matrix[row][col] = -1;
             }
             setTimeout(() => {
-                if (all(matrix)) {
-                    evaluateMatrix();
+                if (gameStarted){
+                    if (all(matrix)) {
+                        evaluateMatrix();
+                    }
+                    else{
+                        document.getElementById("title_part").textContent = "";
+                    }
                 }
-                else{
-                    document.getElementById("title_part").textContent = "";
-                }
-            }, 1000);
+                }, 1000);
         }
 
         function startGame() {
