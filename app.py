@@ -631,6 +631,14 @@ def menu():
         final_nom = cursor.fetchone()[0]
     else:
         cursor.execute("""
+        SELECT nickname FROM nickname WHERE LOWER(nickname) = %s AND userid != %s;
+        """, (nom.lower(),id))
+        prueba = cursor.fetchone()
+        if prueba:
+            if prueba[0].lower() == nom.lower():
+                return render_template('register.html',message = "Este nombre de usuario ya está en uso", ind = "si")
+            
+        cursor.execute("""
         INSERT INTO nickname (userid, nickname)
         VALUES (%s, %s);
         """, (id, nom))
