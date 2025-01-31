@@ -87,6 +87,7 @@
                 <option value="6">6 x 6</option>
                 <option value="8">8 x 8</option>
                 <option value="10">10 x 10</option>
+                <option value="Contrareloj">Contrareloj</option>
             </select>
         </div>
         <div id="leaderboard" style="text-align: center;margin-top: 20px;margin-left: 30px"></div>
@@ -99,14 +100,14 @@
                 let leaderboardDiv = document.getElementById('leaderboard');
                 leaderboardDiv.innerHTML = '';
                 let table = document.createElement('table');
-                let n = parseInt(document.getElementById('matrix-size').value);
+                let n = document.getElementById('matrix-size').value;
         
                 // Crear encabezados de la tabla
                 table.innerHTML = `
                     <tr>
                         <th>Posición</th>
                         <th>Nombre</th>
-                        <th>Tiempo</th>
+                        <th>Record</th>
                     </tr>
                 `;
         
