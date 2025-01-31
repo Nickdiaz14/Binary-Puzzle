@@ -763,6 +763,7 @@ def leader_page():
         n = int(request.args.get('n'))
         board = f'T{n}'
         better = update_leaderboard(board, id,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
+        print(better)
         if better:
             return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
         else:
