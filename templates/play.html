@@ -68,6 +68,7 @@
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <script>
         document.getElementById("title_part").textContent = '';
+        let gamefinished = false;
         let matrixSize = 4; // Tamaño de la matriz
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         
@@ -227,7 +228,10 @@
         }
 
         function evaluateMatrix() {
+            if (gamefinished) return;
+
             if (rules_final(matrix)) {
+                gamefinished = true;
                 stopTimer();
                 let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";

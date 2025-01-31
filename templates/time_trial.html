@@ -60,6 +60,7 @@
         document.getElementById("title_part").textContent = '';
         let matrixSize = 4; // Tamaño de la matriz
         let gamestarted = true;
+        let gamefinished = false;
         let timerInterval;
         let centisecondsElapsed = 3000;
         let reposed_time = 300;
@@ -223,6 +224,7 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                    gamefinished = false;
                     const gameMatrix = data.matrix;
                     const table = document.getElementById('matrix');
                     matrix = gameMatrix.map(row => [...row]);
@@ -240,7 +242,9 @@
         }
 
         function evaluateMatrix() {
+            if (gamefinished) return;
             if (rules_final(matrix)) {
+                gamefinished = true;
                 centisecondsElapsed += reposed_time;
                 boards_solved++;
                 startGame();
