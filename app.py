@@ -588,6 +588,10 @@ def index():
 def solve_page():
     return render_template('solve.html')
 
+@app.route('/time_trial')
+def time_trial_page():
+    return render_template('time_trial.html')
+
 @app.route('/play')
 def play_page():
     return render_template('play.html')
@@ -665,6 +669,7 @@ def connect_db():
 
 # Insertar o actualizar un registro en la base de datos
 def update_leaderboard(board, userid, time_string, total_time):
+    comp = len(board) <= 3
     better = False
     connection = connect_db()
     cursor = connection.cursor()
@@ -684,7 +689,7 @@ def update_leaderboard(board, userid, time_string, total_time):
     if existing_entry:
         # Si ya existe, comparar el total_time
         existing_time = existing_entry[0]
-        if total_time < existing_time:
+        if (comp and total_time < existing_time) or ((not comp) and total_time > existing_time):
             better = True
             # Si el nuevo total_time es menor, actualiza el registro
             cursor.execute("""
@@ -694,13 +699,15 @@ def update_leaderboard(board, userid, time_string, total_time):
             """, (time_string, total_time, board, userid))
     else:
         if count >= 10:
-            cursor.execute("""
-            SELECT id, total_time FROM leaderboard WHERE board = %s ORDER BY total_time DESC LIMIT 1;
-            """, (board,))
+            order = 'DESC' if comp else 'ASC'
+            query = f"""
+            SELECT id, total_time FROM leaderboard WHERE board = %s ORDER BY total_time {order} LIMIT 1;
+            """
+            cursor.execute(query, (board,))
             max_entry = cursor.fetchone()
 
             # Si el nuevo tiempo es menor que el máximo, reemplazar el registro con el tiempo más alto
-            if total_time < max_entry[1]:
+            if (comp and total_time < max_entry[1]) or ((not comp) and total_time > max_entry[1]):
                 cursor.execute("""
                 DELETE FROM leaderboard WHERE id = %s;
                 """, (max_entry[0],))
@@ -728,14 +735,17 @@ def update_leaderboard(board, userid, time_string, total_time):
 # Ejemplo de uso
 
 def get_top_scores(board):
+    comp = len(board) <= 3
     connection = connect_db()
     cursor = connection.cursor()
 
     # Consultar los 5 mejores registros
-    cursor.execute("""
+    order = "ASC" if comp else "DESC"
+    query = f"""
     SELECT nickname,time_string FROM public.leader_final_view
-    WHERE board = %s ORDER BY total_time ASC LIMIT 10;
-    """, (board,))
+    WHERE board = %s ORDER BY total_time {order} LIMIT 10;
+    """
+    cursor.execute(query,(board,))
 
     results = cursor.fetchall()
 
@@ -746,19 +756,29 @@ def get_top_scores(board):
 
 @app.route('/leaderboard')
 def leader_page():
-    tsecs = int(request.args.get('totaltime'))
+    tsecs = request.args.get('totaltime')
     id = request.args.get('userID')
-    n = int(request.args.get('n'))
-    board = f'T{n}'
-    better = update_leaderboard(board, id,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
-    if better:
-        return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
+    if tsecs:
+        tsecs = int(tsecs)
+        n = int(request.args.get('n'))
+        board = f'T{n}'
+        better = update_leaderboard(board, id,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
+        if better:
+            return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
+        else:
+            return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better)
     else:
-        return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better)
+        boards = int(request.args.get('boards'))
+        board = "TContrareloj"
+        better = update_leaderboard(board, id,f'{boards} tableros', boards)
+        if better:
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
+        else:
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better)
 
 @app.route('/leaderboards')
 def leaders_page():
-    dictionary = {'T4':list(get_top_scores('T4')),'T6':list(get_top_scores('T6')),'T8':list(get_top_scores('T8')),'T10':list(get_top_scores('T10'))}
+    dictionary = {'T4':list(get_top_scores('T4')),'T6':list(get_top_scores('T6')),'T8':list(get_top_scores('T8')),'T10':list(get_top_scores('T10')),'TContrareloj':list(get_top_scores('TContrareloj'))}
     return render_template('leaderboards.html', data=json.dumps(dictionary))
 
 @app.route('/display_level')
