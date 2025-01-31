@@ -172,7 +172,7 @@
                 else{
                     document.getElementById("title_part").textContent = "";
                 }
-                }, 500);
+                }, 1000);
         }
 
         function startCountdown(callback) {
@@ -233,7 +233,7 @@
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
                 setTimeout(() => {
                     window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&userID=${localStorage.getItem('userId')}&n=${matrixSize}`;
-                }, 200);
+                }, 500);
             }
         }
 
