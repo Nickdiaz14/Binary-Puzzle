@@ -223,7 +223,6 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
                     const gameMatrix = data.matrix;
                     const table = document.getElementById('matrix');
                     matrix = gameMatrix.map(row => [...row]);
