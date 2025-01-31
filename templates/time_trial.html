@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6, user-scalable=no">
+    <title>Matrix Game</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<style>
+    
+    #countdown-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 15vw;
+        font-family: 'Rubik', sans-serif;
+        z-index: 1000;
+    }
+
+    #countdown {
+        animation: fade 1s ease-in-out infinite;
+    }
+
+    @keyframes fade {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+</style>
+<body>
+    <div id="countdown-overlay">
+        <span id="countdown">3</span>
+    </div>
+    <div style="text-align:center; margin: 20px;">
+        <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">Tablero aleatorio</span>
+    </div>
+    <div style="text-align:center;">
+        <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
+    </div>
+    <div style="text-align:center; margin-bottom: 8px;">
+    </div>
+    <!-- Cronómetro -->
+    <div style="text-align:center; margin: 20px;">
+        <span id="timer" style="font-size: 24px; font-weight: bold; color: #eaeaea;">00:00.00</span>
+    </div>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <script>
+        document.getElementById("title_part").textContent = '';
+        let matrixSize = 4; // Tamaño de la matriz
+        let gamestarted = true;
+        let timerInterval;
+        let centisecondsElapsed = 3000;
+        let reposed_time = 300;
+        let boards_solved = 0;
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+        
+        // Variables para el cronómetro
+
+
+    
+        function startTimer() {
+            clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                centisecondsElapsed--; // Incrementar en 10 ms
+                updateTimerDisplay();
+                if (centisecondsElapsed === 0) {
+                    document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
+                    stopTimer();
+                    window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}`;
+                }
+            }, 10); // Actualizar cada 10 ms (centésima de segundo)
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
+}
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
+        }
+        function adjustLockSize() {
+            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
+                                matrixSize <= 6 ? 'lock-size-35' :
+                                matrixSize <= 8 ? 'lock-size-30' :
+                                matrixSize <= 10 ? 'lock-size-25' : 'lock-size-20';
+
+            // Remover cualquier clase de tamaño de candado previo
+            document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25', 'lock-size-20');
+
+            // Añadir la nueva clase según el tamaño
+            document.body.classList.add(lockSizeClass);
+        }
+        
+        function reset(){
+            document.getElementById("timer").textContent = `00:00.00`;
+            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            createTable(initial);
+        }
+
+        function adjustCellSize() {
+            const cellSize = matrixSize <= 4 ? 100 :
+                            matrixSize <= 6 ? 80 :
+                            matrixSize <= 8 ? 60 :
+                            matrixSize <= 10 ? 50 : 40;
+            stopTimer();
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = `${cellSize}px`;
+                cell.style.height = `${cellSize}px`;
+            });
+
+            adjustLockSize(); // Llamar para ajustar el tamaño del candado
+        }
+
+        function createTable() {
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'grey';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+        }
+
+        function toggleColor(row, col, cell) {
+            if (cell.classList.contains('blocked')) {
+                return; // Do nothing if the cell is blocked
+            }
+            if (cell.className === 'grey') {
+                cell.className = 'red';
+                matrix[row][col] = 0;
+            } else if (cell.className === 'red') {
+                cell.className = 'blue';
+                matrix[row][col] = 1;
+            } else {
+                cell.className = 'grey';
+                matrix[row][col] = -1;
+            }
+            setTimeout(() => {
+                if (all(matrix)) {
+                    evaluateMatrix();
+                }
+                else{
+                    document.getElementById("title_part").textContent = "";
+                }
+            }, 500);
+        }
+
+        function startCountdown(callback) {
+            let overlay = document.getElementById('countdown-overlay');
+            let count = 3; // Segundos de la cuenta regresiva
+            const countdownElement = document.getElementById("countdown");
+            countdownElement.textContent = count;
+
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdownElement.textContent = count;
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    overlay.style.display = "none"; // Ocultar overlay al terminar
+                    callback(); // Llamar a la función de inicio del juego
+                }
+            }, 1000);
+        }
+
+        function startGame() {
+            if(gamestarted) {
+                startCountdown(() => {
+                    fetch('/play/matrix', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ matrix: matrixSize }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        gamestarted = false;
+                        startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                        const gameMatrix = data.matrix;
+                        const table = document.getElementById('matrix');
+                        matrix = gameMatrix.map(row => [...row]);
+
+                        for (let i = 0; i < gameMatrix.length; i++) {
+                            for (let j = 0; j < gameMatrix[i].length; j++) {
+                                const cell = table.rows[i].cells[j];
+                                cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
+                                                gameMatrix[i][j] === 1 ? 'blue blocked' :
+                                                'grey';
+                            }
+                        }
+                    });
+                });
+            } else {
+                fetch('/play/matrix', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ matrix: matrixSize }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                    const gameMatrix = data.matrix;
+                    const table = document.getElementById('matrix');
+                    matrix = gameMatrix.map(row => [...row]);
+
+                    for (let i = 0; i < gameMatrix.length; i++) {
+                        for (let j = 0; j < gameMatrix[i].length; j++) {
+                            const cell = table.rows[i].cells[j];
+                            cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
+                                            gameMatrix[i][j] === 1 ? 'blue blocked' :
+                                            'grey';
+                        }
+                    }
+                });
+            }
+        }
+
+        function evaluateMatrix() {
+            if (rules_final(matrix)) {
+                centisecondsElapsed += reposed_time;
+                boards_solved++;
+                startGame();
+            }
+        }
+
+        function rules_final(matrix) {
+            const n = matrix.length;
+            const matrixt = matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
+            let control = true;
+            if (all(matrix)) {
+                for (let i = 0; i < n; i++) {
+                    for (let j = 0; j < n - 2; j++) {
+                        if (matrix[i][j] === matrix[i][j + 1] && matrix[i][j] === matrix[i][j + 2]) {
+                            document.getElementById("title_part").textContent = `Hay 3 en línea en la fila ${i + 1}`;
+                            control = false;
+                            return control;
+                        }
+                        if (matrix[j][i] === matrix[j + 1][i] && matrix[j][i] === matrix[j + 2][i]) {
+                            document.getElementById("title_part").textContent = `Hay 3 en línea en la columna ${i + 1}`;
+                            control = false;
+                            return control;
+                        }
+                    }
+                }
+                for (let i = 0; i < n; i++) {
+                    if (sum(matrix[i]) < (n) / 2) {
+                        document.getElementById("title_part").textContent = `Hay más amarillos que morados en la fila ${i + 1}`;
+                        control = false;
+                        return control;
+                    }
+                    if (sum(matrix[i]) > (n) / 2) {
+                        document.getElementById("title_part").textContent = `Hay más morados que amarillos en la fila ${i + 1}`;
+                        control = false;
+                        return control;
+                    }
+                }
+                for (let i = 0; i < n; i++) {
+                    if (sum(matrixt[i]) < (n) / 2) {
+                        document.getElementById("title_part").textContent = `Hay más amarillos que morados en la columna ${i + 1}`;
+                        control = false;
+                        return control;
+                    }
+                    if (sum(matrixt[i]) > (n) / 2) {
+                        document.getElementById("title_part").textContent = `Hay más morados que amarillos en la columna ${i + 1}`;
+                        control = false;
+                        return control;
+                    }
+                }
+                for (let i = 0; i < n; i++) {
+                    for (let j = i + 1; j < n; j++) {
+                        if (arraysEqual(matrix[i], matrix[j])) {
+                            document.getElementById("title_part").textContent = `Las filas ${i + 1} y ${j + 1} son iguales`;
+                            control = false;
+                            return control;
+                        }
+                        if (arraysEqual(matrixt[i], matrixt[j])) {
+                            document.getElementById("title_part").textContent = `Las columnas ${i + 1} y ${j + 1} son iguales`;
+                            control = false;
+                            return control;
+                        }
+                    }
+                }
+                return control;
+            }
+            return false;
+        }
+
+        function all(matrix) {
+            return matrix.every(row => row.every(cell => cell !== -1));
+        }
+
+        function sum(array) {
+            return array.reduce((a, b) => a + b, 0);
+        }
+
+        function arraysEqual(a, b) {
+            return JSON.stringify(a) === JSON.stringify(b);
+        }
+        createTable();
+        startGame();
+    </script>
+</body>
+</html>
