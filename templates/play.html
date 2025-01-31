@@ -8,7 +8,48 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
+<style>
+    
+    #countdown-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        align-items: center;
+        color: white;
+        font-size: 15vw;
+        font-family: 'Rubik', sans-serif;
+        z-index: 1000;
+    }
+
+    #countdown {
+        animation: fade 1s ease-in-out infinite;
+    }
+
+    @keyframes fade {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+</style>
 <body>
+    <div id="countdown-overlay">
+        <label style="font-size: 50px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
+        <div style="text-align:center;" class="botones">
+            <button onclick="setBoardSize(4)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">4 x 4</button>
+            <button onclick="setBoardSize(6)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">6 x 6</button>
+        </div>
+        <div style="text-align:center;" class="botones">
+            <button onclick="setBoardSize(8)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">8 x 8</button>
+            <button onclick="setBoardSize(10)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">10 x 10</button>
+        </div>
+    </div>
     <div style="text-align:center; margin: 20px;">
         <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">Tablero aleatorio</span>
     </div>
@@ -16,13 +57,6 @@
         <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
     </div>
     <div style="text-align:center; margin-bottom: 8px;">
-        <label for="matrix-size" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
-        <select id="matrix-size" style="padding: 10px;margin-top: 20px; font-size: 16px; border-radius: 8px; border: 2px solid #4CAF50; background-color: #f9f9f9; color: #333; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
-            <option value="4" selected>4 x 4</option>
-            <option value="6">6 x 6</option>
-            <option value="8">8 x 8</option>
-            <option value="10">10 x 10</option>
-        </select>
     </div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
@@ -31,14 +65,9 @@
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
-    <div style="text-align:center; margin-top: 20px;" class="botones">
-        <button onclick="startGame()" class="resolver evaluar">Iniciar</button>
-        <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar">Volver</button>
-    </div>
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <script>
         document.getElementById("title_part").textContent = '';
-        let gameStarted = false;
-        let gameFinished = false; // Indica si el juego ya ha terminado
         let matrixSize = 4; // Tamaño de la matriz
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         
@@ -46,8 +75,8 @@
         let timerInterval;
         let centisecondsElapsed = 0;
 
+    
         function startTimer() {
-            gameStarted = true;
             clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
             centisecondsElapsed = 0;
             updateTimerDisplay();
@@ -87,8 +116,6 @@
         
         function reset(){
             document.getElementById("timer").textContent = `00:00.00`;
-            gameFinished = false; // Reiniciar la bandera
-            matrixSize = parseInt(document.getElementById('matrix-size').value);
             initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
             createTable(initial);
         }
@@ -139,52 +166,69 @@
                 matrix[row][col] = -1;
             }
             setTimeout(() => {
-                if (gameStarted){
-                    if (all(matrix)) {
-                        evaluateMatrix();
-                    }
-                    else{
-                        document.getElementById("title_part").textContent = "";
-                    }
+                if (all(matrix)) {
+                    evaluateMatrix();
                 }
-                }, 1000);
+                else{
+                    document.getElementById("title_part").textContent = "";
+                }
+                }, 500);
+        }
+
+        function startCountdown(callback) {
+            let overlay = document.getElementById('countdown-overlay');
+            let count = 3; // Segundos de la cuenta regresiva
+            const countdownElement = document.getElementById("countdown");
+            countdownElement.textContent = count;
+
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdownElement.textContent = count;
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    overlay.style.display = "none"; // Ocultar overlay al terminar
+                    callback(); // Llamar a la función de inicio del juego
+                }
+            }, 1000);
         }
 
         function startGame() {
-            fetch('/play/matrix', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ matrix: matrixSize}),
-            })
-            .then(response => response.json())
-            .then(data => {
-                startTimer(); // Iniciar el cronómetro al comenzar el juego
-                const gameMatrix = data.matrix;
-                const table = document.getElementById('matrix');
-                matrix = Array.from({ length: gameMatrix.length }, (_, i) => Array.from({ length: gameMatrix[i].length }, (_, j) => gameMatrix[i][j]));
-                for (let i = 0; i < gameMatrix.length; i++) {
-                    for (let j = 0; j < gameMatrix[i].length; j++) {
-                        const cell = table.rows[i].cells[j];
-                        if (gameMatrix[i][j] === 0) {
-                            cell.className = 'red blocked';
-                        } else if (gameMatrix[i][j] === 1) {
-                            cell.className = 'blue blocked';
-                        } else {
-                            cell.className = 'grey';
+            startCountdown(() => {
+                fetch('/play/matrix', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ matrix: matrixSize }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                    const gameMatrix = data.matrix;
+                    const table = document.getElementById('matrix');
+                    matrix = gameMatrix.map(row => [...row]);
+
+                    for (let i = 0; i < gameMatrix.length; i++) {
+                        for (let j = 0; j < gameMatrix[i].length; j++) {
+                            const cell = table.rows[i].cells[j];
+                            cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
+                                            gameMatrix[i][j] === 1 ? 'blue blocked' :
+                                            'grey';
                         }
                     }
-                }
+                });
             });
         }
 
-        function evaluateMatrix() {
-            if (gameFinished) return; // Si el juego ya terminó, no hacer nada
+        function setBoardSize(size) {
+            let overlay = document.getElementById('countdown-overlay');
+            overlay.innerHTML = '<span id="countdown">3</span>';
+            matrixSize = size; // Asigna el tamaño seleccionado
+            reset(); // Genera el nuevo tablero
+            startGame(); // Inicia la cuenta regresiva
+        }
 
+        function evaluateMatrix() {
             if (rules_final(matrix)) {
                 stopTimer();
-                gameFinished = true; // Marcar el juego como terminado
                 let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
                 setTimeout(() => {
