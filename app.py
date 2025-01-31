@@ -775,7 +775,7 @@ def leader_page():
         if better:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
         else:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better)
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {boards}, bien hecho!')
 
 @app.route('/leaderboards')
 def leaders_page():
