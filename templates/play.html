@@ -232,8 +232,8 @@
                 let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
                 setTimeout(() => {
-                    window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&userID=${localStorage.getItem('userId')}&n=${matrixSize}`;
                 }, 500);
+                window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&userID=${localStorage.getItem('userId')}&n=${matrixSize}`;
             }
         }
 
