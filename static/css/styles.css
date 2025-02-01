@@ -217,7 +217,7 @@ label.resolver {
 .red.blocked::before, .blue.blocked::before {
   content: "";
   position: absolute;
-  background-image: url('logo_M&B.png'); /* Imagen del candado */
+  background-image: url('/images/logo_M&B.png'); /* Imagen del candado */
   background-size: cover;
   opacity: 0.1;
 }
