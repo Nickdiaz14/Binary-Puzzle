@@ -674,11 +674,6 @@ def update_leaderboard(board, userid, time_string, total_time):
     connection = connect_db()
     cursor = connection.cursor()
 
-    cursor.execute("""
-    SELECT COUNT(*) FROM leaderboard WHERE board = %s;
-    """, (board,))
-    count = cursor.fetchone()[0]
-
     # Comprobar si el registro con el mismo nombre ya existe
     cursor.execute("""
     SELECT total_time FROM leaderboard WHERE board = %s AND userid = %s;
@@ -698,31 +693,11 @@ def update_leaderboard(board, userid, time_string, total_time):
             WHERE board = %s AND userid = %s;
             """, (time_string, total_time, board, userid))
     else:
-        if count >= 10:
-            order = 'DESC' if comp else 'ASC'
-            query = f"""
-            SELECT id, total_time FROM leaderboard WHERE board = %s ORDER BY total_time {order} LIMIT 1;
-            """
-            cursor.execute(query, (board,))
-            max_entry = cursor.fetchone()
-
-            # Si el nuevo tiempo es menor que el máximo, reemplazar el registro con el tiempo más alto
-            if (comp and total_time < max_entry[1]) or ((not comp) and total_time > max_entry[1]):
-                cursor.execute("""
-                DELETE FROM leaderboard WHERE id = %s;
-                """, (max_entry[0],))
-
-                # Insertar el nuevo registro
-                cursor.execute("""
-                INSERT INTO leaderboard (board, userid, time_string, total_time)
-                VALUES (%s, %s, %s, %s);
-                """, (board, userid, time_string, total_time))
-        else:
-            # Si no existe, insertar un nuevo registro
-            cursor.execute("""
-            INSERT INTO leaderboard (board, userid, time_string, total_time)
-            VALUES (%s, %s, %s, %s);
-            """, (board, userid, time_string, total_time))
+        # Si no existe, insertar un nuevo registro
+        cursor.execute("""
+        INSERT INTO leaderboard (board, userid, time_string, total_time)
+        VALUES (%s, %s, %s, %s);
+        """, (board, userid, time_string, total_time))
 
     # Guardar los cambios en la base de datos
     connection.commit()
@@ -742,8 +717,8 @@ def get_top_scores(board):
     # Consultar los 5 mejores registros
     order = "ASC" if comp else "DESC"
     query = f"""
-    SELECT nickname,time_string FROM public.leader_final_view
-    WHERE board = %s ORDER BY total_time {order} LIMIT 10;
+    SELECT nickname,time_string, userid FROM public.leader_final_view
+    WHERE board = %s ORDER BY total_time {order};
     """
     cursor.execute(query,(board,))
 
