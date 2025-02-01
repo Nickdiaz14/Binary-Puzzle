@@ -8,7 +8,7 @@
     </head>
     <body>
         <div style="text-align:center; margin: 20px;">
-            <span id="title" style="font-size: 26px; font-weight: bold; color: #ffffff;">top 5 de </span>
+            <span id="title" style="font-size: 26px; font-weight: bold; color: #ffffff;">Ranking de </span>
             <select id="matrix-size" style="padding: 1px; font-size: 26px; font-weight: bold; border-radius: 8px; border: 2px solid #ffffff; background-color: #190e30; color: #ffffff; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
                 <option value="4" selected>4 x 4</option>
                 <option value="6">6 x 6</option>
@@ -42,10 +42,16 @@
                 // Mostrar las entradas del leaderboard
                 leaderboardData.slice(0, 5).forEach((entry, index) => {
                     let row = document.createElement('tr');
+                    // Aplicar clase de color según la posición
+                    let colorClass = "";
+                    if (index === 0) colorClass = "#f1c40f"; // Primer lugar
+                    else if (index === 1) colorClass = "#7bafb9"; // Segundo lugar
+                    else if (index === 2) colorClass = "#bd6104"; // Tercer lugar
+
                     row.innerHTML = `
-                        <td class="tipo2">${index + 1}</td>
-                        <td class="tipo2">${entry[0]}</td>
-                        <td class="tipo2">${entry[1]}</td>
+                        <td class="tipo2" style="color: ${colorClass}">${index + 1}</td>
+                        <td class="tipo2" style="color: ${colorClass}">${entry[0]}</td>
+                        <td class="tipo2" style="color: ${colorClass}">${entry[1]}</td>
                     `;
                     table.appendChild(row);
                 });
