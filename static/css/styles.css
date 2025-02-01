@@ -96,6 +96,17 @@ a {
   text-decoration: none;
 }
 
+@keyframes explode {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.explode {
+  animation: explode 0.5s ease-out forwards;
+}
+
+
 .resolver {
   height: 60px;
   width: 240px;
