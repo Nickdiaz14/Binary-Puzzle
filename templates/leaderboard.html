@@ -5,294 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=0.9, user-scale=no, maximum-scale=0.9">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
         <title>Leaderboards</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                padding: 0;
-                margin: 0;
-                background-color: #190e30; /* Fondo negro */
-                box-sizing: border-box;
-                font-family: "Rubik", sans-serif;
-                touch-action: manipulation; /* Limita gestos de zoom */
-                user-select: none;
-            }
-
-            h1 {
-            margin-bottom: 20px;
-            color: #ffffff;
-            }
-
-            .game-board {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            }
-
-            table.leaderboard {
-            border-collapse: collapse;
-            width: 80%;
-            max-width: 600px;
-            background-color: #1f1f1f;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(191, 14, 204, 0.5);
-            }
-
-            th, td {
-            text-align: center;
-            padding: 12px;
-            color: #e8eaee;
-            border-bottom: 1px solid #333;
-            }
-
-            th {
-            background-color: #2e2e2f; /* Azul profundo */
-            color: #ffffff;
-            font-weight: bold;
-            }
-
-            td {
-            background-color: rgba(228, 228, 228, 0.1);
-            box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.7), inset 2px 2px 5px rgba(255, 255, 255, 0.1);
-            }
-
-            tr:nth-child(even) td {
-            background-color: #000000; /* Rojo oscuro */
-            }
-
-
-            tr.locked td {
-            pointer-events: none;
-            opacity: 0.6;
-            }
-            .locked::before {
-            content: "\1F512"; /* Unicode for lock icon */
-            position: absolute;
-            opacity: 0.6;
-            font-size: 20px;
-            margin-right: 10px;
-            }
-
-            @keyframes confetti-slow {
-                0% { transform: translate3d(0, 0, 0) rotateX(0) rotateY(0); }
-                100% { transform: translate3d(0, 105vh, 0) rotateX(360deg) rotateY(180deg); }
-            }
-
-            @keyframes confetti-medium {
-                0% { transform: translate3d(0, 0, 0) rotateX(0) rotateY(0); }
-                100% { transform: translate3d(50px, 105vh, 0) rotateX(100deg) rotateY(360deg); }
-            }
-
-            @keyframes confetti-fast {
-                0% { transform: translate3d(0, 0, 0) rotateX(0) rotateY(0); }
-                100% { transform: translate3d(-50px, 105vh, 0) rotateX(10deg) rotateY(250deg); }
-            }
-
-
-
-            .container {
-                width: 100vw;
-                height: 100vh;
-                background: #190e30;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                top:0px;
-                bottom: 100%;
-            }
-
-            .confetti-container {
-                perspective: 700px;
-                position: absolute;
-                overflow: hidden;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                pointer-events: none; /* Permite interactuar con los elementos debajo */
-            }
-
-            .confetti {
-                position: absolute;
-                z-index: 1;
-                width: 6px;
-                height: 6px;
-                border-radius: 0%;
-                top: 0;
-                left: 50%;
-                animation-fill-mode: forwards;
-            }
-            .confetti--animation-slow {
-                animation: confetti-slow 3.25s linear 1 forwards;
-            }
-            
-            .confetti--animation-medium {
-                animation: confetti-medium 2.75s linear 1 forwards;
-            }
-            
-            .confetti--animation-fast {
-                animation: confetti-fast 2.25s linear 1 forwards;
-            }
-
-            /* Checkmark */
-            .checkmark-circle {
-                width: 150px;
-                height: 150px;
-                position: relative;
-                display: inline-block;
-                vertical-align: top;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .checkmark-circle .background {
-                width: 150px;
-                height: 150px;
-                border-radius: 50%;
-                background: #00C09D;
-                position: absolute;
-            }
-            .checkmark-circle .checkmark {
-                border-radius: 5px;
-            }
-            .checkmark-circle .checkmark.draw:after {
-                -webkit-animation-delay: 100ms;
-                -moz-animation-delay: 100ms;
-                animation-delay: 100ms;
-                -webkit-animation-duration: 3s;
-                -moz-animation-duration: 3s;
-                animation-duration: 3s;
-                -webkit-animation-timing-function: ease;
-                -moz-animation-timing-function: ease;
-                animation-timing-function: ease;
-                -webkit-animation-name: checkmark;
-                -moz-animation-name: checkmark;
-                animation-name: checkmark;
-                -webkit-transform: scaleX(-1) rotate(135deg);
-                -moz-transform: scaleX(-1) rotate(135deg);
-                -ms-transform: scaleX(-1) rotate(135deg);
-                -o-transform: scaleX(-1) rotate(135deg);
-                transform: scaleX(-1) rotate(135deg);
-                -webkit-animation-fill-mode: forwards;
-                -moz-animation-fill-mode: forwards;
-                animation-fill-mode: forwards;
-            }
-            .checkmark-circle .checkmark:after {
-                opacity: 1;
-                height: 75px;
-                width: 37.5px;
-                -webkit-transform-origin: left top;
-                -moz-transform-origin: left top;
-                -ms-transform-origin: left top;
-                -o-transform-origin: left top;
-                transform-origin: left top;
-                border-right: 15px solid white;
-                border-top: 15px solid white;
-                border-radius: 2.5px !important;
-                content: '';
-                left: 25px;
-                top: 75px;
-                position: absolute;
-            }
-
-            @-webkit-keyframes checkmark {
-            0% {
-                height: 0;
-                width: 0;
-                opacity: 1;
-            }
-            20% {
-                height: 0;
-                width: 37.5px;
-                opacity: 1;
-            }
-            40% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            100% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            }
-            @-moz-keyframes checkmark {
-            0% {
-                height: 0;
-                width: 0;
-                opacity: 1;
-            }
-            20% {
-                height: 0;
-                width: 37.5px;
-                opacity: 1;
-            }
-            40% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            100% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            }
-            @keyframes checkmark {
-            0% {
-                height: 0;
-                width: 0;
-                opacity: 1;
-            }
-            20% {
-                height: 0;
-                width: 37.5px;
-                opacity: 1;
-            }
-            40% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            100% {
-                height: 75px;
-                width: 37.5px;
-                opacity: 1;
-            }
-            }
-
-
-
-            .submit-btn {
-                height: 45px;
-                width: 200px;
-                font-size: 15px;
-                background-color: #00c09d;
-                border: 1px solid #00ab8c;
-                color: #fff;
-                border-radius: 5px;
-                box-shadow: 0 2px 4px 0 rgba(87,71,81,.2);
-                cursor: pointer;
-                transition: all 2s ease-out;
-                transition: all .2s ease-out;
-            }
-
-            .submit-btn:hover {
-                background-color: #2ca893;
-                transition: all .2s ease-out;
-            }
-        </style>
     </head>
     <body>
         <div class="js-container container" style="top:0px !important;">
             <div style="text-align:center; margin: 20px;">
-                <span id="title" style="font-size: 30px; font-weight: bold; color: #ffffff;">Leaderboard de {{board}}</span>
+                <span id="title" style="font-size: 30px; font-weight: bold; color: #ffffff;">Top 5 de {{board}}</span>
             </div>
             <label for="matrix-size" style="font-size: 22px; color: #ffffff; font-weight: bold; margin-top: 10px; margin-bottom: 10px">{{ message }}</label>
             <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
@@ -363,12 +80,11 @@
             });
             // Obtener los datos del leaderboard pasado desde el backend
             const data = JSON.parse('{{ data | safe }}');
-            const board = '{{ board }}';
-    
-            let leaderboardDiv = document.getElementById('leaderboard');
-            let table = document.createElement('table');
     
             // Crear encabezados de la tabla
+            let leaderboardDiv = document.getElementById('leaderboard');
+            leaderboardDiv.innerHTML = '';
+            let table = document.createElement('table');
             table.innerHTML = `
                 <tr>
                     <th>Posición</th>
@@ -378,17 +94,53 @@
             `;
     
             // Mostrar las entradas del leaderboard
-            data.forEach((entry, index) => {
+            data.slice(0, 5).forEach((entry, index) => {
                 let row = document.createElement('tr');
+                // Aplicar clase de color según la posición
+                let colorClass = "";
+                if (index === 0) colorClass = "#f1c40f"; // Primer lugar
+                else if (index === 1) colorClass = "#7bafb9"; // Segundo lugar
+                else if (index === 2) colorClass = "#bd6104"; // Tercer lugar
+
                 row.innerHTML = `
-                    <td class="rank">${index + 1}</td>
-                    <td>${entry[0]}</td>
-                    <td>${entry[1]}</td>
+                    <td class="tipo2" style="color: ${colorClass}">${index + 1}</td>
+                    <td class="tipo2" style="color: ${colorClass}">${entry[0]}</td>
+                    <td class="tipo2" style="color: ${colorClass}">${entry[1]}</td>
                 `;
                 table.appendChild(row);
             });
     
             leaderboardDiv.appendChild(table);
+
+            const userIndex = data.findIndex(entry => entry[2] === localStorage.getItem('userId'));
+
+            if (userIndex !== -1 && userIndex >= 5) { // Si el usuario está en la lista
+                // Espacio entre tabla y nueva sección
+                let space = document.createElement('div');
+                space.style.marginTop = "30px";
+                leaderboardDiv.appendChild(space);
+
+                // Crear una nueva fila con tres celdas separadas
+                let extraTable = document.createElement('table');
+                extraTable.style.width = table.offsetWidth + 'px'
+        
+                // Crear encabezados de la tabla
+                extraTable.innerHTML = `
+                    <tr>
+                        <th>Posición</th>
+                        <th>Nombre</th>
+                        <th>Record</th>
+                    </tr>
+                `;
+                let extraRow = document.createElement('tr');
+                extraRow.innerHTML = `
+                    <td class="tipo2">${userIndex + 1}</td>
+                    <td class="tipo2">${data[userIndex][0]}</td>
+                    <td class="tipo2">${data[userIndex][1]}</td>
+                `;
+                extraTable.appendChild(extraRow);
+                leaderboardDiv.appendChild(extraTable);
+            }
         </script>
     </body>
     </html>
