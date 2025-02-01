@@ -247,17 +247,7 @@
                 gamefinished = true;
                 centisecondsElapsed += reposed_time;
                 boards_solved++;
-                
-                const table = document.getElementById('matrix');
-                table.classList.add('explode');
-
-                // Esperar a que termine la animación antes de reiniciar el juego
-                setTimeout(() => {
-                    table.classList.remove('explode'); // Quitar animación
-                    table.innerHTML = ''; // Limpiar tabla
-                    startGame(); // Generar nueva matriz
-                }, 500);
-                        startGame();
+                startGame();
             }
         }
 
