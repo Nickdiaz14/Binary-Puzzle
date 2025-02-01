@@ -22,6 +22,10 @@
         <script>
             // Obtener los datos del leaderboard pasado desde el backend
             const data = JSON.parse('{{ data | safe }}');
+            const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";
+            const secondPlaceImg = "{{ url_for('static', filename='images/second_place.png') }}";
+            const thirdPlaceImg = "{{ url_for('static', filename='images/third_place.png') }}";
+
 
             function reset() {
                 let leaderboardDiv = document.getElementById('leaderboard');
@@ -41,20 +45,28 @@
         
                 // Mostrar las entradas del leaderboard
                 leaderboardData.slice(0, 5).forEach((entry, index) => {
-                    let row = document.createElement('tr');
-                    // Aplicar clase de color según la posición
-                    let colorClass = "";
-                    if (index === 0) colorClass = "#f1c40f"; // Primer lugar
-                    else if (index === 1) colorClass = "#7bafb9"; // Segundo lugar
-                    else if (index === 2) colorClass = "#bd6104"; // Tercer lugar
+                let row = document.createElement('tr');
+                let colorClass = "";
+                let place = index + 1; // Por defecto, mostrar el número
 
-                    row.innerHTML = `
-                        <td class="tipo2" style="color: ${colorClass}">${index + 1}</td>
-                        <td class="tipo2" style="color: ${colorClass}">${entry[0]}</td>
-                        <td class="tipo2" style="color: ${colorClass}">${entry[1]}</td>
-                    `;
-                    table.appendChild(row);
-                });
+                if (index === 0) {
+                    colorClass = "#f1c40f";
+                    place = `<img src="${firstPlaceImg}" alt="1st" width="20">`;
+                } else if (index === 1) {
+                    colorClass = "#7bafb9";
+                    place = `<img src="${secondPlaceImg}" alt="2nd" width="20">`;
+                } else if (index === 2) {
+                    colorClass = "#bd6104";
+                    place = `<img src="${thirdPlaceImg}" alt="3rd" width="20">`;
+                }
+
+                row.innerHTML = `
+                    <td class="tipo2" style="color: ${colorClass}">${place}</td>
+                    <td class="tipo2" style="color: ${colorClass}">${entry[0]}</td>
+                    <td class="tipo2" style="color: ${colorClass}">${entry[1]}</td>
+                `;
+                table.appendChild(row);
+            });
         
                 leaderboardDiv.appendChild(table);
 
