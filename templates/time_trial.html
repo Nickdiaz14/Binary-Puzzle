@@ -8,34 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<style>
-    
-    #countdown-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: white;
-        font-size: 15vw;
-        font-family: 'Rubik', sans-serif;
-        z-index: 1000;
-    }
-
-    #countdown {
-        animation: fade 1s ease-in-out infinite;
-    }
-
-    @keyframes fade {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-</style>
 <body>
     <div id="countdown-overlay">
         <span id="countdown">3</span>
@@ -63,7 +35,7 @@
         let gamefinished = false;
         let timerInterval;
         let centisecondsElapsed = 3000;
-        let reposed_time = 300;
+        let reposed_time = 800;
         let boards_solved = 0;
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         
@@ -73,11 +45,11 @@
     
         function startTimer() {
             clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
-            updateTimerDisplay();
+            updateTimerDisplay(false);
 
             timerInterval = setInterval(() => {
                 centisecondsElapsed--; // Incrementar en 10 ms
-                updateTimerDisplay();
+                updateTimerDisplay(false);
                 if (centisecondsElapsed === 0) {
                     document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                     stopTimer();
@@ -93,12 +65,20 @@
             const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
 }
 
-        function updateTimerDisplay() {
+        function updateTimerDisplay(valid) {
             const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
             const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
             const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
-            document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
+            const timerElement = document.getElementById("timer");
+            if (valid) {
+                timerElement.style.color = "#4fff0f";
+                setTimeout(() => {
+                    timerElement.style.color = "#ffffff";
+                }, 200);
+            }
+            timerElement.textContent = `${minutes}:${seconds}.${milliseconds}`;
         }
+
         function adjustLockSize() {
             const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
                                 matrixSize <= 6 ? 'lock-size-35' :
@@ -244,9 +224,10 @@
         function evaluateMatrix() {
             if (gamefinished) return;
             if (rules_final(matrix)) {
-                gamefinished = true;
-                centisecondsElapsed += reposed_time;
+                centisecondsElapsed += reposed_time - (50*boards_solved);
                 boards_solved++;
+                updateTimerDisplay(reposed_time - (50*boards_solved));
+                gamefinished = true;
                 startGame();
             }
         }
