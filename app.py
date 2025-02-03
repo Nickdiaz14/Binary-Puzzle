@@ -607,7 +607,7 @@ def levels_page():
 @app.route('/menu')
 def menu():
     id = request.args.get('userID')
-    nom = request.args.get('nickname')
+    nom = str(request.args.get('nickname'))
     ch = request.args.get('ch')
 
     connection = connect_db()
