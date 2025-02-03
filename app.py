@@ -588,6 +588,10 @@ def index():
 def solve_page():
     return render_template('solve.html')
 
+@app.route('/tutorial')
+def tutorial_page():
+    return render_template('tutorial.html')
+
 @app.route('/time_trial')
 def time_trial_page():
     return render_template('time_trial.html')
@@ -605,6 +609,7 @@ def menu():
     id = request.args.get('userID')
     nom = request.args.get('nickname')
     ch = request.args.get('ch')
+
     connection = connect_db()
     cursor = connection.cursor()
 
@@ -647,6 +652,11 @@ def menu():
         VALUES (%s, %s);
         """, (id, nom))
         final_nom = nom
+
+        connection.commit()
+        cursor.close()
+        connection.close()   
+        return render_template('tutorial.html')     
 
     # Guardar los cambios en la base de datos
     connection.commit()
