@@ -8,36 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<style>
-    
-    #countdown-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.9);
-        justify-content: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        align-items: center;
-        color: white;
-        font-size: 15vw;
-        font-family: 'Rubik', sans-serif;
-        z-index: 1000;
-    }
-
-    #countdown {
-        animation: fade 1s ease-in-out infinite;
-    }
-
-    @keyframes fade {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-</style>
 <body>
     <div id="countdown-overlay">
         <label style="font-size: 50px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>

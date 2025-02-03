@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6, user-scalable=no">
+    <title>Matrix Game</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div style="text-align:center; margin: 20px;">
+        <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">Tutorial</span>
+    </div>
+    <div style="text-align:center; margin-bottom: 20px;">
+        <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
+    </div>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <script>
+        document.getElementById("title_part").textContent = '';
+        let matrixSize = 4; // Tamaño de la matriz
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+        const table = document.getElementById('matrix');
+
+        function adjustCellSize() {
+            const cellSize = matrixSize <= 4 ? 100 :
+                            matrixSize <= 6 ? 80 :
+                            matrixSize <= 8 ? 60 :
+                            matrixSize <= 10 ? 50 : 40;
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = `${cellSize}px`;
+                cell.style.height = `${cellSize}px`;
+            });
+        }
+
+        function createTable() {
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'grey';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+        }
+
+        function toggleColor(row, col, cell) {
+            if (cell.classList.contains('blocked')) {
+                return; // Do nothing if the cell is blocked
+            }
+            if (cell.className === 'grey') {
+                cell.className = 'red';
+                matrix[row][col] = 0;
+            } else if (cell.className === 'red') {
+                cell.className = 'blue';
+                matrix[row][col] = 1;
+            } else {
+                cell.className = 'grey';
+                matrix[row][col] = -1;
+            }
+            if (matrix[0][0] === 0) {
+                table.rows[0].cells[0].style.border = 'none';
+                table.rows[0].cells[0].classList.add('blocked');
+                table.rows[1].cells[0].classList.remove('blocked');
+                table.rows[1].cells[0].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "Presiona la celda dos veces para volverla morada.";
+            }
+            if (matrix[1][0] === 1) {
+                table.rows[1].cells[0].style.border = 'none';
+                table.rows[1].cells[0].classList.add('blocked');
+                table.rows[0].cells[2].classList.remove('blocked');
+                table.rows[0].cells[2].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "No puede haber tres celdas amarillas juntas en una fila.";
+            }
+            if (matrix[0][2] === 1) {
+                table.rows[0].cells[2].style.border = 'none';
+                table.rows[0].cells[2].classList.add('blocked');
+                table.rows[1].cells[1].classList.remove('blocked');
+                table.rows[1].cells[1].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "Tampoco puede haber tres celdas moradas juntas en una fila.";
+            }
+            if (matrix[1][1] === 0) {
+                table.rows[1].cells[1].style.border = 'none';
+                table.rows[1].cells[1].classList.add('blocked');
+                table.rows[2].cells[1].classList.remove('blocked');
+                table.rows[2].cells[1].style.border = '4px dashed red'
+                table.rows[2].cells[2].classList.remove('blocked');
+                table.rows[2].cells[2].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "Tampoco puede haber tres celdas del mismo color juntas en una columna.";
+            }
+            if (matrix[2][1] === 1 && matrix[2][2] === 0) {
+                table.rows[2].cells[1].style.border = 'none';
+                table.rows[2].cells[1].classList.add('blocked');
+                table.rows[2].cells[2].style.border = 'none';
+                table.rows[2].cells[2].classList.add('blocked');
+                table.rows[1].cells[0].style.border = '4px dashed red'
+                table.rows[1].cells[1].style.border = '4px dashed red'
+                table.rows[1].cells[2].style.border = '4px dashed red'
+                table.rows[1].cells[3].classList.remove('blocked');
+                table.rows[1].cells[3].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "Cada fila debe tener tantas celdas amarillas como moradas.";
+            }
+            if (matrix[1][3] === 0) {
+                table.rows[1].cells[3].style.border = 'none';
+                table.rows[1].cells[3].classList.add('blocked');
+                table.rows[1].cells[0].style.border = 'none'
+                table.rows[1].cells[1].style.border = 'none'
+                table.rows[1].cells[2].style.border = 'none'
+                table.rows[0].cells[1].style.border = '4px dashed red'
+                table.rows[1].cells[1].style.border = '4px dashed red'
+                table.rows[2].cells[1].style.border = '4px dashed red'
+                table.rows[3].cells[1].classList.remove('blocked');
+                table.rows[3].cells[1].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "Las columnas también tiene la misma cantidad de cada color.";
+            }
+            if (matrix[3][1] === 1) {
+                table.rows[3].cells[1].style.border = 'none';
+                table.rows[3].cells[1].classList.add('blocked');
+                table.rows[0].cells[1].style.border = 'none'
+                table.rows[1].cells[1].style.border = 'none'
+                table.rows[2].cells[1].style.border = 'none'
+                table.rows[3].cells[2].classList.remove('blocked');
+                table.rows[3].cells[2].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "Sabes cual va aquí ¿verdad?";
+            }
+            if (matrix[3][2] === 0) {
+                table.rows[2].cells[0].classList.remove('blocked');
+                table.rows[2].cells[0].style.border = '4px dashed red'
+                table.rows[2].cells[1].style.border = '4px dashed red'
+                table.rows[2].cells[2].style.border = '4px dashed red'
+                table.rows[2].cells[3].classList.remove('blocked');
+                table.rows[2].cells[3].style.border = '4px dashed red'
+                table.rows[3].cells[0].classList.remove('blocked');
+                table.rows[3].cells[0].style.border = '4px dashed red'
+                table.rows[3].cells[1].style.border = '4px dashed red'
+                table.rows[3].cells[2].classList.add('blocked');
+                table.rows[3].cells[2].style.border = '4px dashed red'
+                table.rows[3].cells[3].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "No hay dos filas o columnas iguales.";
+            }
+            if (matrix[2][0] === 1 && matrix[2][3] === 0 && matrix[3][0] === 0) {
+                table.rows[2].cells[0].classList.add('blocked');
+                table.rows[2].cells[0].style.border = 'none'
+                table.rows[2].cells[1].style.border = 'none'
+                table.rows[2].cells[2].style.border = 'none'
+                table.rows[2].cells[3].classList.add('blocked');
+                table.rows[2].cells[3].style.border = 'none'
+                table.rows[3].cells[0].classList.add('blocked');
+                table.rows[3].cells[0].style.border = 'none'
+                table.rows[3].cells[1].style.border = 'none'
+                table.rows[3].cells[2].style.border = 'none'
+                table.rows[3].cells[3].style.border = 'none'
+                table.rows[0].cells[3].classList.remove('blocked');
+                table.rows[0].cells[3].style.border = '4px dashed red'
+                document.getElementById("title_part").textContent = "Solo falta esta y sabes cual es.";
+            }
+            if (matrix[0][3] == 1) {
+                table.rows[0].cells[3].classList.add('blocked');
+                table.rows[0].cells[3].style.border = 'none'
+                document.getElementById("title_part").textContent = "¡Buen trabajo!";
+                setTimeout(() => {
+                    const user = localStorage.getItem('userId');
+                    window.location.href = `/menu?userID=${user}`
+                }, 500);
+            }
+        }
+
+        function startGame() {
+            let valid = true
+            const gameMatrix = [
+                [-1, 0, -1, -1],
+                [-1, -1, 1, -1],
+                [-1, -1, -1, -1],
+                [-1, -1, -1, 1]
+            ];
+            
+            const table = document.getElementById('matrix');
+            matrix = gameMatrix.map(row => [...row]);
+
+            for (let i = 0; i < gameMatrix.length; i++) {
+                for (let j = 0; j < gameMatrix[i].length; j++) {
+                    const cell = table.rows[i].cells[j];
+                    cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
+                                    gameMatrix[i][j] === 1 ? 'blue blocked' :
+                                    'grey blocked';
+                }
+            }
+            table.rows[0].cells[0].classList.remove('blocked');
+            table.rows[0].cells[0].style.border = '4px dashed red'
+            document.getElementById("title_part").textContent = "Presiona la celda una vez para volverla amarilla.";
+        }
+        createTable();
+        startGame();
+    </script>
+</body>
+</html>
