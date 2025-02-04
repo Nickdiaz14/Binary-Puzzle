@@ -48,6 +48,7 @@ tr {
     border: 3px solid #1f1f1f;
     aspect-ratio: 1 / 1;
     transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
+    transition: background-color 0.3s ease-in-out;
     padding: 5px;
   }
   .tipo2{
@@ -95,6 +96,17 @@ tr {
 a {
   text-decoration: none;
 }
+
+.changing {
+  animation: blink 0.3s ease-in-out;
+}
+
+@keyframes blink {
+  0% { transform: scale(1.1); }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
 
 #timer {
   transition: color 0.4s ease-in-out;

@@ -124,18 +124,25 @@
 
         function toggleColor(row, col, cell) {
             if (cell.classList.contains('blocked')) {
-                return; // Do nothing if the cell is blocked
+                return; // No hacer nada si la celda está bloqueada
             }
-            if (cell.className === 'grey') {
-                cell.className = 'red';
-                matrix[row][col] = 0;
-            } else if (cell.className === 'red') {
-                cell.className = 'blue';
-                matrix[row][col] = 1;
-            } else {
-                cell.className = 'grey';
-                matrix[row][col] = -1;
-            }
+
+            cell.classList.add("changing"); // Agregar clase de animación
+
+            setTimeout(() => {
+                if (cell.className.includes('grey')) {
+                    cell.className = 'red';
+                    matrix[row][col] = 0;
+                } else if (cell.className.includes('red')) {
+                    cell.className = 'blue';
+                    matrix[row][col] = 1;
+                } else {
+                    cell.className = 'grey';
+                    matrix[row][col] = -1;
+                }
+                
+                cell.classList.remove("changing"); // Quitar clase después de la animación
+            }, 100);
             setTimeout(() => {
                 if (all(matrix)) {
                     evaluateMatrix();
