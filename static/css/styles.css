@@ -249,7 +249,7 @@ label.resolver {
   margin: 0 15px;
 }
 
-button:focus {
+button:focus, div:focus {
   outline: none;
 }
 
