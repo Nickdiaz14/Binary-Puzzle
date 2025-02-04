@@ -1,5 +1,4 @@
 body {
-  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -10,7 +9,6 @@ body {
   background-color: #190e30; /* Fondo negro */
   box-sizing: border-box;
   font-family: "Rubik", sans-serif;
-  touch-action: manipulation; /* Limita gestos de zoom */
   user-select: none;
 }
 
@@ -50,7 +48,6 @@ tr {
     transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
     transition: background-color 0.3s ease-in-out;
     padding: 5px;
-    user-select: none;
   }
   .tipo2{
     background-color: #000000;

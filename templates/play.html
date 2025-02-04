@@ -37,19 +37,6 @@
     </table>
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <script>
-
-        let lastTouchEnd = 0;
-
-        document.addEventListener('touchend', function (event) {
-        const now = new Date().getTime();
-        if (now - lastTouchEnd <= 300) {
-            // Si se produce un segundo toque dentro de 300 ms, prevenimos el zoom
-            event.preventDefault();
-        }
-        lastTouchEnd = now;
-        }, false);
-
-
         document.getElementById("title_part").textContent = '';
         let gamefinished = false;
         let matrixSize = 4; // Tamaño de la matriz
