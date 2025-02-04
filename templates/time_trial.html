@@ -67,7 +67,13 @@
             const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
             const timerElement = document.getElementById("timer");
             if (valid) {
-                timerElement.style.color = "#4fff0f";
+                timerElement.style.color = "#32ca00";
+                setTimeout(() => {
+                    timerElement.style.color = "#ffffff";
+                }, 400);
+            }
+            if (centisecondsElapsed <= 800) {
+                timerElement.style.color = "#f00";
                 setTimeout(() => {
                     timerElement.style.color = "#ffffff";
                 }, 200);
