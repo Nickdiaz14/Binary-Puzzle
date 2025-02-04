@@ -249,14 +249,8 @@ label.resolver {
   margin: 0 15px;
 }
 
-button, div {
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-*:focus {
-  outline: none !important;
-  box-shadow: none !important;
+.botones button:focus {
+  outline: none; /* Elimina el borde azul predeterminado del navegador */
 }
 
 .locked {
