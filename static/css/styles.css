@@ -249,8 +249,14 @@ label.resolver {
   margin: 0 15px;
 }
 
-button:focus, div:focus {
-  outline: none;
+button, div {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+*:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .locked {
