@@ -50,6 +50,7 @@ tr {
     transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
     transition: background-color 0.3s ease-in-out;
     padding: 5px;
+    user-select: none;
   }
   .tipo2{
     background-color: #000000;
@@ -249,8 +250,9 @@ label.resolver {
   margin: 0 15px;
 }
 
-.botones button:focus {
-  outline: none; /* Elimina el borde azul predeterminado del navegador */
+.botones button:focus, td:focus {
+  outline: none !important; /* Elimina el borde azul */
+  box-shadow: none !important; /* Evita efectos de sombra */
 }
 
 .locked {
