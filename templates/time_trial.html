@@ -67,16 +67,18 @@
             const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
             const timerElement = document.getElementById("timer");
             if (valid) {
-                timerElement.style.color = "#32ca00";
+                timerElement.style.color = "#4fff0f";
                 setTimeout(() => {
                     timerElement.style.color = "#ffffff";
-                }, 400);
+                }, 500);
             }
-            if (centisecondsElapsed <= 800) {
-                timerElement.style.color = "#f00";
-                setTimeout(() => {
-                    timerElement.style.color = "#ffffff";
-                }, 200);
+            if (centisecondsElapsed <= 1000) {
+                if (centisecondsElapsed% 100 === 0) {
+                    timerElement.style.color = "#f00";
+                    setTimeout(() => {
+                        timerElement.style.color = "#ffffff";
+                    }, 500);
+                }
             }
             timerElement.textContent = `${minutes}:${seconds}.${milliseconds}`;
         }
