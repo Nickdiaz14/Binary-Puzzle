@@ -9,6 +9,7 @@ body {
   background-color: #190e30; /* Fondo negro */
   box-sizing: border-box;
   font-family: "Rubik", sans-serif;
+  touch-action: manipulation; /* Limita gestos de zoom */
   user-select: none;
 }
 
