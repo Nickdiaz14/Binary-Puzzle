@@ -247,6 +247,7 @@ label.resolver {
 }
 .botones button {
   margin: 0 15px;
+  outline: none;
 }
 
 .locked {
