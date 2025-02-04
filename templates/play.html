@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
     <title>Matrix Game</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
@@ -37,6 +37,19 @@
     </table>
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <script>
+
+        let lastTouchEnd = 0;
+
+        document.addEventListener('touchend', function (event) {
+        const now = new Date().getTime();
+        if (now - lastTouchEnd <= 300) {
+            // Si se produce un segundo toque dentro de 300 ms, prevenimos el zoom
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+        }, false);
+
+
         document.getElementById("title_part").textContent = '';
         let gamefinished = false;
         let matrixSize = 4; // Tamaño de la matriz
@@ -99,9 +112,6 @@
             stopTimer();
             const cells = document.querySelectorAll('td');
             cells.forEach(cell => {
-                cell.addEventListener('click', function() {
-                    this.blur(); // Elimina el foco de la celda
-                });
                 cell.style.width = `${cellSize}px`;
                 cell.style.height = `${cellSize}px`;
             });
@@ -127,25 +137,18 @@
 
         function toggleColor(row, col, cell) {
             if (cell.classList.contains('blocked')) {
-                return; // No hacer nada si la celda está bloqueada
+                return; // Do nothing if the cell is blocked
             }
-
-            cell.classList.add("changing"); // Agregar clase de animación
-
-            setTimeout(() => {
-                if (cell.className.includes('grey')) {
-                    cell.className = 'red';
-                    matrix[row][col] = 0;
-                } else if (cell.className.includes('red')) {
-                    cell.className = 'blue';
-                    matrix[row][col] = 1;
-                } else {
-                    cell.className = 'grey';
-                    matrix[row][col] = -1;
-                }
-                
-                cell.classList.remove("changing"); // Quitar clase después de la animación
-            }, 100);
+            if (cell.className === 'grey') {
+                cell.className = 'red';
+                matrix[row][col] = 0;
+            } else if (cell.className === 'red') {
+                cell.className = 'blue';
+                matrix[row][col] = 1;
+            } else {
+                cell.className = 'grey';
+                matrix[row][col] = -1;
+            }
             setTimeout(() => {
                 if (all(matrix)) {
                     evaluateMatrix();
