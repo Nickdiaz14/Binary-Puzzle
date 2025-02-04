@@ -12,6 +12,15 @@ body {
   user-select: none;
 }
 
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus, td:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 table {
   border-collapse: collapse;
 }
