@@ -146,46 +146,40 @@
                 }, 500);
         }
 
-        function startCountdown(callback) {
-            let overlay = document.getElementById('countdown-overlay');
-            let count = 3; // Segundos de la cuenta regresiva
-            const countdownElement = document.getElementById("countdown");
-            countdownElement.textContent = count;
-
-            const countdownInterval = setInterval(() => {
-                count--;
-                countdownElement.textContent = count;
-                if (count <= 0) {
-                    clearInterval(countdownInterval);
-                    overlay.style.display = "none"; // Ocultar overlay al terminar
-                    callback(); // Llamar a la función de inicio del juego
-                }
-            }, 1000);
-        }
-
         function startGame() {
-            startCountdown(() => {
-                fetch('/play/matrix', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ matrix: matrixSize }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
-                    const gameMatrix = data.matrix;
-                    const table = document.getElementById('matrix');
-                    matrix = gameMatrix.map(row => [...row]);
+            fetch('/play/matrix', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ matrix: matrixSize }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const gameMatrix = data.matrix;
+                const table = document.getElementById('matrix');
+                matrix = gameMatrix.map(row => [...row]);
 
-                    for (let i = 0; i < gameMatrix.length; i++) {
-                        for (let j = 0; j < gameMatrix[i].length; j++) {
-                            const cell = table.rows[i].cells[j];
-                            cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
-                                            gameMatrix[i][j] === 1 ? 'blue blocked' :
-                                            'grey';
-                        }
+                for (let i = 0; i < gameMatrix.length; i++) {
+                    for (let j = 0; j < gameMatrix[i].length; j++) {
+                        const cell = table.rows[i].cells[j];
+                        cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
+                                        gameMatrix[i][j] === 1 ? 'blue blocked' :
+                                        'grey';
                     }
-                });
+                }
+                let overlay = document.getElementById('countdown-overlay');
+                let count = 3; // Segundos de la cuenta regresiva
+                const countdownElement = document.getElementById("countdown");
+                countdownElement.textContent = count;
+
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    countdownElement.textContent = count;
+                    if (count <= 0) {
+                        clearInterval(countdownInterval);
+                        overlay.style.display = "none"; // Ocultar overlay al terminar
+                        startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                    }
+                }, 600);
             });
         }
 
