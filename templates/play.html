@@ -167,25 +167,24 @@
                     }
                 }
                 let overlay = document.getElementById('countdown-overlay');
-                let count = 3; // Segundos de la cuenta regresiva
+                let count = 1;
                 const countdownElement = document.getElementById("countdown");
-                countdownElement.textContent = count;
+                countdownElement.textContent = "¡Adelante!";
 
                 const countdownInterval = setInterval(() => {
                     count--;
-                    countdownElement.textContent = count;
                     if (count <= 0) {
                         clearInterval(countdownInterval);
                         overlay.style.display = "none"; // Ocultar overlay al terminar
                         startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
                     }
-                }, 600);
+                }, 800);
             });
         }
 
         function setBoardSize(size) {
             let overlay = document.getElementById('countdown-overlay');
-            overlay.innerHTML = '<span id="countdown">3</span>';
+            overlay.innerHTML = '<span id="countdown" style="font-size: 140px;"></span>';
             matrixSize = size; // Asigna el tamaño seleccionado
             reset(); // Genera el nuevo tablero
             startGame(); // Inicia la cuenta regresiva
