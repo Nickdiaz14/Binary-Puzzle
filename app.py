@@ -656,7 +656,7 @@ def menu():
         connection.commit()
         cursor.close()
         connection.close()   
-        return render_template('tutorial.html')     
+        return render_template('tutorial.html', init = True)     
 
     # Guardar los cambios en la base de datos
     connection.commit()

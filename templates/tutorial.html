@@ -18,6 +18,9 @@
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
+    {% if init %}
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Omitir</button>
+    {% endif %}
     <script>
         document.getElementById("title_part").textContent = '';
         let matrixSize = 4; // Tamaño de la matriz
