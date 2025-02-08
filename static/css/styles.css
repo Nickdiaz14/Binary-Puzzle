@@ -87,7 +87,6 @@ tr {
     opacity: 0.6;
     }
     .locked::before {
-    content: "\1F512"; /* Unicode for lock icon */
     position: absolute;
     opacity: 0.6;
     font-size: 20px;
@@ -251,11 +250,13 @@ label.resolver {
 }
 
 .blue.blocked {
+  pointer-events: none; /* Prevent clicking */
   background: linear-gradient(145deg, #5800d4, #9b00fb);
   box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
   color: #ffffff;
 }
 .red.blocked {
+  pointer-events: none; /* Prevent clicking */
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
   box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 8px 12px rgba(0, 0, 0, 0.7);

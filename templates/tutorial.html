@@ -27,6 +27,19 @@
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         const table = document.getElementById('matrix');
 
+        function adjustLockSize() {
+            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
+                                matrixSize <= 6 ? 'lock-size-35' :
+                                matrixSize <= 8 ? 'lock-size-30' :
+                                matrixSize <= 10 ? 'lock-size-25' : 'lock-size-20';
+
+            // Remover cualquier clase de tamaño de candado previo
+            document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25', 'lock-size-20');
+
+            // Añadir la nueva clase según el tamaño
+            document.body.classList.add(lockSizeClass);
+        }
+        
         function adjustCellSize() {
             const cellSize = matrixSize <= 4 ? 100 :
                             matrixSize <= 6 ? 80 :
@@ -37,6 +50,8 @@
                 cell.style.width = `${cellSize}px`;
                 cell.style.height = `${cellSize}px`;
             });
+
+            adjustLockSize(); // Llamar para ajustar el tamaño del candado
         }
 
         function createTable() {
@@ -71,102 +86,102 @@
             }
             if (matrix[0][0] === 0) {
                 table.rows[0].cells[0].style.border = 'none';
-                table.rows[0].cells[0].classList.add('blocked');
-                table.rows[1].cells[0].classList.remove('blocked');
+                table.rows[0].cells[0].classList.add('locked');
+                table.rows[1].cells[0].classList.remove('locked');
                 table.rows[1].cells[0].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "Presiona la celda dos veces para volverla morada.";
             }
             if (matrix[1][0] === 1) {
                 table.rows[1].cells[0].style.border = 'none';
-                table.rows[1].cells[0].classList.add('blocked');
-                table.rows[0].cells[2].classList.remove('blocked');
+                table.rows[1].cells[0].classList.add('locked');
+                table.rows[0].cells[2].classList.remove('locked');
                 table.rows[0].cells[2].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "No puede haber tres celdas amarillas juntas en una fila.";
             }
             if (matrix[0][2] === 1) {
                 table.rows[0].cells[2].style.border = 'none';
-                table.rows[0].cells[2].classList.add('blocked');
-                table.rows[1].cells[1].classList.remove('blocked');
+                table.rows[0].cells[2].classList.add('locked');
+                table.rows[1].cells[1].classList.remove('locked');
                 table.rows[1].cells[1].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "Tampoco puede haber tres celdas moradas juntas en una fila.";
             }
             if (matrix[1][1] === 0) {
                 table.rows[1].cells[1].style.border = 'none';
-                table.rows[1].cells[1].classList.add('blocked');
-                table.rows[2].cells[1].classList.remove('blocked');
+                table.rows[1].cells[1].classList.add('locked');
+                table.rows[2].cells[1].classList.remove('locked');
                 table.rows[2].cells[1].style.border = '4px dashed red'
-                table.rows[2].cells[2].classList.remove('blocked');
+                table.rows[2].cells[2].classList.remove('locked');
                 table.rows[2].cells[2].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "No puede haber tres celdas del mismo color juntas en una columna.";
             }
             if (matrix[2][1] === 1 && matrix[2][2] === 0) {
                 table.rows[2].cells[1].style.border = 'none';
-                table.rows[2].cells[1].classList.add('blocked');
+                table.rows[2].cells[1].classList.add('locked');
                 table.rows[2].cells[2].style.border = 'none';
-                table.rows[2].cells[2].classList.add('blocked');
+                table.rows[2].cells[2].classList.add('locked');
                 table.rows[1].cells[0].style.border = '4px dashed red'
                 table.rows[1].cells[1].style.border = '4px dashed red'
                 table.rows[1].cells[2].style.border = '4px dashed red'
-                table.rows[1].cells[3].classList.remove('blocked');
+                table.rows[1].cells[3].classList.remove('locked');
                 table.rows[1].cells[3].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "Cada fila debe tener tantas celdas amarillas como moradas.";
             }
             if (matrix[1][3] === 0) {
                 table.rows[1].cells[3].style.border = 'none';
-                table.rows[1].cells[3].classList.add('blocked');
+                table.rows[1].cells[3].classList.add('locked');
                 table.rows[1].cells[0].style.border = 'none'
                 table.rows[1].cells[1].style.border = 'none'
                 table.rows[1].cells[2].style.border = 'none'
                 table.rows[0].cells[1].style.border = '4px dashed red'
                 table.rows[1].cells[1].style.border = '4px dashed red'
                 table.rows[2].cells[1].style.border = '4px dashed red'
-                table.rows[3].cells[1].classList.remove('blocked');
+                table.rows[3].cells[1].classList.remove('locked');
                 table.rows[3].cells[1].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "Las columnas también tienen la misma cantidad de cada color.";
             }
             if (matrix[3][1] === 1) {
                 table.rows[3].cells[1].style.border = 'none';
-                table.rows[3].cells[1].classList.add('blocked');
+                table.rows[3].cells[1].classList.add('locked');
                 table.rows[0].cells[1].style.border = 'none'
                 table.rows[1].cells[1].style.border = 'none'
                 table.rows[2].cells[1].style.border = 'none'
-                table.rows[3].cells[2].classList.remove('blocked');
+                table.rows[3].cells[2].classList.remove('locked');
                 table.rows[3].cells[2].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "Sabes cual va aquí ¿verdad?";
             }
             if (matrix[3][2] === 0) {
-                table.rows[2].cells[0].classList.remove('blocked');
+                table.rows[2].cells[0].classList.remove('locked');
                 table.rows[2].cells[0].style.border = '4px dashed red'
                 table.rows[2].cells[1].style.border = '4px dashed red'
                 table.rows[2].cells[2].style.border = '4px dashed red'
-                table.rows[2].cells[3].classList.remove('blocked');
+                table.rows[2].cells[3].classList.remove('locked');
                 table.rows[2].cells[3].style.border = '4px dashed red'
-                table.rows[3].cells[0].classList.remove('blocked');
+                table.rows[3].cells[0].classList.remove('locked');
                 table.rows[3].cells[0].style.border = '4px dashed red'
                 table.rows[3].cells[1].style.border = '4px dashed red'
-                table.rows[3].cells[2].classList.add('blocked');
+                table.rows[3].cells[2].classList.add('locked');
                 table.rows[3].cells[2].style.border = '4px dashed red'
                 table.rows[3].cells[3].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "No puede haber dos filas o columnas iguales.";
             }
             if (matrix[2][0] === 1 && matrix[2][3] === 0 && matrix[3][0] === 0) {
-                table.rows[2].cells[0].classList.add('blocked');
+                table.rows[2].cells[0].classList.add('locked');
                 table.rows[2].cells[0].style.border = 'none'
                 table.rows[2].cells[1].style.border = 'none'
                 table.rows[2].cells[2].style.border = 'none'
-                table.rows[2].cells[3].classList.add('blocked');
+                table.rows[2].cells[3].classList.add('locked');
                 table.rows[2].cells[3].style.border = 'none'
-                table.rows[3].cells[0].classList.add('blocked');
+                table.rows[3].cells[0].classList.add('locked');
                 table.rows[3].cells[0].style.border = 'none'
                 table.rows[3].cells[1].style.border = 'none'
                 table.rows[3].cells[2].style.border = 'none'
                 table.rows[3].cells[3].style.border = 'none'
-                table.rows[0].cells[3].classList.remove('blocked');
+                table.rows[0].cells[3].classList.remove('locked');
                 table.rows[0].cells[3].style.border = '4px dashed red'
                 document.getElementById("title_part").textContent = "Solo falta esta y sabes cual es.";
             }
             if (matrix[0][3] == 1) {
-                table.rows[0].cells[3].classList.add('blocked');
+                table.rows[0].cells[3].classList.add('locked');
                 table.rows[0].cells[3].style.border = 'none'
                 document.getElementById("title_part").textContent = "¡Buen trabajo!";
                 setTimeout(() => {
@@ -193,10 +208,10 @@
                     const cell = table.rows[i].cells[j];
                     cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
                                     gameMatrix[i][j] === 1 ? 'blue blocked' :
-                                    'grey blocked';
+                                    'grey locked';
                 }
             }
-            table.rows[0].cells[0].classList.remove('blocked');
+            table.rows[0].cells[0].classList.remove('locked');
             table.rows[0].cells[0].style.border = '4px dashed red'
             document.getElementById("title_part").textContent = "Presiona la celda una vez para volverla amarilla.";
         }
