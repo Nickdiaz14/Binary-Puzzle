@@ -53,7 +53,6 @@ tr {
     cursor: pointer;
     background-color: rgba(208, 142, 227, 0.235);
     box-shadow: inset -3px -3px 5px rgba(6, 6, 6, 0.7);
-    border: 3px solid #1f1f1f;
     aspect-ratio: 1 / 1;
     transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
     transition: background-color 0.3s ease-in-out;
