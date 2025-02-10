@@ -83,42 +83,6 @@
             timerElement.textContent = `${minutes}:${seconds}.${milliseconds}`;
         }
 
-        function adjustLockSize() {
-            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
-                                matrixSize <= 6 ? 'lock-size-35' :
-                                matrixSize <= 8 ? 'lock-size-30' : 'lock-size-25';
-
-            // Remover cualquier clase de tamaño de candado previo
-            document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25');
-
-            // Añadir la nueva clase según el tamaño
-            document.body.classList.add(lockSizeClass);
-        }
-        
-        function reset(){
-            document.getElementById("timer").textContent = `00:00.00`;
-            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
-            createTable(initial);
-        }
-
-        function adjustCellSize() {
-            const cellSize = matrixSize <= 4 ? 100 :
-                            matrixSize <= 6 ? 80 :
-                            matrixSize <= 8 ? 60 : 50;
-            const cellRadius = matrixSize <= 4 ? 28 :
-                               matrixSize <= 6 ? 23 :
-                               matrixSize <= 8 ? 18 : 13;
-            stopTimer();
-            const cells = document.querySelectorAll('td');
-            cells.forEach(cell => {
-                cell.style.width = `${cellSize}px`;
-                cell.style.height = `${cellSize}px`;
-                cell.style.borderRadius = `${cellRadius}px`
-            });
-
-            adjustLockSize(); // Llamar para ajustar el tamaño del candado
-        }
-
         function createTable() {
             const table = document.getElementById('matrix');
             table.innerHTML = ''; // Limpiar contenido de la tabla existente
@@ -132,7 +96,13 @@
                 }
                 table.appendChild(row);
             }
-            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = "100px";
+                cell.style.height = "100px";
+                cell.style.borderRadius = "25px";
+            });
+            document.body.classList.add('lock-size-40');
         }
 
         function toggleColor(row, col, cell) {

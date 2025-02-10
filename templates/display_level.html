@@ -52,12 +52,10 @@
         }
         
         function adjustLockSize() {
-            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
-                                matrixSize <= 6 ? 'lock-size-35' :
-                                matrixSize <= 8 ? 'lock-size-30' : 'lock-size-25';
+            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' : 'lock-size-35';
 
             // Remover cualquier clase de tamaño de candado previo
-            document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25');
+            document.body.classList.remove('lock-size-40', 'lock-size-35');
 
             // Añadir la nueva clase según el tamaño
             document.body.classList.add(lockSizeClass);
@@ -70,12 +68,8 @@
         }
 
         function adjustCellSize() {
-            const cellSize = matrixSize <= 4 ? 100 :
-                            matrixSize <= 6 ? 80 :
-                            matrixSize <= 8 ? 60 : 50;
-            const cellRadius = matrixSize <= 4 ? 28 :
-                               matrixSize <= 6 ? 23 :
-                               matrixSize <= 8 ? 18 : 13;
+            const cellSize = matrixSize <= 4 ? 100 : 80;
+            const cellRadius = matrixSize <= 4 ? 25 : 20;
             stopTimer();
             const cells = document.querySelectorAll('td');
             cells.forEach(cell => {
