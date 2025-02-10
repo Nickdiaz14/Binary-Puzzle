@@ -40,7 +40,6 @@ h1 {
 table {
   border-collapse: collapse;
   border-radius: 5px;
-  background-color: #1f1f1f; /* Ajuste del fondo de la tabla para que combine mejor */
 }
 
 tr {
@@ -51,18 +50,20 @@ tr {
     text-align: center;
     vertical-align: middle;
     cursor: pointer;
-    background-color: rgba(208, 142, 227, 0.235);
-    box-shadow: inset -3px -3px 5px rgba(6, 6, 6, 0.7);
+    border-radius: 18px;
+    border: 2px solid #190e30;
     aspect-ratio: 1 / 1;
+    background-color: rgb(0 0 0 / 42%);
     transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
     transition: background-color 0.3s ease-in-out;
     padding: 5px;
   }
   .tipo2{
-    background-color: #000000;
+    border: 1px solid #190e30;
+    border-radius: 0px;
+    background-color: #000000a1;
     color: #f0f0f0;
-    box-shadow: inset -3px -3px 5px rgba(0, 0, 0, 0.7), inset 2px 2px 5px rgba(255, 255, 255, 0.1);
-    padding: 10px;
+    padding: 11px;
   }
 
   .game-board {
@@ -183,7 +184,7 @@ label.resolver {
 
 .resolver.azulito:hover {
   background: linear-gradient(145deg, #5800d4, #9b00fb);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   color: #ffffff;
 }
 .resolver.azulito:active {
@@ -193,7 +194,7 @@ label.resolver {
 .resolver.rojito:hover {
   color: #000000;
   background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 .resolver.rojito:active {
   background: #ef9606;
@@ -206,7 +207,7 @@ label.resolver {
 .resolver.inicio:hover {
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 .resolver.evaluar {
   width: 120px;
@@ -214,7 +215,7 @@ label.resolver {
 }
 .resolver.evaluar:hover {
   background: linear-gradient(145deg, #5800d4, #9b00fb);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   color: #ffffff;
 }
 
@@ -226,12 +227,12 @@ label.resolver {
 .red {
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 8px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 
 .blue {
   background: linear-gradient(145deg, #5800d4, #9b00fb);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   color: #ffffff;
 }
 
@@ -251,14 +252,14 @@ label.resolver {
 .blue.blocked {
   pointer-events: none; /* Prevent clicking */
   background: linear-gradient(145deg, #5800d4, #9b00fb);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993), 6px 6px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   color: #ffffff;
 }
 .red.blocked {
   pointer-events: none; /* Prevent clicking */
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993), 6px 8px 12px rgba(0, 0, 0, 0.7);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 .red.blocked::before, .blue.blocked::before {
   content: "";
