@@ -51,9 +51,9 @@ tr {
     vertical-align: middle;
     cursor: pointer;
     border-radius: 18px;
-    border: 2px solid #190e30;
+    border: 3px solid #190e30;
     aspect-ratio: 1 / 1;
-    background-color: rgb(0 0 0 / 42%);
+    background-color: rgb(103 102 102 / 29%);
     transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
     transition: background-color 0.3s ease-in-out;
     padding: 5px;
