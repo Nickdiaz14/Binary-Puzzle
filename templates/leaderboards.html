@@ -52,6 +52,7 @@
                 let leaderboardDiv = document.getElementById('leaderboard');
                 leaderboardDiv.innerHTML = '';
                 let table = document.createElement('table');
+                table.classList.add("leaderboard");
                 let n = document.getElementById('matrix-size').value;
                 let leaderboardData = data[`T${n}`];
 
@@ -101,6 +102,7 @@
 
                     // Crear una nueva fila con tres celdas separadas
                     let extraTable = document.createElement('table');
+                    extraTable.classList.add("leaderboard");
                     extraTable.style.width = table.offsetWidth + 'px';
             
                     // Crear encabezados de la tabla
