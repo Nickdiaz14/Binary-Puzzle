@@ -8,8 +8,8 @@
     </head>
     <body>
         <div style="text-align:center; margin: 20px;">
-            <span id="title" style="font-size: 26px; font-weight: bold; color: #ffffff;">Ranking de </span>
-            <select id="matrix-size" style="padding: 1px; font-size: 26px; font-weight: bold; border-radius: 8px; border: 2px solid #ffffff; background-color: #190e30; color: #ffffff; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
+            <h1 id="title" style="font-size: 26px; font-weight: bold;">Ranking</h1>
+            <select id="matrix-size" style="padding: 1px; font-size: 26px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
                 <option value="4" selected>4 x 4</option>
                 <option value="6">6 x 6</option>
                 <option value="8">8 x 8</option>
@@ -20,6 +20,26 @@
         <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
         <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
         <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const savedTheme = localStorage.getItem("theme") || "myb-theme";
+                document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+                const div = document.getElementById("matrix-size");
+
+                if (savedTheme === "light-theme") {
+                    div.style.background = "#fffde6";
+                    div.style.color = "#000000";
+                    div.style.border = "1px solid #121212";
+                } else if (savedTheme === "myb-theme") {
+                    div.style.background = "#15003e";
+                    div.style.color = "#ffffff";
+                    div.style.border = "1px solid #ccc";
+                } else {
+                    div.style.background = "#000112";
+                    div.style.color = "#ffffff";
+                    div.style.border = "1px solid #ccc";
+                }
+            });
             // Obtener los datos del leaderboard pasado desde el backend
             const data = JSON.parse('{{ data | safe }}');
             const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";
@@ -80,7 +100,7 @@
 
                     // Crear una nueva fila con tres celdas separadas
                     let extraTable = document.createElement('table');
-                    extraTable.style.width = table.offsetWidth + 'px'
+                    extraTable.style.width = table.offsetWidth + 'px';
             
                     // Crear encabezados de la tabla
                     extraTable.innerHTML = `

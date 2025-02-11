@@ -10,25 +10,30 @@
 </head>
 <body>
     <div id="countdown-overlay">
-        <span id="countdown" style="font-size: 120px;"></span>
-    </div>
-    <div style="text-align:center; margin: 20px;">
-        <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">Contrareloj</span>
+        <h1 id="countdown" style="font-size: 120px;color: #ffffff;"></h1>
     </div>
     <div style="text-align:center;">
-        <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Contrareloj</h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
     </div>
     <div style="text-align:center; margin-bottom: 8px;">
     </div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
-        <span id="timer" style="font-size: 24px; font-weight: bold; color: #eaeaea;">00:00.00</span>
+        <h1 id="timer" style="font-size: 24px; font-weight: bold;">00:00.00</h1>
     </div>
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = localStorage.getItem("theme") || "myb-theme";
+            document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
+            document.body.classList.add(savedTheme);
+        });
         document.getElementById("title_part").textContent = '';
         let matrixSize = 4; // Tamaño de la matriz
         let gamestarted = true;
@@ -69,14 +74,14 @@
             if (valid) {
                 timerElement.style.color = "#4fff0f";
                 setTimeout(() => {
-                    timerElement.style.color = "#ffffff";
+                    timerElement.style.removeProperty("color");
                 }, 500);
             }
             if (centisecondsElapsed <= 1000) {
-                if (centisecondsElapsed% 100 === 0) {
+                if (centisecondsElapsed% 120 === 0) {
                     timerElement.style.color = "#f00";
                     setTimeout(() => {
-                        timerElement.style.color = "#ffffff";
+                        timerElement.style.removeProperty("color");
                     }, 500);
                 }
             }
@@ -166,6 +171,7 @@
                     }, 1000);
                 });
             } else {
+                document.getElementById("title_part").textContent = '';
                 fetch('/play/matrix', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

@@ -9,9 +9,9 @@
     <body>
         <div class="js-container container" style="top:0px !important;">
             <div style="text-align:center; margin: 20px;">
-                <span id="title" style="font-size: 30px; font-weight: bold; color: #ffffff;">Ranking de {{board}}</span>
+                <h1 id="title" style="font-size: 30px; font-weight: bold;">Ranking de {{board}}</h1>
             </div>
-            <label for="matrix-size" style="font-size: 22px; color: #ffffff; font-weight: bold; margin-top: 10px; margin-bottom: 10px">{{ message }}</label>
+            <h1 for="matrix-size" style="font-size: 22px; font-weight: bold; margin-top: 10px; margin-bottom: 10px">{{ message }}</h1>
             <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
             <div style="text-align:center;" class="botones">
                 <button onclick="reintentar()" class="resolver evaluar">Reintentar</button>
@@ -80,6 +80,11 @@
                 }
             });
             // Obtener los datos del leaderboard pasado desde el backend
+            document.addEventListener("DOMContentLoaded", function() {
+                const savedTheme = localStorage.getItem("theme") || "myb-theme";
+                document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            });
             const data = JSON.parse('{{ data | safe }}');
             const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";
             const secondPlaceImg = "{{ url_for('static', filename='images/second_place.png') }}";

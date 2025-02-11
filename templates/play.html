@@ -12,31 +12,36 @@
     <div id="countdown-overlay">
         <label style="font-size: 50px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
         <div style="text-align:center;" class="botones">
-            <button onclick="setBoardSize(4)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">4 x 4</button>
-            <button onclick="setBoardSize(6)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">6 x 6</button>
+            <button onclick="setBoardSize(4)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">4 x 4</button>
+            <button onclick="setBoardSize(6)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">6 x 6</button>
         </div>
         <div style="text-align:center;" class="botones">
-            <button onclick="setBoardSize(8)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">8 x 8</button>
-            <button onclick="setBoardSize(10)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px; color: #f9f9f9">10 x 10</button>
+            <button onclick="setBoardSize(8)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">8 x 8</button>
+            <button onclick="setBoardSize(10)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">10 x 10</button>
         </div>
     </div>
-    <div style="text-align:center; margin: 20px;">
-        <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">Tablero aleatorio</span>
+    <div style="text-align:center;">
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Tablero aleatorio</h1>
     </div>
     <div style="text-align:center;">
-        <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
     </div>
     <div style="text-align:center; margin-bottom: 8px;">
     </div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
-        <span id="timer" style="font-size: 24px; font-weight: bold; color: #eaeaea;">00:00.00</span>
+        <h1 id="timer" style="font-size: 24px; font-weight: bold;">00:00.00</h1>
     </div>
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = localStorage.getItem("theme") || "myb-theme";
+            document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
+            document.body.classList.add(savedTheme);
+        });
         document.getElementById("title_part").textContent = '';
         let gamefinished = false;
         let matrixSize = 4; // Tamaño de la matriz
@@ -186,7 +191,8 @@
 
         function setBoardSize(size) {
             let overlay = document.getElementById('countdown-overlay');
-            overlay.innerHTML = '<span id="countdown" style="font-size: 120px;"></span>';
+            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
+            document.getElementById("title").textContent = `Tablero ${size}x${size}`;
             matrixSize = size; // Asigna el tamaño seleccionado
             reset(); // Genera el nuevo tablero
             startGame(); // Inicia la cuenta regresiva

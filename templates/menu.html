@@ -8,25 +8,25 @@
 </head>
 <body>
     <div style="text-align:center; margin: 20px;">
-        <span id="title" style="font-size: 60px; font-weight: bold; color: #ffffff;">¡Hola, {{ nickname }}!</span>
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">¡Hola, {{ nickname }}!</h1>
     </div>
     <div style="text-align:center;">
-        <h1>0H H1</h1>
-        <button onclick="toggleInfo()" style="margin-bottom: 10px; margin-left: 10px; padding: 15px 30px; font-size: 20px; border-radius: 12px; border: 2px solid #ffffff; background-color: #653d6c; color: #ffffff; cursor: pointer; box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);">Reglas</button>
-        <div id="algorithm-info" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; background-color: #190e30; color: #ffffff; border: 1px solid #ccc; border-radius: 8px;"></div>
-        <div style="text-align:center;">
-            <span id="title_part" style="font-size: 30px; font-weight: bold; color: #a49e9e;"></span>
-        </div>
+        <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; margin-left: 210px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
+        <div id="algorithm-info" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
         <div style="text-align:center;" class="botones">
             <button onclick="location.href='/play'" class="resolver azulito">Jugar</button>
-            <button onclick="location.href='/levels'" class="resolver rojito">Niveles</button>
+            <button onclick="location.href='/time_trial'" class="resolver rojito">Contrareloj</button>
         </div>
         <div style="text-align:center;" class="botones">
-            <button onclick="location.href='/time_trial'" class="resolver rojito">Contrareloj</button>
+            <button onclick="location.href='/tutorial'" class="resolver rojito">Tutorial</button>
             <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}`" class="resolver azulito ">Ranking</button>
         </div>
+        <div style="height: 40px;"></div>
+
+        <h1 id="title" style="margin-top: 20px; font-size: 27px; font-weight: bold;">Ajustes</h1>
+
         <div style="text-align:center;" class="botones">
-            <button onclick="location.href='/tutorial'" class="resolver azulito">Tutorial</button>
+            <button id="theme-toggle" class="resolver azulito">Cambiar Tema</button>
             <button onclick="location.href = '/?ch=si'" class="resolver rojito">Cambiar nombre</button>
         </div>
     </div>
@@ -40,6 +40,63 @@
             4. No puede haber dos filas o columnas idénticas.`
             infoDiv.innerHTML = description;
             infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            const themeToggle = document.getElementById("theme-toggle");
+
+            // Recuperar el tema guardado en localStorage (opcional)
+            const savedTheme = localStorage.getItem("theme") || "myb-theme";
+            document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
+            document.body.classList.add(savedTheme);
+            
+            const div = document.getElementById("algorithm-info");
+
+            if (savedTheme === "light-theme") {
+                div.style.color = "#000000";
+                div.style.border = "1px solid #121212";
+            } else {
+                div.style.color = "#ffffff";
+                div.style.border = "1px solid #ccc";
+            }
+
+            themeToggle.addEventListener("click", function () {
+                let currentTheme = document.body.classList.contains("myb-theme")
+                    ? "myb-theme"
+                    : document.body.classList.contains("light-theme")
+                    ? "light-theme"
+                    : "dark-theme";
+
+                let nextTheme = currentTheme === "myb-theme"
+                    ? "dark-theme"
+                    : currentTheme === "dark-theme"
+                    ? "light-theme"
+                    : "myb-theme";
+
+                document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
+                document.body.classList.add(nextTheme);
+
+                // Guardar el tema en localStorage
+                localStorage.setItem("theme", nextTheme);
+                const div = document.getElementById("algorithm-info");
+
+            if (nextTheme === "light-theme") {
+                div.style.color = "#000000";
+                div.style.border = "1px solid #121212";
+            } else {
+                div.style.color = "#ffffff";
+                div.style.border = "1px solid #ccc";
+            }
+            });
+        });
+        const savedTheme = localStorage.getItem("theme");  
+        const div = document.getElementById("algorithm-info");
+
+        if (savedTheme === "light-theme") {
+            div.style.color = "#000000";
+            div.style.border = "1px solid #121212";
+        } else {
+            div.style.color = "#ffffff";
+            div.style.border = "1px solid #ccc";
         }
     </script>
 </body>

@@ -7,13 +7,18 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <label for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px; color: #f9f9f9">¡Bienvenido a Math & Beer!</label>
-    <label style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Ingresa un nombre o apodo</label>
-    <label for="matrix-size" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</label>
+    <h1 for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;">¡Bienvenido a Math & Beer!</h1>
+    <h1 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">Ingresa un nombre o apodo</h1>
+    <h1 for="matrix-size" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</h1>
     <input type="text" id="nickname" name="nickname" required style="margin-top: 15px; padding: 10px; border: 2px solid #007BFF; border-radius: 5px; font-size: 16px;">
     <button onclick="startGame()" style="margin-top: 15px;" class="resolver evaluar">Empezar</button>
 
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = localStorage.getItem("theme") || "myb-theme";
+            document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
+            document.body.classList.add(savedTheme);
+        });
         function startGame() {
             const nickname = document.getElementById('nickname').value;
             const userId = localStorage.getItem('userId');
