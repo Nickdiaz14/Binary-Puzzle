@@ -9,7 +9,7 @@
     <body>
         <div style="text-align:center; margin: 20px;">
             <h1 id="title" style="font-size: 26px; font-weight: bold;">Ranking</h1>
-            <select id="matrix-size" style="padding: 1px; font-size: 26px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
+            <select id="matrix-size" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
                 <option value="4" selected>4 x 4</option>
                 <option value="6">6 x 6</option>
                 <option value="8">8 x 8</option>
@@ -26,6 +26,7 @@
                     document.body.classList.remove("light-theme", "dark-theme");
                     document.body.classList.add(savedTheme);
                 }
+                const div = document.getElementById("matrix-size");
 
                 if (savedTheme === "light-theme") {
                     div.style.background = "#fffde6";

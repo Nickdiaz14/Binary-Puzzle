@@ -21,10 +21,10 @@ h1 {
 
 th {
   padding: 12px;
-  background-color: #000000;
-  color: #ffffff;
+  background-color: #4a4949;
+  color: #fffde6;
   font-weight: bold;
-  border: 4px solid #000000;
+  border: 3px solid #4a4949;
 }
 
 td {
@@ -39,10 +39,10 @@ td {
   padding: 5px;
 }
 .tipo2{
-  border: 4px solid #000000;
+  border: 3px solid #4a4949;
   border-radius: 0px;
-  background-color: #ffffff08;
-  color: #f0f0f0;
+  background-color: #000112;
+  color: #fffde6;
   padding: 11px;
   font-weight: bold;
 }
@@ -242,10 +242,10 @@ body.dark-theme h1 {
 
 body.dark-theme th {
   padding: 12px;
-  background-color: #fffde6;
-  color: #000000;
+  background-color: #4a4949;
+  color: #fffde6;
   font-weight: bold;
-  border: 2px solid #fffde6;
+  border: 3px solid #4a4949;
 }
 
 body.dark-theme td {
@@ -260,10 +260,10 @@ body.dark-theme td {
   padding: 5px;
 }
 body.dark-theme .tipo2{
-  border: 2px solid #fffde6;
+  border: 3px solid #4a4949;
   border-radius: 0px;
   background-color: #000112;
-  color: #f0f0f0;
+  color: #fffde6;
   padding: 11px;
   font-weight: bold;
 }
