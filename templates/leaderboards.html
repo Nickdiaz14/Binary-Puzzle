@@ -26,7 +26,7 @@
                     document.body.classList.remove("light-theme", "dark-theme");
                     document.body.classList.add(savedTheme);
                 }
-                
+
                 if (savedTheme === "light-theme") {
                     div.style.background = "#fffde6";
                     div.style.color = "#000000";
@@ -65,7 +65,7 @@
                 `;
         
                 // Mostrar las entradas del leaderboard
-                leaderboardData.slice(0, 5).forEach((entry, index) => {
+                leaderboardData.slice(0, 10).forEach((entry, index) => {
                 let row = document.createElement('tr');
                 let colorClass = "";
                 let place = index + 1; // Por defecto, mostrar el número
@@ -93,7 +93,7 @@
 
                 const userIndex = leaderboardData.findIndex(entry => entry[2] === localStorage.getItem('userId'));
 
-                if (userIndex !== -1 && userIndex >= 5) { // Si el usuario está en la lista
+                if (userIndex !== -1 && userIndex >= 10) { // Si el usuario está en la lista
                     // Espacio entre tabla y nueva sección
                     let space = document.createElement('div');
                     space.style.marginTop = "30px";
