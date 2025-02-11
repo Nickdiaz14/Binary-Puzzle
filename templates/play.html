@@ -43,6 +43,16 @@
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
+            if (savedTheme === "light-theme") {
+                color0 = "rojas";
+                color1 = "azules";
+            } else if (savedTheme === "dark-theme"){
+                color0 = "amarillas";
+                color1 = "azules";
+            } else {
+                color0 = "amarillas";
+                color1 = "moradas";
+            }
         });
         document.getElementById("title_part").textContent = '';
         let gamefinished = false;
@@ -235,24 +245,24 @@
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrix[i]) < (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más amarillos que morados en la fila ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color0} que ${color1} en la fila ${i + 1}`;
                         control = false;
                         return control;
                     }
                     if (sum(matrix[i]) > (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más morados que amarillos en la fila ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color0} en la fila ${i + 1}`;
                         control = false;
                         return control;
                     }
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrixt[i]) < (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más amarillos que morados en la columna ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color0} que ${color1} en la columna ${i + 1}`;
                         control = false;
                         return control;
                     }
                     if (sum(matrixt[i]) > (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más morados que amarillos en la columna ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color0} en la columna ${i + 1}`;
                         control = false;
                         return control;
                     }
