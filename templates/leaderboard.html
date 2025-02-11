@@ -81,9 +81,11 @@
             });
             // Obtener los datos del leaderboard pasado desde el backend
             document.addEventListener("DOMContentLoaded", function() {
-                const savedTheme = localStorage.getItem("theme") || "myb-theme";
-                document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
-                document.body.classList.add(savedTheme);
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme) {
+                    document.body.classList.remove("light-theme", "dark-theme");
+                    document.body.classList.add(savedTheme);
+                }
             });
             const data = JSON.parse('{{ data | safe }}');
             const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";

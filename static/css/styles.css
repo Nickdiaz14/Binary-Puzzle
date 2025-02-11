@@ -1,5 +1,5 @@
 /* ---------------------------------------------------------------- M&B theme ----------------------------------------------------------------*/
-body.myb-theme {
+body {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,12 +14,12 @@ body.myb-theme {
   user-select: none;
 }
 
-body.myb-theme h1 {
+h1 {
   transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
   color: #ffffff; /* Título en blanco */
 }
 
-body.myb-theme td {
+td {
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
@@ -30,45 +30,45 @@ body.myb-theme td {
   transition: background-color 0.3s ease-in-out;
   padding: 5px;
 }
-body.myb-theme .tipo2{
+.tipo2{
   border-radius: 0px;
   background-color: #000000a1;
   color: #f0f0f0;
   padding: 11px;
 }
 
-body.myb-theme .resolver.azulito:hover {
+.resolver.azulito:hover {
   background: linear-gradient(145deg, #5800d4, #9b00fb);
   box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   color: #ffffff;
 }
-body.myb-theme .resolver.azulito:active {
+.resolver.azulito:active {
   background: #3f016f;
   box-shadow: inset 6px 6px 12px #2f0045, inset -6px -6px 12px #5a028d;
 }
-body.myb-theme .resolver.rojito:hover {
+.resolver.rojito:hover {
   color: #000000;
   background: linear-gradient(145deg, #ffff00, #ff9306);
   box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
-body.myb-theme .resolver.rojito:active {
+.resolver.rojito:active {
   background: #ef9606;
   box-shadow: inset 6px 6px 12px #aa5704, inset -6px -6px 12px #ff9008;
 }
 
-body.myb-theme .resolver.inicio:hover {
+.resolver.inicio:hover {
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
   box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 
-body.myb-theme .resolver.evaluar:hover {
+.resolver.evaluar:hover {
   background: linear-gradient(145deg, #5800d4, #9b00fb);
   box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   color: #ffffff;
 }
 
-body.myb-theme .red {
+.red {
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
   box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
@@ -76,14 +76,14 @@ body.myb-theme .red {
   outline-offset: -3px;
 }
 
-body.myb-theme .blue {
+.blue {
   background: linear-gradient(145deg, #5800d4, #9b00fb);
   box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   outline: 3px solid rgb(85, 1, 133);
   outline-offset: -3px;
 }
 
-body.myb-theme .container {
+.container {
   width: 100vw;
   height: 100vh;
   background: #15003e;
@@ -255,6 +255,7 @@ body.dark-theme .resolver.azulito:active {
   box-shadow: inset 6px 6px 12px #aa5704, inset -6px -6px 12px #ff9008;
 }
 body.dark-theme .resolver.rojito:hover {
+  color: #ffffff;
   background: linear-gradient(145deg, #5800d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
 }

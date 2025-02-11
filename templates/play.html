@@ -38,9 +38,11 @@
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const savedTheme = localStorage.getItem("theme") || "myb-theme";
-            document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
-            document.body.classList.add(savedTheme);
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            }
         });
         document.getElementById("title_part").textContent = '';
         let gamefinished = false;

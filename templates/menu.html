@@ -45,9 +45,11 @@
             const themeToggle = document.getElementById("theme-toggle");
 
             // Recuperar el tema guardado en localStorage (opcional)
-            const savedTheme = localStorage.getItem("theme") || "myb-theme";
-            document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
-            document.body.classList.add(savedTheme);
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);   
+            }
             
             const div = document.getElementById("algorithm-info");
 
@@ -60,23 +62,26 @@
             }
 
             themeToggle.addEventListener("click", function () {
-                let currentTheme = document.body.classList.contains("myb-theme")
-                    ? "myb-theme"
+                let currentTheme = document.body.classList.contains("dark-theme")
+                    ? "dark-theme"
                     : document.body.classList.contains("light-theme")
                     ? "light-theme"
-                    : "dark-theme";
+                    : "";
 
-                let nextTheme = currentTheme === "myb-theme"
+                let nextTheme = currentTheme === ""
                     ? "dark-theme"
                     : currentTheme === "dark-theme"
                     ? "light-theme"
-                    : "myb-theme";
-
-                document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
-                document.body.classList.add(nextTheme);
+                    : false;
+                document.body.classList.remove("light-theme", "dark-theme");
+                if (nextTheme) {
+                    document.body.classList.add(nextTheme);
+                    localStorage.setItem("theme", nextTheme);
+                } else {
+                    localStorage.removeItem("theme");
+                }
 
                 // Guardar el tema en localStorage
-                localStorage.setItem("theme", nextTheme);
                 const div = document.getElementById("algorithm-info");
 
             if (nextTheme === "light-theme") {

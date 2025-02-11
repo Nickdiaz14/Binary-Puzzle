@@ -21,21 +21,22 @@
         <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                const savedTheme = localStorage.getItem("theme") || "myb-theme";
-                document.body.classList.remove("myb-theme", "light-theme", "dark-theme");
-                document.body.classList.add(savedTheme);
-                const div = document.getElementById("matrix-size");
-
+                const savedTheme = localStorage.getItem("theme");
+                if (savedTheme) {
+                    document.body.classList.remove("light-theme", "dark-theme");
+                    document.body.classList.add(savedTheme);
+                }
+                
                 if (savedTheme === "light-theme") {
                     div.style.background = "#fffde6";
                     div.style.color = "#000000";
                     div.style.border = "1px solid #121212";
-                } else if (savedTheme === "myb-theme") {
-                    div.style.background = "#15003e";
+                } else if (savedTheme === "dark-theme") {
+                    div.style.background = "#000112";
                     div.style.color = "#ffffff";
                     div.style.border = "1px solid #ccc";
                 } else {
-                    div.style.background = "#000112";
+                    div.style.background = "#15003e";
                     div.style.color = "#ffffff";
                     div.style.border = "1px solid #ccc";
                 }
