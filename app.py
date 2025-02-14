@@ -581,11 +581,11 @@ def constraint_solver ():
 @app.route('/memory', methods=['POST'])
 def memory():
     cells = int(request.json['size']) + 3
-    matrix = [[-1] * 5 for _ in range(5)]  # Matriz para llevar el control de los colores
+    matrix = [[-1] * 6 for _ in range(6)]  # Matriz para llevar el control de los colores
     inds = []
     for i in range(cells):
         while True:
-            a = random.choices(range(5), k=2)
+            a = random.choices(range(6), k=2)
             if a not in inds:
                 inds.append(a)
                 matrix[a[0]][a[1]] = 0

@@ -16,7 +16,7 @@
         <h1 id="title" style="font-size: 60px; font-weight: bold;">Memoria</h1>
     </div>
     <div style="text-align:center;">
-        <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold;">¡Replica el patrón!</h1>
     </div>
     <div style="text-align:center; margin-bottom: 8px;">
     </div>
@@ -34,13 +34,12 @@
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
-        document.getElementById("title_part").textContent = '';
-        let matrixSize = 5; // Tamaño de la matriz
+        let matrixSize = 6; // Tamaño de la matriz
         let gamestarted = true;
         let gamefinished = false;
         let timerInterval;
         let acc = 0;
-        let centisecondsElapsed = 300;
+        let centisecondsElapsed = 200;
         let boards_solved = 0;
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
     
@@ -56,7 +55,6 @@
                         document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                         window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
                     } else {
-                        document.getElementById("title_part").textContent = "¡Replica el patrón!";
                         gamefinished = true;
                         centisecondsElapsed = 1000;
                         createTable();
@@ -121,11 +119,11 @@
                 stopTimer();
                 window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
             }
-            else if (acc === boards_solved + 3){
+            else if (acc === Math.floor(boards_solved / 3) + 3){
                 stopTimer();
                 gamefinished = false;
                 setTimeout(() => {
-                    centisecondsElapsed = 300;
+                    centisecondsElapsed = 200;
                     startTimer();
                     boards_solved++;
                     startGame();
@@ -138,7 +136,7 @@
             fetch('/memory', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ size: boards_solved }),
+                body: JSON.stringify({ size: Math.floor(boards_solved / 3) }),
             })
             .then(response => response.json())
             .then(data => {
