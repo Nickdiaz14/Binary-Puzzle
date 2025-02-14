@@ -596,9 +596,9 @@ def tutorial_page():
 def time_trial_page():
     return render_template('time_trial.html')
 
-@app.route('/play')
+@app.route('/0hh1')
 def play_page():
-    return render_template('play.html')
+    return render_template('0hh1.html')
 
 @app.route('/levels')
 def levels_page():
