@@ -762,22 +762,6 @@ def get_top_scores(board):
     
     return results
 
-def get_scores():
-    connection = connect_db()
-    cursor = connection.cursor()
-
-    query = f"""
-    SELECT board, nickname,time_string, userid FROM public.leader_final_view;
-    """
-    cursor.execute(query,())
-
-    results = cursor.fetchall()
-
-    cursor.close()
-    connection.close()
-    
-    return results
-
 @app.route('/leaderboard')
 def leader_page():
     tsecs = request.args.get('totaltime')
