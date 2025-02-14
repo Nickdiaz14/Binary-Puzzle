@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from collections import defaultdict
 from itertools import permutations
 from constraint import Problem
 import concurrent.futures
@@ -7,7 +8,6 @@ import threading
 import psycopg2
 import random
 import json
-import ast
 import os
 
 app = Flask(__name__)
@@ -576,6 +576,21 @@ def constraint_solver ():
     ubi = [(i, j) for i in range(n) for j in range(n) if matrix[i][j] != -1]
     solutions = binary_puzzle_solver(n, matrix, ubi)
     return jsonify({'solution': solutions})
+
+
+@app.route('/memory', methods=['POST'])
+def memory():
+    cells = int(request.json['size']) + 3
+    matrix = [[-1] * 5 for _ in range(5)]  # Matriz para llevar el control de los colores
+    inds = []
+    for i in range(cells):
+        while True:
+            a = random.choices(range(5), k=2)
+            if a not in inds:
+                inds.append(a)
+                matrix[a[0]][a[1]] = 0
+                break
+    return jsonify({'matrix': matrix})
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/')
 def index():
@@ -599,6 +614,10 @@ def time_trial_page():
 @app.route('/0hh1')
 def play_page():
     return render_template('0hh1.html')
+
+@app.route('/memory')
+def memory_page():
+    return render_template('memory.html')
 
 @app.route('/levels')
 def levels_page():
@@ -739,9 +758,26 @@ def get_top_scores(board):
     
     return results
 
+def get_scores():
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    query = f"""
+    SELECT board, nickname,time_string, userid FROM public.leader_final_view;
+    """
+    cursor.execute(query,())
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    
+    return results
+
 @app.route('/leaderboard')
 def leader_page():
     tsecs = request.args.get('totaltime')
+    game = request.args.get('game')
     id = request.args.get('userID')
     if tsecs:
         tsecs = int(tsecs)
@@ -752,9 +788,17 @@ def leader_page():
             return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
         else:
             return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better)
-    else:
+    elif game == '0hh1':
         boards = int(request.args.get('boards'))
         board = "TContrareloj"
+        better = update_leaderboard(board, id,f'{boards} tableros', boards)
+        if better:
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
+        else:
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {boards} tableros, bien hecho!')
+    else:
+        boards = int(request.args.get('boards'))
+        board = "TMemoria"
         better = update_leaderboard(board, id,f'{boards} tableros', boards)
         if better:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
@@ -763,7 +807,16 @@ def leader_page():
 
 @app.route('/leaderboards')
 def leaders_page():
-    dictionary = {'T4':list(get_top_scores('T4')),'T6':list(get_top_scores('T6')),'T8':list(get_top_scores('T8')),'T10':list(get_top_scores('T10')),'TContrareloj':list(get_top_scores('TContrareloj'))}
+    leaderboards = get_scores()
+    grouped = defaultdict(list)
+
+    # Agrupar por el primer valor de cada sublista (T4, T8, etc.)
+    for row in leaderboards:
+        grouped[str(row[0])].append(row[1:])
+
+    # Convertir a diccionario si no quieres un defaultdict
+    dictionary = dict(grouped)
+    dictionary['TContrareloj'].reverse()
     return render_template('leaderboards.html', data=json.dumps(dictionary))
 
 @app.route('/display_level')

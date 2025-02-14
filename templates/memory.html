@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
+    <title>Matrix Game</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="countdown-overlay">
+        <h1 id="countdown" style="font-size: 120px;color: #ffffff;"></h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Contrareloj</h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
+    </div>
+    <div style="text-align:center; margin-bottom: 8px;">
+    </div>
+    <!-- Cronómetro -->
+    <div style="text-align:center; margin: 20px;">
+        <h1 id="timer" style="font-size: 24px; font-weight: bold;">00:00.00</h1>
+    </div>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <script>
+        const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            }
+        document.getElementById("title_part").textContent = '';
+        let matrixSize = 5; // Tamaño de la matriz
+        let gamestarted = true;
+        let gamefinished = false;
+        let timerInterval;
+        let acc = 0;
+        let centisecondsElapsed = 300;
+        let boards_solved = 0;
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+    
+        function startTimer() {
+            clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                centisecondsElapsed--; // Incrementar en 10 ms
+                if (centisecondsElapsed === 0) {
+                    stopTimer();
+                    if (gamefinished) {
+                        document.getElementById("title_part").textContent = "Perdiste";
+                        window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
+                    } else {
+                        gamefinished = true;
+                        centisecondsElapsed = 1000;
+                        createTable();
+                        startTimer();
+                    }
+                }
+                updateTimerDisplay();
+            }, 10); // Actualizar cada 10 ms (centésima de segundo)
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
+            return { minutes, seconds, centiseconds, totalCentiseconds: centisecondsElapsed };
+}
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function createTable() {
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'grey';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = "100px";
+                cell.style.height = "100px";
+                cell.style.borderRadius = "25px";
+            });
+            document.body.classList.add('lock-size-40');
+        }
+
+        function toggleColor(row, col, cell) {
+            if (cell.classList.contains('locked')) {
+                return; // Do nothing if the cell is blocked
+            }
+            if (matrix[row][col] === 0) {
+                cell.className = 'red';
+                cell.classList.add('locked');
+                acc++;
+            } else {
+                cell.className = 'blue';
+                matrix[row][col] = 1;
+            }
+            if (matrix.some(fila => fila.includes(1))) {
+                document.getElementById("title_part").textContent = "Perdiste";
+                stopTimer();
+                window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
+            }
+            else if (acc === boards_solved + 3){
+                stopTimer();
+                gamefinished = false;
+                setTimeout(() => {
+                    centisecondsElapsed = 300;
+                    startTimer();
+                    boards_solved++;
+                    startGame();
+                    acc = 0;
+                }, 1000);
+            }
+        }
+
+        function startGame() {
+            fetch('/memory', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ size: boards_solved }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const gameMatrix = data.matrix;
+                const table = document.getElementById('matrix');
+                matrix = gameMatrix.map(row => [...row]);
+
+                for (let i = 0; i < gameMatrix.length; i++) {
+                    for (let j = 0; j < gameMatrix[i].length; j++) {
+                        const cell = table.rows[i].cells[j];
+                        cell.className = gameMatrix[i][j] === 0 ? 'red locked' : 'grey locked';
+                    }
+                }
+                if(gamestarted) {
+                    gamestarted = false;
+                    let overlay = document.getElementById('countdown-overlay');
+                    let count = 2;
+                    const countdownElement = document.getElementById("countdown");
+                    countdownElement.textContent = "¡Recuerda el patrón!";
+
+                    const countdownInterval = setInterval(() => {
+                        count--;
+                        countdownElement.textContent = "¡Adelante!";
+                        if (count <= 0) {
+                            clearInterval(countdownInterval);
+                            overlay.style.display = "none"; // Ocultar overlay al terminar
+                            startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                        }
+                    }, 1000);
+                }
+                
+            });
+        }
+        createTable();
+        startGame();
+    </script>
+</body>
+</html>

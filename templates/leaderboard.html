@@ -21,9 +21,11 @@
         <script>
             function reintentar() {
                 if (board === "Contrareloj") {
-                    window.location.href = '/time_trial'
-                }else {
-                    window.location.href = '/play'
+                    window.location.href = '/time_trial_0hh1'
+                }else if (board === "Memoria") {
+                    window.location.href = '/memory'
+                } else {
+                    window.location.href = '/0hh1'
                 }
             }
             const best = '{{best}}'
