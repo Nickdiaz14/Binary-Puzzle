@@ -144,7 +144,11 @@
                 matrix[row][col] = 1;
                 document.getElementById("title_part").textContent = "¡Sigue intentándolo!";
                 stopTimer();
-                window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
+                if (matrixSize === 5) {
+                    window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=mindgrid2`;
+                } else {
+                    window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=mindgrid1`;
+                }
             } else if (user_matrix[row][col] === 0) {
                 if (matrixSize === 5) {
                     user_matrix[row][col] = 1;
