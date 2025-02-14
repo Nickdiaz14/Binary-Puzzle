@@ -156,10 +156,12 @@
                     let overlay = document.getElementById('countdown-overlay');
                     let count = 2;
                     const countdownElement = document.getElementById("countdown");
+                    countdownElement.style.fontSize = "50px"; 
                     countdownElement.textContent = "¡Recuerda el patrón!";
 
                     const countdownInterval = setInterval(() => {
                         count--;
+                        countdownElement.style.fontSize = "120px"; 
                         countdownElement.textContent = "¡Adelante!";
                         if (count <= 0) {
                             clearInterval(countdownInterval);
