@@ -819,16 +819,7 @@ def leader_page():
 
 @app.route('/leaderboards')
 def leaders_page():
-    leaderboards = get_scores()
-    grouped = defaultdict(list)
-
-    # Agrupar por el primer valor de cada sublista (T4, T8, etc.)
-    for row in leaderboards:
-        grouped[str(row[0])].append(row[1:])
-
-    # Convertir a diccionario si no quieres un defaultdict
-    dictionary = dict(grouped)
-    dictionary['TContrareloj'].reverse()
+    dictionary = {'T4':list(get_top_scores('T4')),'T6':list(get_top_scores('T6')),'T8':list(get_top_scores('T8')),'T10':list(get_top_scores('T10')),'TContrareloj':list(get_top_scores('TContrareloj')),'TUnicolor':list(get_top_scores('TUnicolor')),'TBicolor':list(get_top_scores('TBicolor'))}
     return render_template('leaderboards.html', data=json.dumps(dictionary))
 
 @app.route('/display_level')
