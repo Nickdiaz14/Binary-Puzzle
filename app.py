@@ -592,9 +592,9 @@ def solve_page():
 def tutorial_page():
     return render_template('tutorial.html')
 
-@app.route('/time_trial')
+@app.route('/time_trial_0hh1')
 def time_trial_page():
-    return render_template('time_trial.html')
+    return render_template('time_trial_0hh1.html')
 
 @app.route('/0hh1')
 def play_page():
