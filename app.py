@@ -580,15 +580,19 @@ def constraint_solver ():
 
 @app.route('/memory', methods=['POST'])
 def memory():
-    cells = int(request.json['size']) + 3
-    matrix = [[-1] * 6 for _ in range(6)]  # Matriz para llevar el control de los colores
+    cells = int(request.json['cells']) + 3
+    n = int(request.json['size'])
+    matrix = [[-1] * n for _ in range(n)]  # Matriz para llevar el control de los colores
     inds = []
     for i in range(cells):
         while True:
-            a = random.choices(range(6), k=2)
+            a = random.choices(range(n), k=2)
             if a not in inds:
                 inds.append(a)
-                matrix[a[0]][a[1]] = 0
+                if n == 6:
+                    matrix[a[0]][a[1]] = 0
+                else:
+                    matrix[a[0]][a[1]] = random.randint(0,1)
                 break
     return jsonify({'matrix': matrix})
 #--------------------------------------------------------------------------------------------------------------------
@@ -796,9 +800,17 @@ def leader_page():
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
         else:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {boards} tableros, bien hecho!')
+    elif game == 'mindgrid1':
+        boards = int(request.args.get('boards'))
+        board = "TUnicolor"
+        better = update_leaderboard(board, id,f'{boards} tableros', boards)
+        if better:
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
+        else:
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {boards} tableros, bien hecho!')
     else:
         boards = int(request.args.get('boards'))
-        board = "TMemoria"
+        board = "TBicolor"
         better = update_leaderboard(board, id,f'{boards} tableros', boards)
         if better:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")

@@ -93,6 +93,13 @@ td {
   outline-offset: -3px;
 }
 
+.lose {
+  background: linear-gradient(145deg, #d70505, #ff0606);
+  box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
+  outline: 3px solid rgb(117, 2, 2);
+  outline-offset: -3px;
+}
+
 .container {
   width: 100vw;
   height: 100vh;
@@ -198,6 +205,14 @@ body.light-theme .blue {
   background: linear-gradient(145deg, #5800d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   outline: 3px solid rgb(1, 14, 128);
+  outline-offset: -3px;
+}
+
+body.light-theme .lose {
+  color: #ffffff;
+  background: linear-gradient(145deg, #ffff00, #ff9306);
+  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
+  outline: 3px solid rgb(219, 120, 0);
   outline-offset: -3px;
 }
 
@@ -308,6 +323,13 @@ body.dark-theme .blue {
   background: linear-gradient(145deg, #5800d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   outline: 3px solid rgb(1, 14, 128);
+  outline-offset: -3px;
+}
+
+body.dark-theme .lose {
+  background: linear-gradient(145deg, #d70505, #ff0606);
+  box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
+  outline: 3px solid rgb(117, 2, 2);
   outline-offset: -3px;
 }
 body.dark-theme .container {

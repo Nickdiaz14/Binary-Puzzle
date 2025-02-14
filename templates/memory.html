@@ -10,7 +10,11 @@
 </head>
 <body>
     <div id="countdown-overlay">
-        <h1 id="countdown" style="font-size: 120px;color: #ffffff;"></h1>
+        <label style="font-size: 50px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir una dificultad</label>
+        <div style="text-align:center;" class="botones">
+            <button onclick="setBoardSize(6)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">Unicolor</button>
+            <button onclick="setBoardSize(5)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">Bicolor</button>
+        </div>
     </div>
     <div style="text-align:center;">
         <h1 id="title" style="font-size: 60px; font-weight: bold;">Memoria</h1>
@@ -34,14 +38,14 @@
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
-        let matrixSize = 6; // Tamaño de la matriz
+        let matrixSize = 5; // Tamaño de la matriz
         let gamestarted = true;
         let gamefinished = false;
         let timerInterval;
-        let acc = 0;
         let centisecondsElapsed = 200;
         let boards_solved = 0;
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+        let user_matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
     
         function startTimer() {
             clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
@@ -53,7 +57,11 @@
                     stopTimer();
                     if (gamefinished) {
                         document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
-                        window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
+                        if (matrixSize === 5) {
+                            window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=mindgrid2`;
+                        } else {
+                            window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=mindgrid1`;
+                        }
                     } else {
                         gamefinished = true;
                         centisecondsElapsed = 1000;
@@ -80,6 +88,36 @@
             document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
         }
 
+        function adjustLockSize() {
+            const lockSizeClass = matrixSize <= 5 ? 'lock-size-40' :'lock-size-35';
+
+            // Remover cualquier clase de tamaño de candado previo
+            document.body.classList.remove('lock-size-40', 'lock-size-35');
+
+            // Añadir la nueva clase según el tamaño
+            document.body.classList.add(lockSizeClass);
+        }
+        
+        function reset(){
+            document.getElementById("timer").textContent = `00:00.00`;
+            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            createTable(initial);
+        }
+
+        function adjustCellSize() {
+            const cellSize = matrixSize <= 5 ? 100 : 80;
+            const cellRadius = matrixSize <= 5 ? 25 :20;
+            stopTimer();
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = `${cellSize}px`;
+                cell.style.height = `${cellSize}px`;
+                cell.style.borderRadius = `${cellRadius}px`
+            });
+
+            adjustLockSize(); // Llamar para ajustar el tamaño del candado
+        }
+
         function createTable() {
             const table = document.getElementById('matrix');
             table.innerHTML = ''; // Limpiar contenido de la tabla existente
@@ -93,33 +131,30 @@
                 }
                 table.appendChild(row);
             }
-            const cells = document.querySelectorAll('td');
-            cells.forEach(cell => {
-                cell.style.width = "80px";
-                cell.style.height = "80px";
-                cell.style.borderRadius = "20px";
-            });
-            document.body.classList.add('lock-size-40');
+            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
         }
 
         function toggleColor(row, col, cell) {
+            let lose = false;
             if (cell.classList.contains('locked')) {
                 return; // Do nothing if the cell is blocked
             }
-            if (matrix[row][col] === 0) {
-                cell.className = 'red';
-                cell.classList.add('locked');
-                acc++;
-            } else {
-                cell.className = 'blue';
+            if (matrix[row][col] === -1) {
+                cell.className = 'lose';
                 matrix[row][col] = 1;
-            }
-            if (matrix.some(fila => fila.includes(1))) {
                 document.getElementById("title_part").textContent = "¡Sigue intentándolo!";
                 stopTimer();
                 window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
+            } else if (user_matrix[row][col] === 0) {
+                if (matrixSize === 5) {
+                    user_matrix[row][col] = 1;
+                    cell.className = 'blue'
+                }
+            } else {
+                user_matrix[row][col] = 0;
+                cell.className = 'red'
             }
-            else if (acc === Math.floor(boards_solved / 2) + 3){
+            if (user_matrix.every((fila, i) => fila.every((val, j) => val === matrix[i][j]))){
                 stopTimer();
                 gamefinished = false;
                 setTimeout(() => {
@@ -136,18 +171,20 @@
             fetch('/memory', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ size: Math.floor(boards_solved / 2) }),
+                body: JSON.stringify({ cells: Math.floor(boards_solved / 2) , size:matrixSize}),
             })
             .then(response => response.json())
             .then(data => {
                 const gameMatrix = data.matrix;
                 const table = document.getElementById('matrix');
                 matrix = gameMatrix.map(row => [...row]);
-
+                user_matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
                 for (let i = 0; i < gameMatrix.length; i++) {
                     for (let j = 0; j < gameMatrix[i].length; j++) {
                         const cell = table.rows[i].cells[j];
-                        cell.className = gameMatrix[i][j] === 0 ? 'red locked' : 'grey locked';
+                        cell.className = gameMatrix[i][j] === 0 ? 'red blocked' :
+                                         gameMatrix[i][j] === 1 ? 'blue blocked' :
+                                          'grey locked';
                     }
                 }
                 if(gamestarted) {
@@ -172,8 +209,16 @@
                 
             });
         }
+
+        function setBoardSize(size) {
+            let overlay = document.getElementById('countdown-overlay');
+            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
+            document.getElementById("title").textContent = `Tablero ${size}x${size}`;
+            matrixSize = size; // Asigna el tamaño seleccionado
+            reset(); // Genera el nuevo tablero
+            startGame(); // Inicia la cuenta regresiva
+        }
         createTable();
-        startGame();
     </script>
 </body>
 </html>
