@@ -119,7 +119,7 @@
                 stopTimer();
                 window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
             }
-            else if (acc === Math.floor(boards_solved / 3) + 3){
+            else if (acc === Math.floor(boards_solved / 2) + 3){
                 stopTimer();
                 gamefinished = false;
                 setTimeout(() => {
@@ -136,7 +136,7 @@
             fetch('/memory', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ size: Math.floor(boards_solved / 3) }),
+                body: JSON.stringify({ size: Math.floor(boards_solved / 2) }),
             })
             .then(response => response.json())
             .then(data => {
