@@ -53,9 +53,10 @@
                 if (centisecondsElapsed === 0) {
                     stopTimer();
                     if (gamefinished) {
-                        document.getElementById("title_part").textContent = "Perdiste";
+                        document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                         window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
                     } else {
+                        document.getElementById("title_part").textContent = "¡Replica el patrón!";
                         gamefinished = true;
                         centisecondsElapsed = 1000;
                         createTable();
@@ -116,7 +117,7 @@
                 matrix[row][col] = 1;
             }
             if (matrix.some(fila => fila.includes(1))) {
-                document.getElementById("title_part").textContent = "Perdiste";
+                document.getElementById("title_part").textContent = "¡Sigue intentándolo!";
                 stopTimer();
                 window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=memorygrid`;
             }
