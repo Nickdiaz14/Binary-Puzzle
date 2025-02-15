@@ -25,7 +25,7 @@
             const nickname = document.getElementById('nickname').value;
             const userId = localStorage.getItem('userId');
             const ind = '{{ ind }}'
-            if (nickname) {
+            if (nickname && nickname.length <= 25) {
                 if (userId) {
                     if (ind.toString() === "si") {
                         window.location.href = `/menu?nickname=${nickname}&userID=${userId}&ch=si`
