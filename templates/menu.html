@@ -54,7 +54,9 @@
     </div>
     <script>
         function handleGameChange() {
-            toggleInfo()
+            const infoDiv = document.getElementById('algorithm-info');
+            infoDiv.style.display = 'none';
+
             const gameSelect = document.getElementById("game").value;
             const game1Menu = document.getElementById("game1-menu");
             const game2Menu = document.getElementById("game2-menu");
