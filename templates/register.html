@@ -9,7 +9,7 @@
 <body>
     <h1 for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;">¡Bienvenido a Math & Beer!</h1>
     <h1 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">Ingresa un nombre o apodo</h1>
-    <h1 for="matrix-size" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</h1>
+    <h1 id = "case" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</h1>
     <input type="text" id="nickname" name="nickname" required style="margin-top: 15px; padding: 10px; border: 2px solid #007BFF; border-radius: 5px; font-size: 16px;">
     <button onclick="startGame()" style="margin-top: 15px;" class="resolver evaluar">Empezar</button>
 
@@ -25,19 +25,23 @@
             const nickname = document.getElementById('nickname').value;
             const userId = localStorage.getItem('userId');
             const ind = '{{ ind }}'
-            if (nickname && nickname.length <= 25) {
-                if (userId) {
-                    if (ind.toString() === "si") {
-                        window.location.href = `/menu?nickname=${nickname}&userID=${userId}&ch=si`
+            if (nickname) {
+                if (nickname.length <= 25) {
+                    if (userId) {
+                        if (ind.toString() === "si") {
+                            window.location.href = `/menu?nickname=${nickname}&userID=${userId}&ch=si`
+                        } else {
+                            window.location.href = `/menu?userID=${userId}`
+                        }
                     } else {
-                        window.location.href = `/menu?userID=${userId}`
-                    }
+                        const new_userId = crypto.randomUUID();
+                        localStorage.setItem('userId', new_userId);
+                        window.location.href = `/menu?nickname=${nickname}&userID=${new_userId}`
+                    };
                 } else {
-                    const new_userId = crypto.randomUUID();
-                    localStorage.setItem('userId', new_userId);
-                    window.location.href = `/menu?nickname=${nickname}&userID=${new_userId}`
+                    document.getElementById("case").textContent = 'Excediste el máximo de caracteres.';
                 };
-            };
+            }
         }
         const ind = '{{ ind }}'
         const user = localStorage.getItem('userId');
