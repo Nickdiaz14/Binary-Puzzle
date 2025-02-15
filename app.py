@@ -624,7 +624,8 @@ def play_page():
 
 @app.route('/memory')
 def memory_page():
-    return render_template('memory.html')
+    dif = request.args.get('dif')
+    return render_template('memory.html', dif= dif)
 
 @app.route('/levels')
 def levels_page():
