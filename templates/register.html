@@ -50,6 +50,10 @@
                 window.location.href = `/menu?userID=${user}`
             }
         }
+        if (ind && ind.toString() !== "si") {
+            localStorage.setItem('userId', ind);
+            window.location.href = `/menu?userID=${localStorage.getItem('userId')}`
+        }
     </script>
 </body>
 </html>
