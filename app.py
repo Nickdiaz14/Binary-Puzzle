@@ -598,9 +598,12 @@ def memory():
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/')
 def index():
+    id = request.args.get('userID')
     ch = request.args.get('ch')
     if ch:
         return render_template('register.html', ind = "si")
+    if id:
+        return render_template('register.html', ind = id)
     return render_template('register.html')
 
 @app.route('/solve')
