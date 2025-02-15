@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div style="text-align:center; margin: 20px;">
+    <img id="image" src="{{ url_for('static', filename='images/logo_M&B.png') }}" style="width: 120px;">
+    <div style="text-align:center;">
         <h1 id="title" style="font-size: 60px; font-weight: bold;">¡Hola, {{ nickname }}!</h1>
     </div>
     <div style="text-align:center;">
@@ -46,6 +47,8 @@
         }
         document.addEventListener("DOMContentLoaded", function () {
             const themeToggle = document.getElementById("theme-toggle");
+            const div = document.getElementById("algorithm-info");
+            const image = document.getElementById("image");
 
             // Recuperar el tema guardado en localStorage (opcional)
             const savedTheme = localStorage.getItem("theme");
@@ -53,15 +56,16 @@
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);   
             }
-            
-            const div = document.getElementById("algorithm-info");
 
             if (savedTheme === "light-theme") {
                 div.style.color = "#000000";
                 div.style.border = "1px solid #121212";
+                image.style.filter = "none";
+
             } else {
                 div.style.color = "#ffffff";
                 div.style.border = "1px solid #ccc";
+                image.style.filter = "invert(100%)";
             }
 
             themeToggle.addEventListener("click", function () {
@@ -90,9 +94,11 @@
             if (nextTheme === "light-theme") {
                 div.style.color = "#000000";
                 div.style.border = "1px solid #121212";
+                image.style.filter = "none";
             } else {
                 div.style.color = "#ffffff";
                 div.style.border = "1px solid #ccc";
+                image.style.filter = "invert(100%)";
             }
             });
         });
@@ -102,9 +108,11 @@
         if (savedTheme === "light-theme") {
             div.style.color = "#000000";
             div.style.border = "1px solid #121212";
+            image.style.filter = "none";
         } else {
             div.style.color = "#ffffff";
             div.style.border = "1px solid #ccc";
+            image.style.filter = "invert(100%)";
         }
     </script>
 </body>
