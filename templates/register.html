@@ -7,8 +7,10 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1 for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;">¡Bienvenido a Math & Beer!</h1>
-    <h1 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">Cambiamos de dominio, haz click en el botón de abajo para ingresar</h1>
+    <div style="text-align: center;">
+        <h1 for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;">¡Bienvenido a Math & Beer!</h1>
+        <h1 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">Cambiamos de dominio, haz click en el botón de abajo para ingresar</h1>
+    </div>
     <button onclick="window.location.href=`https://math-and-beer.onrender.com?userID=${localStorage.getItem('userId')}`" style="margin-top: 15px;" class="resolver evaluar">Empezar</button>
 </body>
 </html>
