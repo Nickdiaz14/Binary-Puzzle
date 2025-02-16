@@ -789,7 +789,7 @@ def leader_page():
     elif game == '0hh1':
         boards = int(request.args.get('boards'))
         board = "TContrareloj"
-        better = update_leaderboard(board, id,f'{boards} tableros', boards)
+        better = update_leaderboard(board, id,f'{boards} tabs', boards)
         if better:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
         else:
