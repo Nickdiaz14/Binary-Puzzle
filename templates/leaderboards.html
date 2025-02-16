@@ -40,8 +40,14 @@
         
                 // Restaurar selección desde localStorage
                 const savedSelection = localStorage.getItem("selectedMatrix");
-                if (savedSelection) {
-                    document.getElementById("matrix-size").value = savedSelection;
+                const matrixSelect = document.getElementById("matrix-size");
+
+                // Si hay un valor guardado y es válido, seleccionarlo; de lo contrario, usar la primera opción disponible.
+                if (savedSelection && [...matrixSelect.options].some(option => option.value === savedSelection)) {
+                    matrixSelect.value = savedSelection;
+                } else {
+                    matrixSelect.value = matrixSelect.options[0].value; // Asignar el primer valor disponible
+                    localStorage.setItem("selectedMatrix", matrixSelect.value); // Guardarlo en localStorage
                 }
         
                 reset(); // Llamar para asegurarse de que el leaderboard se carga con la selección guardada
