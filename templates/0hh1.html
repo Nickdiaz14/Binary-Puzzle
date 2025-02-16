@@ -220,7 +220,25 @@
                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
                 setTimeout(() => {
                 }, 500);
-                window.location.href = `/leaderboard?totaltime=${tiempo.totalCentiseconds}&userID=${localStorage.getItem('userId')}&n=${matrixSize}`;
+                fetch('/leaderboard/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        score: tiempo.totalCentiseconds,
+                        userID: localStorage.getItem('userId'),
+                        game: '0hh1',
+                        n: matrixSize
+                    })
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.better) {
+                        window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&better=si&board=${data.board}`;
+                    } else {
+                        window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&score=${data.score}&board=${data.board}`;
+                    }
+                });
             }
         }
 

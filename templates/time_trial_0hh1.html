@@ -64,7 +64,24 @@
                 if (centisecondsElapsed === 0) {
                     document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                     stopTimer();
-                    window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=0hh1`;
+                    fetch('/leaderboard/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            score: boards_solved,
+                            userID: localStorage.getItem('userId'),
+                            game: 'TT0hh1'
+                        })
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.better) {
+                            window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&better=si&board=${data.board}`;
+                        } else {
+                            window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&score=${data.score}&board=${data.board}`;
+                        }
+                    });
                 }
             }, 10); // Actualizar cada 10 ms (centésima de segundo)
         }

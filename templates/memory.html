@@ -53,9 +53,43 @@
                     if (gamefinished) {
                         document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                         if (matrixSize === 5) {
-                            window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=mindgrid2`;
+                            fetch('/leaderboard/update', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    score: boards_solved,
+                                    userID: localStorage.getItem('userId'),
+                                    game: 'mindgrid2'
+                                })
+                            }).then(response => response.json())
+                            .then(data => {
+                                if (data.better) {
+                                    window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&better=si&board=${data.board}`;
+                                } else {
+                                    window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&score=${data.score}&board=${data.board}`;
+                                }
+                            });
                         } else {
-                            window.location.href = `/leaderboard?boards=${boards_solved}&userID=${localStorage.getItem('userId')}&game=mindgrid1`;
+                            fetch('/leaderboard/update', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    score: boards_solved,
+                                    userID: localStorage.getItem('userId'),
+                                    game: 'mindgrid1'
+                                })
+                            }).then(response => response.json())
+                            .then(data => {
+                                if (data.better) {
+                                    window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&better=si&board=${data.board}`;
+                                } else {
+                                    window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&score=${data.score}&board=${data.board}`;
+                                }
+                            });
                         }
                     } else {
                         gamefinished = true;

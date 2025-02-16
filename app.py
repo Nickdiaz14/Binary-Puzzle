@@ -772,44 +772,47 @@ def get_top_scores(board):
     
     return results
 
+@app.route('/leaderboard/update', methods=['POST'])
+def leader_update():
+    game = request.json['game']
+    score = int(request.json['score'])
+    id = request.json['userID']
+    print(game,score)
+    if game == '0hh1':
+        n = int(request.json['n'])
+        board = f'T{n}'
+        better = update_leaderboard(board, id,f'{(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}', score)
+        return jsonify({'better': better,'score':score,'board':board})
+    if game == 'TT0hh1':
+        board = "TContrareloj"
+        better = update_leaderboard(board, id,f'{score} tabs', score)
+        return jsonify({'better': better,'score':score,'board':board})
+    if game == 'mindgrid1':
+        board = "TUnicolor"
+        better = update_leaderboard(board, id,f'{score} tabs', score)
+        return jsonify({'better': better,'score':score,'board':board})
+    else:
+        board = "TBicolor"
+        better = update_leaderboard(board, id,f'{score} tabs', score)
+        return jsonify({'better': better,'score':score,'board':board})
+
+
+
 @app.route('/leaderboard')
 def leader_page():
-    tsecs = request.args.get('totaltime')
-    game = request.args.get('game')
     id = request.args.get('userID')
-    if tsecs:
-        tsecs = int(tsecs)
-        n = int(request.args.get('n'))
-        board = f'T{n}'
-        better = update_leaderboard(board, id,f'{(tsecs//6000):02}:{((tsecs%6000)//100):02}.{(tsecs%100):02}', tsecs)
-        if better:
-            return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
+    better = request.args.get('better')
+    board = request.args.get('board')
+    score = int(request.args.get('score'))
+    if better:
+        if len(board) <= 3:
+            return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
         else:
-            return render_template('leaderboard.html', board=f'{n}x{n}', data=json.dumps(get_top_scores(board)), best = better)
-    elif game == '0hh1':
-        boards = int(request.args.get('boards'))
-        board = "TContrareloj"
-        better = update_leaderboard(board, id,f'{boards} tabs', boards)
-        if better:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
-        else:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {boards} tableros, bien hecho!')
-    elif game == 'mindgrid1':
-        boards = int(request.args.get('boards'))
-        board = "TUnicolor"
-        better = update_leaderboard(board, id,f'{boards} tabs', boards)
-        if better:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
-        else:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {boards} tableros, bien hecho!')
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
+    elif len(board) <= 3:
+        return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
     else:
-        boards = int(request.args.get('boards'))
-        board = "TBicolor"
-        better = update_leaderboard(board, id,f'{boards} tabs', boards)
-        if better:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
-        else:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {boards} tableros, bien hecho!')
+        return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
 
 @app.route('/leaderboards')
 def leaders_page():
