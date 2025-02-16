@@ -803,15 +803,16 @@ def leader_page():
     id = request.args.get('userID')
     better = request.args.get('better')
     board = request.args.get('board')
-    score = int(request.args.get('score'))
     if better:
         if len(board) <= 3:
             return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
         else:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
     elif len(board) <= 3:
+        score = int(request.args.get('score'))
         return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
     else:
+        score = int(request.args.get('score'))
         return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
 
 @app.route('/leaderboards')
