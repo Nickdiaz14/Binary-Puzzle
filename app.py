@@ -595,6 +595,12 @@ def memory():
                     matrix[a[0]][a[1]] = random.randint(0,1)
                 break
     return jsonify({'matrix': matrix})
+
+@app.route('/sequence', methods=['POST'])
+def sequence():
+    n = int(request.json['size'])
+    inds = [random.choices(range(n), k=2) for _ in range(50)]
+    return jsonify({'matrix': inds})
 #--------------------------------------------------------------------------------------------------------------------
 @app.route('/')
 def index():
@@ -791,7 +797,7 @@ def leader_page():
     elif game == 'mindgrid1':
         boards = int(request.args.get('boards'))
         board = "TUnicolor"
-        better = update_leaderboard(board, id,f'{boards} tableros', boards)
+        better = update_leaderboard(board, id,f'{boards} tabs', boards)
         if better:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
         else:
@@ -799,7 +805,7 @@ def leader_page():
     else:
         boards = int(request.args.get('boards'))
         board = "TBicolor"
-        better = update_leaderboard(board, id,f'{boards} tableros', boards)
+        better = update_leaderboard(board, id,f'{boards} tabs', boards)
         if better:
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = "¡Superaste tu record!")
         else:
@@ -807,8 +813,15 @@ def leader_page():
 
 @app.route('/leaderboards')
 def leaders_page():
-    dictionary = {'T4':list(get_top_scores('T4')),'T6':list(get_top_scores('T6')),'T8':list(get_top_scores('T8')),'T10':list(get_top_scores('T10')),'TContrareloj':list(get_top_scores('TContrareloj')),'TUnicolor':list(get_top_scores('TUnicolor')),'TBicolor':list(get_top_scores('TBicolor'))}
-    return render_template('leaderboards.html', data=json.dumps(dictionary))
+    game = request.args.get('game')
+    dictionary = {}
+    if game == '0h-h1':
+        boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
+    else:
+        boards = ['TUnicolor', 'TBicolor']
+    for board in boards:
+        dictionary[board] = list(get_top_scores(board))
+    return render_template('leaderboards.html', data=json.dumps(dictionary), game = game)
 
 @app.route('/display_level')
 def display_levels_page():

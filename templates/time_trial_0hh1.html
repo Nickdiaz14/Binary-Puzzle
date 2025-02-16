@@ -188,7 +188,11 @@
         function evaluateMatrix() {
             if (gamefinished) return;
             if (rules_final(matrix)) {
-                centisecondsElapsed += reposed_time - (50*boards_solved);
+                if (reposed_time - (50*boards_solved) <= 200) {
+                    centisecondsElapsed += 200;
+                } else {
+                    centisecondsElapsed += reposed_time - (50*boards_solved);
+                }
                 boards_solved++;
                 updateTimerDisplay(reposed_time - (50*boards_solved));
                 gamefinished = true;

@@ -14,8 +14,8 @@
     <div style="text-align:center; margin: 20px;">
         <h1 id="title1" style="font-size: 26px; font-weight: bold;">Juegos</h1>
         <select id="game" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="handleGameChange()">
-            <option value="1" selected>0h-h1</option>
-            <option value="2">MindGrid</option>
+            <option value="0h-h1" selected>0h-h1</option>
+            <option value="MindGrid">MindGrid</option>
         </select>
     </div>
     <div style="text-align:center;">
@@ -24,12 +24,12 @@
         <!-- Menú Juego 1 (0h-h1) -->
         <div id="game1-menu" style="text-align:center;">
             <div class="botones">
-                <button onclick="location.href='/0hh1'" class="resolver azulito">Oh-h1</button>
+                <button onclick="location.href='/0hh1'" class="resolver azulito">0h-h1</button>
                 <button onclick="location.href='/time_trial_0hh1'" class="resolver rojito">Contrarreloj</button>
             </div>
             <div class="botones">
                 <button onclick="location.href='/tutorial'" class="resolver rojito">Tutorial</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}`" class="resolver rojito">Rankings</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver rojito">Rankings</button>
             </div>
         </div>
 
@@ -40,7 +40,7 @@
                 <button onclick="location.href='/memory?dif=5'" class="resolver rojito">Bicolor</button>
             </div>
             <div class="botones">
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}`" class="resolver azulito" style="margin-left: 150px;">Ranking</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="margin-left: 150px;">Rankings</button>
             </div>
         </div>
         <div style="height: 40px;"></div>
@@ -61,7 +61,7 @@
             const game1Menu = document.getElementById("game1-menu");
             const game2Menu = document.getElementById("game2-menu");
 
-            if (gameSelect === "1") {
+            if (gameSelect === "0h-h1") {
                 game1Menu.style.display = "block";
                 game2Menu.style.display = "none";
             } else {

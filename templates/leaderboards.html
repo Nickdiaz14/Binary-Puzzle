@@ -10,13 +10,6 @@
         <div style="text-align:center; margin: 20px;">
             <h1 id="title" style="font-size: 26px; font-weight: bold;">Ranking</h1>
             <select id="matrix-size" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
-                <option value="4" selected>4 x 4</option>
-                <option value="6">6 x 6</option>
-                <option value="8">8 x 8</option>
-                <option value="10">10 x 10</option>
-                <option value="Contrareloj">Contrareloj</option>
-                <option value="Unicolor">Unicolor</option>
-                <option value="Bicolor">Bicolor</option>
             </select>
         </div>
         <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
@@ -49,6 +42,22 @@
             const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";
             const secondPlaceImg = "{{ url_for('static', filename='images/second_place.png') }}";
             const thirdPlaceImg = "{{ url_for('static', filename='images/third_place.png') }}";
+            const game = '{{ game }}';
+            const matrixSelect = document.getElementById("matrix-size");
+
+            // Limpiar las opciones actuales
+            matrixSelect.innerHTML = "";
+
+            if (game === "0h-h1") {
+                matrixSelect.innerHTML += '<option value="4" selected>4 x 4</option>';
+                matrixSelect.innerHTML += '<option value="6">6 x 6</option>';
+                matrixSelect.innerHTML += '<option value="8">8 x 8</option>';
+                matrixSelect.innerHTML += '<option value="10">10 x 10</option>';
+                matrixSelect.innerHTML += '<option value="Contrareloj">Contrareloj</option>';
+            } else {
+                matrixSelect.innerHTML += '<option value="Unicolor" selected>Unicolor</option>';
+                matrixSelect.innerHTML += '<option value="Bicolor">Bicolor</option>';
+            }
 
 
             function reset() {
