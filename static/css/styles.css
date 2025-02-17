@@ -111,6 +111,16 @@ td {
   top:0px;
   bottom: 100%;
 }
+.contenedor {
+  display: flex;
+  justify-content: center; /* Centra los puntos horizontalmente */
+  gap: 10px; /* Espacio entre puntos */
+}
+
+.punto {
+  width: 20px; /* Ajusta el tamaño */
+  margin: 4px; /* Espaciado entre imágenes */
+}
 
 /* ---------------------------------------------------------------- light theme ----------------------------------------------------------------*/
 body.light-theme {

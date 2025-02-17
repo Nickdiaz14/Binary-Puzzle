@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
+    <title>Matrix Game</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="countdown-overlay">
+        <label style="font-size: 50px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir tamaño de matriz</label>
+        <div style="text-align:center;" class="botones">
+            <button onclick="setBoardSize(3)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">3 x 3</button>
+            <button onclick="setBoardSize(4)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">4 x 4</button>
+        </div>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Memoria</h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold;">¡Replica el patrón!</h1>
+    </div>
+    <div style="text-align:center; margin-bottom: 8px;">
+    </div>
+    <div id="conteo" class="contenedor" style="margin-bottom: 20px;">
+    </div>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <script>
+        const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            }
+        let matrixSize = 4; // Tamaño de la matriz
+        let boards_solved = 0
+        let coords;
+        let tiles;
+        let gamestarted = true;
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+        let user_matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+
+        function adjustLockSize() {
+            const lockSizeClass = matrixSize <= 5 ? 'lock-size-40' :'lock-size-35';
+
+            // Remover cualquier clase de tamaño de candado previo
+            document.body.classList.remove('lock-size-40', 'lock-size-35');
+
+            // Añadir la nueva clase según el tamaño
+            document.body.classList.add(lockSizeClass);
+        }
+        
+        function reset(){
+            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            createTable(initial);
+        }
+
+        function adjustCellSize() {
+            const cellSize = matrixSize <= 5 ? 100 : 80;
+            const cellRadius = matrixSize <= 5 ? 25 :20;
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = `${cellSize}px`;
+                cell.style.height = `${cellSize}px`;
+                cell.style.borderRadius = `${cellRadius}px`
+            });
+
+            adjustLockSize(); // Llamar para ajustar el tamaño del candado
+        }
+
+        function createTable() {
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'grey';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+        }
+
+        function toggleColor(row, col, cell) {
+            if (cell.classList.contains('locked')) {
+                return; // Do nothing if the cell is blocked
+            }
+            if (row.toString() === coords[0].toString() && col.toString() === coords[1].toString()) {
+                const image = document.getElementById(`Imagen ${(tiles - coords.length)/2}`)
+                coords = coords.slice(2);
+                user_matrix[row][col] = matrix[row][col];
+                highlightCellsSequentially([row,col],10);
+                image.src = "{{ url_for('static', filename='images/bien.png') }}";
+                if (savedTheme === "light-theme") {
+                    image.style.filter = "none";
+                } else {
+                    image.style.filter = "invert(100%)";
+                }
+            } else {
+                cell.className = 'lose';
+                for (let index = 0; index < tiles/2; index++) {
+                    const image = document.getElementById(`Imagen ${index}`)
+                    image.src = "{{ url_for('static', filename='images/mal.png') }}";
+                    image.style.filter = "none";
+                }
+                fetch('/leaderboard/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        score: boards_solved,
+                        userID: localStorage.getItem('userId'),
+                        game: 'sequence',
+                        n: matrixSize
+                    })
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.better) {
+                        window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&better=si&board=${data.board}`;
+                    } else {
+                        window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&score=${data.score}&board=${data.board}`;
+                    }
+                });
+            }
+            if (coords.length === 0) {
+                boards_solved++;
+                startGame();
+            }
+        }
+
+        async function highlightCellsSequentially(coords,time) {
+            const table = document.getElementById('matrix');
+            for (let index = 0; index < coords.length; index+=2) {
+                let row = coords[index];
+                let col = coords[index+1];
+                matrix[row][col] = index/2;
+                const cell = table.rows[row].cells[col];
+                cell.className = 'red';
+
+                await new Promise(resolve => setTimeout(resolve, time)); // Espera antes de cambiar a gris
+                cell.className = 'grey';
+
+                await new Promise(resolve => setTimeout(resolve, time)); // Espera antes de la siguiente celda
+            }
+            createTable();
+        }
+
+        function startGame() {
+            fetch('/sequence', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ size: matrixSize, cells: boards_solved }),
+            })
+            .then(response => response.json())
+            .then(async (data) => {
+                coords = data.places;
+                tiles = coords.length
+                let conteo = document.getElementById("conteo");
+                conteo.innerHTML = '';
+                for (let index = 0; index < tiles/2; index++) {
+                    conteo.innerHTML += `<img src="{{ url_for('static', filename='images/vacio.png') }}" id="Imagen ${index}" alt="Imagen ${index}" class="punto">`;
+                }
+                const table = document.getElementById('matrix');
+                matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+                user_matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+                
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix[i].length; j++) {
+                        const cell = table.rows[i].cells[j];
+                        cell.className = 'grey locked';
+                    }
+                }
+
+                if (gamestarted) {
+                    gamestarted = false;
+                    let overlay = document.getElementById('countdown-overlay');
+                    let count = 2;
+                    const countdownElement = document.getElementById("countdown");
+                    countdownElement.style.fontSize = "50px"; 
+                    countdownElement.textContent = "¡Recuerda el patrón!";
+
+                    const countdownInterval = setInterval(() => {
+                        count--;
+                        countdownElement.style.fontSize = "120px"; 
+                        countdownElement.textContent = "¡Adelante!";
+                        if (count <= 0) {
+                            clearInterval(countdownInterval);
+                            overlay.style.display = "none"; // Ocultar overlay al terminar
+                        }
+                    }, 1000);
+                    await new Promise(resolve => setTimeout(resolve, 1100));
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                highlightCellsSequentially(coords,160); // Llama a la función secuencialmente
+            });
+        }
+
+
+        function setBoardSize(size) {
+            let overlay = document.getElementById('countdown-overlay');
+            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
+            document.getElementById("title").textContent = `${size}x${size}`;
+            matrixSize = size; // Asigna el tamaño seleccionado
+            reset(); // Genera el nuevo tablero
+            startGame(); // Inicia la cuenta regresiva
+        }
+        createTable();
+    </script>
+</body>
+</html>

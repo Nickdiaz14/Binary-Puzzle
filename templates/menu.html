@@ -15,7 +15,7 @@
         <h1 id="title1" style="font-size: 26px; font-weight: bold;">Juegos</h1>
         <select id="game" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="handleGameChange()">
             <option value="0h-h1" selected>0h-h1</option>
-            <option value="MindGrid">MindGrid</option>
+            <option value="MindGrid">Mind Games</option>
         </select>
     </div>
     <div style="text-align:center;">
@@ -40,7 +40,8 @@
                 <button onclick="location.href='/memory?dif=5'" class="resolver rojito">Bicolor</button>
             </div>
             <div class="botones">
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="margin-left: 150px;">Rankings</button>
+                <button onclick="location.href='/sequence'" class="resolver rojito">Secuencia</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
             </div>
         </div>
         <div style="height: 40px;"></div>
@@ -74,8 +75,9 @@
         document.addEventListener("DOMContentLoaded", handleGameChange);
         function toggleInfo() {
             const gameSelect = document.getElementById("game").value;
+
             const infoDiv = document.getElementById('algorithm-info');
-            let description = gameSelect === "1" ? `
+            let description = gameSelect === "0h-h1" ? `
             1. Todo el tablero debe estar lleno. <br>
             2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
             3. No puede haber tres celdas consecutivas del mismo color. <br>

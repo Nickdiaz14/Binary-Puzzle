@@ -22,8 +22,10 @@
             function reintentar() {
                 if (board === "Contrareloj") {
                     window.location.href = '/time_trial_0hh1'
-                }else if (board.includes('color')) {
+                } else if (board.includes('color')) {
                     window.location.href = '/memory'
+                } else if (board.includes('x')) {
+                    window.location.href = '/sequence'
                 } else {
                     window.location.href = '/0hh1'
                 }
