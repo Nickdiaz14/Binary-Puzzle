@@ -157,7 +157,7 @@
             fetch('/sequence', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ size: matrixSize, cells: 5 }),
+                body: JSON.stringify({ size: matrixSize, cells: boards_solved }),
             })
             .then(response => response.json())
             .then(async (data) => {
