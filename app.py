@@ -598,7 +598,11 @@ def memory():
 
 @app.route('/sequence', methods=['POST'])
 def sequence():
-    cells = int(request.json['cells']) + 3
+    mode = request.json['mode']
+    if mode:
+        cells = 20
+    else:
+        cells = int(request.json['cells']) + 3
     n = int(request.json['size'])
     inds = [random.choices(range(n)) for _ in range(cells*2)]
     return jsonify({'places': inds})
@@ -801,8 +805,8 @@ def leader_update():
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
     else:
-        n = int(request.json['n'])
-        board = f'TSeq{n}'
+        mode = request.json['mode']
+        board = f'T{mode}'
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
 
@@ -817,19 +821,13 @@ def leader_page():
         if len(board) <= 3:
             return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
         else:
-            if 'Seq' in board:
-                return render_template('leaderboard.html', board=f'{board[-1]}x{board[-1]}', data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
-            else:
-                return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
     elif len(board) <= 3:
         score = int(request.args.get('score'))
         return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
     else:
         score = int(request.args.get('score'))
-        if 'Seq' in board:
-            return render_template('leaderboard.html', board=f'{board[-1]}x{board[-1]}', data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
-        else:
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
+        return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
 
 @app.route('/leaderboards')
 def leaders_page():
@@ -838,7 +836,7 @@ def leaders_page():
     if game == '0h-h1':
         boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
     else:
-        boards = ['TUnicolor', 'TBicolor', 'TSeq3', 'TSeq4']
+        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio']
     for board in boards:
         dictionary[board] = list(get_top_scores(board))
     return render_template('leaderboards.html', data=json.dumps(dictionary), game = game)
