@@ -600,7 +600,7 @@ def memory():
 def sequence():
     mode = request.json['mode']
     if mode:
-        cells = 20
+        cells = 40
     else:
         cells = int(request.json['cells']) + 3
     n = int(request.json['size'])
