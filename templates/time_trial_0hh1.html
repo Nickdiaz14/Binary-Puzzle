@@ -37,12 +37,15 @@
             if (savedTheme === "light-theme") {
                 color0 = "rojas";
                 color1 = "azules";
+                border = "rgb(0,0,0)"
             } else if (savedTheme === "dark-theme"){
                 color0 = "amarillas";
                 color1 = "azules";
+                border = "rgb(255,255,255)"
             } else {
                 color0 = "amarillas";
                 color1 = "moradas";
+                border = "rgb(255,255,255)"
             }
         document.getElementById("title_part").textContent = '';
         let matrixSize = 4; // Tamaño de la matriz
@@ -235,7 +238,7 @@
                             return control;
                         }
                         if (matrix[j][i] === matrix[j + 1][i] && matrix[j][i] === matrix[j + 2][i]) {
-                            document.getElementById("title_part").textContent = matrix[i][j] == 0? `Hay 3 ${color0} seguidos` : `Hay 3 ${color1} seguidos`;
+                            document.getElementById("title_part").textContent = matrix[j][i] == 0? `Hay 3 ${color0} seguidos` : `Hay 3 ${color1} seguidos`;
                             for (let k = 0; k < 3; k++) {
                                 table.rows[j+k].cells[i].style.outline = `5px solid ${border}`;
                                 table.rows[j+k].cells[i].style.outlineOffset = "-5px";   
