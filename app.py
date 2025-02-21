@@ -634,8 +634,12 @@ def time_trial_page():
     return render_template('time_trial_0hh1.html')
 
 @app.route('/0hh1')
-def play_page():
+def ohhi_page():
     return render_template('0hh1.html')
+
+@app.route('/0hn0')
+def ohno_page():
+    return render_template('0hn0.html')
 
 @app.route('/memory')
 def memory_page():

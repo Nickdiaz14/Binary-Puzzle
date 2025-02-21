@@ -30,13 +30,28 @@
             }
         });
         document.getElementById("title_part").textContent = '';
-        let color0 = "";
-        let color1 = "";
+        let color0;
+        let color1;
+        let border;
         let matrixSize = 4; // Tamaño de la matriz
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         const table = document.getElementById('matrix');
 
         function createTable() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "light-theme") {
+                color0 = "roja";
+                color1 = "azul";
+                border = "rgb(0,0,0)"
+            } else if (savedTheme === "dark-theme"){
+                color0 = "amarilla";
+                color1 = "azul";
+                border = "rgb(255,255,255)"
+            } else {
+                color0 = "amarilla";
+                color1 = "morada";
+                border = "rgb(255,255,255)"
+            }
             const table = document.getElementById('matrix');
             table.innerHTML = ''; // Limpiar contenido de la tabla existente
             for (let i = 0; i < matrixSize; i++) {
@@ -74,126 +89,149 @@
             }
             if (matrix[0][0] === 0) {
                 table.rows[0].cells[0].style.removeProperty("outline");
-                table.rows[0].cells[0].className = matrix[0][0] === 0? 'red':matrix[0][0] === 1? 'blue' : 'grey';
+                table.rows[0].cells[0].style.removeProperty("outline-offset");
                 table.rows[0].cells[0].classList.add('locked');
                 table.rows[1].cells[0].classList.remove('locked');
-                table.rows[1].cells[0].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[1].cells[0].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[0].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = `Presiona la celda dos veces para volverla ${color1}.`;
             }
             if (matrix[1][0] === 1) {
                 table.rows[1].cells[0].style.removeProperty("outline");
-                table.rows[1].cells[0].className = matrix[1][0] === 0? 'red':matrix[1][0] === 1? 'blue' : 'grey';
+                table.rows[1].cells[0].style.removeProperty("outline-offset");
                 table.rows[1].cells[0].classList.add('locked');
                 table.rows[0].cells[2].classList.remove('locked');
-                table.rows[0].cells[2].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[0].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[0].cells[2].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "No puede haber tres celdas del mismo color juntas en una fila.";
             }
             if (matrix[0][2] === 1) {
                 table.rows[0].cells[2].style.removeProperty("outline");
-                table.rows[0].cells[2].className = matrix[0][2] === 0? 'red':matrix[0][2] === 1? 'blue' : 'grey';
+                table.rows[0].cells[2].style.removeProperty("outline-offset");
                 table.rows[0].cells[2].classList.add('locked');
                 table.rows[1].cells[1].classList.remove('locked');
-                table.rows[1].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[1].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[1].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "¿Recuerdas la anterior regla?";
             }
             if (matrix[1][1] === 0) {
                 table.rows[1].cells[1].style.removeProperty("outline");
-                table.rows[1].cells[1].className = matrix[1][1] === 0? 'red':matrix[1][1] === 1? 'blue' : 'grey';
+                table.rows[1].cells[1].style.removeProperty("outline-offset");
                 table.rows[1].cells[1].classList.add('locked');
                 table.rows[2].cells[1].classList.remove('locked');
-                table.rows[2].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[2].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[1].style.outlineOffset = "-5px";
                 table.rows[2].cells[2].classList.remove('locked');
-                table.rows[2].cells[2].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[2].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[2].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "No puede haber tres celdas del mismo color juntas en una columna.";
             }
             if (matrix[2][1] === 1 && matrix[2][2] === 0) {
                 table.rows[2].cells[1].style.removeProperty("outline");
-                table.rows[2].cells[1].className = matrix[2][1] === 0? 'red':matrix[2][1] === 1? 'blue' : 'grey';
+                table.rows[2].cells[1].style.removeProperty("outline-offset");
                 table.rows[2].cells[1].classList.add('locked');
                 table.rows[2].cells[2].style.removeProperty("outline");
-                table.rows[2].cells[2].className = matrix[2][2] === 0? 'red':matrix[2][2] === 1? 'blue' : 'grey';
+                table.rows[2].cells[2].style.removeProperty("outline-offset");
                 table.rows[2].cells[2].classList.add('locked');
-                table.rows[1].cells[0].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[1].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[1].cells[2].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[1].cells[0].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[0].style.outlineOffset = "-5px";
+                table.rows[1].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[1].style.outlineOffset = "-5px";
+                table.rows[1].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[2].style.outlineOffset = "-5px";
                 table.rows[1].cells[3].classList.remove('locked');
-                table.rows[1].cells[3].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[1].cells[3].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[3].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "Cada fila debe tener la misma cantidad de celdas de cada color.";
             }
             if (matrix[1][3] === 0) {
                 table.rows[1].cells[3].style.removeProperty("outline");
-                table.rows[1].cells[3].className = matrix[1][3] === 0? 'red':matrix[1][3] === 1? 'blue' : 'grey';
+                table.rows[1].cells[3].style.removeProperty("outline-offset");
                 table.rows[1].cells[3].classList.add('locked');
                 table.rows[1].cells[0].style.removeProperty("outline");
-                table.rows[1].cells[0].className = matrix[1][0] === 0? 'red':matrix[1][0] === 1? 'blue' : 'grey';
+                table.rows[1].cells[0].style.removeProperty("outline-offset");
                 table.rows[1].cells[1].style.removeProperty("outline");
-                table.rows[1].cells[1].className = matrix[1][1] === 0? 'red':matrix[1][1] === 1? 'blue' : 'grey';
+                table.rows[1].cells[1].style.removeProperty("outline-offset");
                 table.rows[1].cells[2].style.removeProperty("outline");
-                table.rows[1].cells[2].className = matrix[1][2] === 0? 'red':matrix[1][2] === 1? 'blue' : 'grey';
-                table.rows[0].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[1].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[2].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[1].cells[2].style.removeProperty("outline-offset");
+                table.rows[0].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[0].cells[1].style.outlineOffset = "-5px";
+                table.rows[1].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[1].style.outlineOffset = "-5px";
+                table.rows[2].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[1].style.outlineOffset = "-5px";
                 table.rows[3].cells[1].classList.remove('locked');
-                table.rows[3].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[3].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[3].cells[1].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "Las columnas también cumplen la anterior regla.";
             }
             if (matrix[3][1] === 1) {
                 table.rows[3].cells[1].style.removeProperty("outline");
-                table.rows[3].cells[1].className = matrix[3][1] === 0? 'red':matrix[3][1] === 1? 'blue' : 'grey';
+                table.rows[3].cells[1].style.removeProperty("outline-offset");
                 table.rows[3].cells[1].classList.add('locked');
                 table.rows[0].cells[1].style.removeProperty("outline");
-                table.rows[0].cells[1].className = matrix[0][1] === 0? 'red':matrix[0][1] === 1? 'blue' : 'grey';
+                table.rows[0].cells[1].style.removeProperty("outline-offset");
                 table.rows[1].cells[1].style.removeProperty("outline");
-                table.rows[1].cells[1].className = matrix[1][1] === 0? 'red':matrix[1][1] === 1? 'blue' : 'grey';
+                table.rows[1].cells[1].style.removeProperty("outline-offset");
                 table.rows[2].cells[1].style.removeProperty("outline");
-                table.rows[2].cells[1].className = matrix[2][1] === 0? 'red':matrix[2][1] === 1? 'blue' : 'grey';
+                table.rows[2].cells[1].style.removeProperty("outline-offset");
                 table.rows[3].cells[2].classList.remove('locked');
-                table.rows[3].cells[2].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[3].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[3].cells[2].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "Sabes cual va aquí ¿verdad?";
             }
             if (matrix[3][2] === 0) {
                 table.rows[2].cells[0].classList.remove('locked');
-                table.rows[2].cells[0].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[2].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[2].cells[2].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[2].cells[0].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[0].style.outlineOffset = "-5px";
+                table.rows[2].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[1].style.outlineOffset = "-5px";
+                table.rows[2].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[2].style.outlineOffset = "-5px";
                 table.rows[2].cells[3].classList.remove('locked');
-                table.rows[2].cells[3].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[2].cells[3].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[3].style.outlineOffset = "-5px";
                 table.rows[3].cells[0].classList.remove('locked');
-                table.rows[3].cells[0].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[3].cells[1].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[3].cells[0].style.outline = `5px solid ${border}`;
+                table.rows[3].cells[0].style.outlineOffset = "-5px";
+                table.rows[3].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[3].cells[1].style.outlineOffset = "-5px";
                 table.rows[3].cells[2].classList.add('locked');
-                table.rows[3].cells[2].style.outline = "3px solid rgb(255, 0, 0)";
-                table.rows[3].cells[3].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[3].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[3].cells[2].style.outlineOffset = "-5px";
+                table.rows[3].cells[3].style.outline = `5px solid ${border}`;
+                table.rows[3].cells[3].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "No puede haber dos filas o columnas iguales.";
             }
             if (matrix[2][0] === 1 && matrix[2][3] === 0 && matrix[3][0] === 0) {
                 table.rows[2].cells[0].classList.add('locked');
                 table.rows[2].cells[0].style.removeProperty("outline");
-                table.rows[2].cells[0].className = matrix[2][0] === 0? 'red':matrix[2][0] === 1? 'blue' : 'grey';
+                table.rows[2].cells[0].style.removeProperty("outline-offset");
                 table.rows[2].cells[1].style.removeProperty("outline");
-                table.rows[2].cells[1].className = matrix[2][1] === 0? 'red':matrix[2][1] === 1? 'blue' : 'grey';
+                table.rows[2].cells[1].style.removeProperty("outline-offset");
                 table.rows[2].cells[2].style.removeProperty("outline");
-                table.rows[2].cells[2].className = matrix[2][2] === 0? 'red':matrix[2][2] === 1? 'blue' : 'grey';
+                table.rows[2].cells[2].style.removeProperty("outline-offset");
                 table.rows[2].cells[3].classList.add('locked');
                 table.rows[2].cells[3].style.removeProperty("outline");
-                table.rows[2].cells[3].className = matrix[2][3] === 0? 'red':matrix[2][3] === 1? 'blue' : 'grey';
+                table.rows[2].cells[3].style.removeProperty("outline-offset");
                 table.rows[3].cells[0].classList.add('locked');
                 table.rows[3].cells[0].style.removeProperty("outline");
-                table.rows[3].cells[0].className = matrix[3][0] === 0? 'red':matrix[3][0] === 1? 'blue' : 'grey';
+                table.rows[3].cells[0].style.removeProperty("outline-offset");
                 table.rows[3].cells[1].style.removeProperty("outline");
-                table.rows[3].cells[1].className = matrix[3][1] === 0? 'red':matrix[3][1] === 1? 'blue' : 'grey';
+                table.rows[3].cells[1].style.removeProperty("outline-offset");
                 table.rows[3].cells[2].style.removeProperty("outline");
-                table.rows[3].cells[2].className = matrix[3][2] === 0? 'red':matrix[3][2] === 1? 'blue' : 'grey';
+                table.rows[3].cells[2].style.removeProperty("outline-offset");
                 table.rows[3].cells[3].style.removeProperty("outline");
-                table.rows[3].cells[3].className = matrix[3][3] === 0? 'red':matrix[3][3] === 1? 'blue' : 'grey';
+                table.rows[3].cells[3].style.removeProperty("outline-offset");
                 table.rows[0].cells[3].classList.remove('locked');
-                table.rows[0].cells[3].style.outline = "3px solid rgb(255, 0, 0)";
+                table.rows[0].cells[3].style.outline = `5px solid ${border}`;
+                table.rows[0].cells[3].style.outlineOffset = "-5px";
                 document.getElementById("title_part").textContent = "Solo falta esta y sabes cual es.";
             }
             if (matrix[0][3] == 1) {
                 table.rows[0].cells[3].classList.add('locked');
                 table.rows[0].cells[3].style.removeProperty("outline");
-                table.rows[0].cells[3].className = matrix[0][3] === 0? 'red':matrix[0][3] === 1? 'blue' : 'grey';
+                table.rows[0].cells[3].style.removeProperty("outline-offset");
                 document.getElementById("title_part").textContent = "¡Buen trabajo!";
                 setTimeout(() => {
                     const user = localStorage.getItem('userId');
@@ -223,17 +261,8 @@
                 }
             }
             table.rows[0].cells[0].classList.remove('locked');
-            table.rows[0].cells[0].style.outline = "3px solid rgb(255, 0, 0)";
-            if (localStorage.getItem("theme") === "light-theme") {
-                color0 = "roja";
-                color1 = "azul";
-            } else if (localStorage.getItem("theme") === "dark-theme"){
-                color0 = "amarilla";
-                color1 = "azul";
-            } else {
-                color0 = "amarilla";
-                color1 = "morada";
-            }
+            table.rows[0].cells[0].style.outline = `5px solid ${border}`;
+            table.rows[0].cells[0].style.outlineOffset = "-5px";
             document.getElementById("title_part").textContent = `Presiona la celda una vez para volverla ${color0}.`;
         }
         createTable();

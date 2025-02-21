@@ -218,6 +218,7 @@
         }
 
         function rules_final(matrix) {
+            const table = document.getElementById('matrix');
             const n = matrix.length;
             const matrixt = matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
             let control = true;
@@ -225,12 +226,20 @@
                 for (let i = 0; i < n; i++) {
                     for (let j = 0; j < n - 2; j++) {
                         if (matrix[i][j] === matrix[i][j + 1] && matrix[i][j] === matrix[i][j + 2]) {
-                            document.getElementById("title_part").textContent = `Hay 3 en línea en la fila ${i + 1}`;
+                            document.getElementById("title_part").textContent = matrix[i][j] == 0? `Hay 3 ${color0} seguidos` : `Hay 3 ${color1} seguidos`;
+                            for (let k = 0; k < 3; k++) {
+                                table.rows[i].cells[j+k].style.outline = `5px solid ${border}`;
+                                table.rows[i].cells[j+k].style.outlineOffset = "-5px";   
+                            }
                             control = false;
                             return control;
                         }
                         if (matrix[j][i] === matrix[j + 1][i] && matrix[j][i] === matrix[j + 2][i]) {
-                            document.getElementById("title_part").textContent = `Hay 3 en línea en la columna ${i + 1}`;
+                            document.getElementById("title_part").textContent = matrix[i][j] == 0? `Hay 3 ${color0} seguidos` : `Hay 3 ${color1} seguidos`;
+                            for (let k = 0; k < 3; k++) {
+                                table.rows[j+k].cells[i].style.outline = `5px solid ${border}`;
+                                table.rows[j+k].cells[i].style.outlineOffset = "-5px";   
+                            }
                             control = false;
                             return control;
                         }
@@ -238,24 +247,40 @@
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrix[i]) < (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color1} en la fila ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color0} que ${color1}`;
+                        for (let j = 0; j < n; j++) {
+                            table.rows[i].cells[j].style.outline = `5px solid ${border}`;
+                            table.rows[i].cells[j].style.outlineOffset = "-5px";
+                        }
                         control = false;
                         return control;
                     }
                     if (sum(matrix[i]) > (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color1} en la fila ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color0}`;
+                        for (let j = 0; j < n; j++) {
+                            table.rows[i].cells[j].style.outline = `5px solid ${border}`;
+                            table.rows[i].cells[j].style.outlineOffset = "-5px";
+                        }
                         control = false;
                         return control;
                     }
                 }
                 for (let i = 0; i < n; i++) {
                     if (sum(matrixt[i]) < (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color1} en la columna ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color0} que ${color1}`;
+                        for (let j = 0; j < n; j++) {
+                            table.rows[j].cells[i].style.outline = `5px solid ${border}`;
+                            table.rows[j].cells[i].style.outlineOffset = "-5px";
+                        }
                         control = false;
                         return control;
                     }
                     if (sum(matrixt[i]) > (n) / 2) {
-                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color1} en la columna ${i + 1}`;
+                        document.getElementById("title_part").textContent = `Hay más ${color1} que ${color0}`;
+                        for (let j = 0; j < n; j++) {
+                            table.rows[j].cells[i].style.outline = `5px solid ${border}`;
+                            table.rows[j].cells[i].style.outlineOffset = "-5px";
+                        }
                         control = false;
                         return control;
                     }
@@ -263,12 +288,24 @@
                 for (let i = 0; i < n; i++) {
                     for (let j = i + 1; j < n; j++) {
                         if (arraysEqual(matrix[i], matrix[j])) {
-                            document.getElementById("title_part").textContent = `Las filas ${i + 1} y ${j + 1} son iguales`;
+                            document.getElementById("title_part").textContent = `Hay dos filas iguales`;
+                            for (let k = 0; k < n; k++) {
+                                table.rows[i].cells[k].style.outline = `5px solid ${border}`;
+                                table.rows[i].cells[k].style.outlineOffset = "-5px";
+                                table.rows[j].cells[k].style.outline = `5px solid ${border}`;
+                                table.rows[j].cells[k].style.outlineOffset = "-5px";
+                            }
                             control = false;
                             return control;
                         }
                         if (arraysEqual(matrixt[i], matrixt[j])) {
-                            document.getElementById("title_part").textContent = `Las columnas ${i + 1} y ${j + 1} son iguales`;
+                            document.getElementById("title_part").textContent = `Hay dos filas iguales`;
+                            for (let k = 0; k < n; k++) {
+                                table.rows[k].cells[i].style.outline = `5px solid ${border}`;
+                                table.rows[k].cells[i].style.outlineOffset = "-5px";
+                                table.rows[k].cells[j].style.outline = `5px solid ${border}`;
+                                table.rows[k].cells[j].style.outlineOffset = "-5px";
+                            }
                             control = false;
                             return control;
                         }
