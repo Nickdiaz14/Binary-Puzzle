@@ -10,13 +10,6 @@
         <div style="text-align:center; margin: 20px;">
             <h1 id="title" style="font-size: 26px; font-weight: bold;">Ranking</h1>
             <select id="matrix-size" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="reset()">
-                <option value="4" selected>4 x 4</option>
-                <option value="6">6 x 6</option>
-                <option value="8">8 x 8</option>
-                <option value="10">10 x 10</option>
-                <option value="Contrareloj">Contrareloj</option>
-                <option value="Unicolor">Unicolor</option>
-                <option value="Bicolor">Bicolor</option>
             </select>
         </div>
         <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
@@ -24,12 +17,13 @@
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 const savedTheme = localStorage.getItem("theme");
+                const div = document.getElementById("matrix-size");
+        
                 if (savedTheme) {
                     document.body.classList.remove("light-theme", "dark-theme");
                     document.body.classList.add(savedTheme);
                 }
-                const div = document.getElementById("matrix-size");
-
+        
                 if (savedTheme === "light-theme") {
                     div.style.background = "#fffde6";
                     div.style.color = "#000000";
@@ -43,23 +37,64 @@
                     div.style.color = "#ffffff";
                     div.style.border = "1px solid #ccc";
                 }
+        
+                // Restaurar selección desde localStorage
+                const savedSelection = localStorage.getItem("selectedMatrix");
+                const matrixSelect = document.getElementById("matrix-size");
+
+                // Si hay un valor guardado y es válido, seleccionarlo; de lo contrario, usar la primera opción disponible.
+                if (savedSelection && [...matrixSelect.options].some(option => option.value === savedSelection)) {
+                    matrixSelect.value = savedSelection;
+                } else {
+                    matrixSelect.value = matrixSelect.options[0].value; // Asignar el primer valor disponible
+                    localStorage.setItem("selectedMatrix", matrixSelect.value); // Guardarlo en localStorage
+                }
+        
+                reset(); // Llamar para asegurarse de que el leaderboard se carga con la selección guardada
             });
-            // Obtener los datos del leaderboard pasado desde el backend
+        
             const data = JSON.parse('{{ data | safe }}');
             const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";
             const secondPlaceImg = "{{ url_for('static', filename='images/second_place.png') }}";
             const thirdPlaceImg = "{{ url_for('static', filename='images/third_place.png') }}";
-
-
+            const game = '{{ game }}';
+            const matrixSelect = document.getElementById("matrix-size");
+        
+            // Limpiar opciones y agregar nuevas
+            matrixSelect.innerHTML = "";
+        
+            if (game === "0h-h1") {
+                matrixSelect.innerHTML += '<option value="4">4 x 4</option>';
+                matrixSelect.innerHTML += '<option value="6">6 x 6</option>';
+                matrixSelect.innerHTML += '<option value="8">8 x 8</option>';
+                matrixSelect.innerHTML += '<option value="10">10 x 10</option>';
+                matrixSelect.innerHTML += '<option value="Contrareloj">Contrareloj</option>';
+            } else {
+                matrixSelect.innerHTML += '<option value="Unicolor">Unicolor</option>';
+                matrixSelect.innerHTML += '<option value="Bicolor">Bicolor</option>';
+                matrixSelect.innerHTML += '<option value="Progresivo">Progresivo</option>';
+                matrixSelect.innerHTML += '<option value="Aleatorio">Aleatorio</option>';
+            }
+        
+            // Restaurar la selección guardada después de poblar las opciones
+            const savedSelection = localStorage.getItem("selectedMatrix");
+            if (savedSelection) {
+                matrixSelect.value = savedSelection;
+            }
+        
+            matrixSelect.addEventListener("change", function() {
+                localStorage.setItem("selectedMatrix", matrixSelect.value);
+                reset();
+            });
+        
             function reset() {
                 let leaderboardDiv = document.getElementById('leaderboard');
                 leaderboardDiv.innerHTML = '';
                 let table = document.createElement('table');
                 table.classList.add("leaderboard");
                 let n = document.getElementById('matrix-size').value;
-                let leaderboardData = data[`T${n}`];
-
-                // Crear encabezados de la tabla
+                let leaderboardData = data[`T${n}`] || [];
+        
                 table.innerHTML = `
                     <tr>
                         <th>Posición</th>
@@ -68,47 +103,43 @@
                     </tr>
                 `;
         
-                // Mostrar las entradas del leaderboard
                 leaderboardData.slice(0, 10).forEach((entry, index) => {
-                let row = document.createElement('tr');
-                let colorClass = "";
-                let place = index + 1; // Por defecto, mostrar el número
-
-                if (index === 0) {
-                    colorClass = "#f1c40f";
-                    place = `<img src="${firstPlaceImg}" alt="1st" width="20">`;
-                } else if (index === 1) {
-                    colorClass = "#7bafb9";
-                    place = `<img src="${secondPlaceImg}" alt="2nd" width="20">`;
-                } else if (index === 2) {
-                    colorClass = "#bd6104";
-                    place = `<img src="${thirdPlaceImg}" alt="3rd" width="20">`;
-                }
-
-                row.innerHTML = `
-                    <td class="tipo2" style="color: ${colorClass}">${place}</td>
-                    <td class="tipo2" style="color: ${colorClass}">${entry[0]}</td>
-                    <td class="tipo2" style="color: ${colorClass}">${entry[1]}</td>
-                `;
-                table.appendChild(row);
-            });
+                    let row = document.createElement('tr');
+                    let colorClass = "";
+                    let place = index + 1;
+        
+                    if (index === 0) {
+                        colorClass = "#f1c40f";
+                        place = `<img src="${firstPlaceImg}" alt="1st" width="20">`;
+                    } else if (index === 1) {
+                        colorClass = "#7bafb9";
+                        place = `<img src="${secondPlaceImg}" alt="2nd" width="20">`;
+                    } else if (index === 2) {
+                        colorClass = "#bd6104";
+                        place = `<img src="${thirdPlaceImg}" alt="3rd" width="20">`;
+                    }
+        
+                    row.innerHTML = `
+                        <td class="tipo2" style="color: ${colorClass}">${place}</td>
+                        <td class="tipo2" style="color: ${colorClass}">${entry[0]}</td>
+                        <td class="tipo2" style="color: ${colorClass}">${entry[1]}</td>
+                    `;
+                    table.appendChild(row);
+                });
         
                 leaderboardDiv.appendChild(table);
-
+        
                 const userIndex = leaderboardData.findIndex(entry => entry[2] === localStorage.getItem('userId'));
-
-                if (userIndex !== -1 && userIndex >= 10) { // Si el usuario está en la lista
-                    // Espacio entre tabla y nueva sección
+        
+                if (userIndex !== -1 && userIndex >= 10) {
                     let space = document.createElement('div');
                     space.style.marginTop = "30px";
                     leaderboardDiv.appendChild(space);
-
-                    // Crear una nueva fila con tres celdas separadas
+        
                     let extraTable = document.createElement('table');
                     extraTable.classList.add("leaderboard");
                     extraTable.style.width = table.offsetWidth + 'px';
-            
-                    // Crear encabezados de la tabla
+        
                     extraTable.innerHTML = `
                         <tr>
                             <th>Posición</th>
@@ -126,7 +157,23 @@
                     leaderboardDiv.appendChild(extraTable);
                 }
             }
+        
+            function updateLeaderboard() {
+                fetch(window.location.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, "text/html");
+                        const newData = JSON.parse(doc.querySelector("script").innerHTML.match(/JSON\.parse\('(.+)'\)/)[1].replace(/\\'/g, "'"));
+                        Object.assign(data, newData);
+                        reset();
+                    })
+                    .catch(error => console.error("Error al actualizar el leaderboard:", error));
+            }
+        
+            setInterval(updateLeaderboard, 10000); // Actualizar cada 10 segundos
+        
             reset();
-        </script>
+        </script>        
     </body>
     </html>

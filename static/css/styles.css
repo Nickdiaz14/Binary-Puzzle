@@ -37,8 +37,13 @@ td {
   transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
   transition: background-color 0.3s ease-in-out;
   padding: 5px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #ffffff;
 }
 .tipo2{
+  font-size: 16px;
+  font-weight: normal;
   border: 3px solid #4a4949;
   border-radius: 0px;
   background-color: #000112;
@@ -111,6 +116,15 @@ td {
   top:0px;
   bottom: 100%;
 }
+.contenedor {
+  display: flex;
+  justify-content: center; /* Centra los puntos horizontalmente */
+  gap: 10px; /* Espacio entre puntos */
+}
+
+.punto {
+  width: 15px; /* Ajusta el tamaño */
+}
 
 /* ---------------------------------------------------------------- light theme ----------------------------------------------------------------*/
 body.light-theme {
@@ -151,8 +165,13 @@ body.light-theme td {
   transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
   transition: background-color 0.3s ease-in-out;
   padding: 5px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #ffffff;
 }
 body.light-theme .tipo2{
+  font-size: 16px;
+  font-weight: normal;
   border: 3px solid #000;
   border-radius: 0px;
   color: #000;
@@ -273,8 +292,13 @@ body.dark-theme td {
   transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
   transition: background-color 0.3s ease-in-out;
   padding: 5px;
+  font-size: 40px;
+  font-weight: bold;
+  color: #ffffff;
 }
 body.dark-theme .tipo2{
+  font-size: 16px;
+  font-weight: normal;
   border: 3px solid #4a4949;
   border-radius: 0px;
   background-color: #000112;
