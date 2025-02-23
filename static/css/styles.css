@@ -1,133 +1,4 @@
-/* ---------------------------------------------------------------- M&B theme ----------------------------------------------------------------*/
 body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  padding: 0;
-  margin: 0;
-  background-color: #15003e; /* Fondo negro */
-  box-sizing: border-box;
-  font-family: "Rubik", sans-serif;
-  touch-action: manipulation; /* Limita gestos de zoom */
-  user-select: none;
-}
-
-h1 {
-  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
-  color: #ffffff; /* Título en blanco */
-}
-
-th {
-  padding: 12px;
-  background-color: #4a4949;
-  color: #fffde6;
-  font-weight: bold;
-  border: 3px solid #4a4949;
-}
-
-td {
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  border: 5px solid #15003e;
-  aspect-ratio: 1 / 1;
-  background-color: rgb(103 102 102 / 29%);
-  transition: width 0.3s ease, height 0.3s ease; /* Transición suave cuando el tamaño cambia */
-  transition: background-color 0.3s ease-in-out;
-  padding: 5px;
-  font-size: 40px;
-  font-weight: bold;
-  color: #ffffff;
-}
-.tipo2{
-  font-size: 16px;
-  font-weight: normal;
-  border: 3px solid #4a4949;
-  border-radius: 0px;
-  background-color: #000112;
-  color: #fffde6;
-  padding: 11px;
-  font-weight: bold;
-}
-
-.resolver.azulito:hover {
-  background: linear-gradient(145deg, #5800d4, #9b00fb);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
-  color: #ffffff;
-}
-.resolver.azulito:active {
-  background: #3f016f;
-  box-shadow: inset 6px 6px 12px #2f0045, inset -6px -6px 12px #5a028d;
-}
-.resolver.rojito:hover {
-  color: #000000;
-  background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
-}
-.resolver.rojito:active {
-  background: #ef9606;
-  box-shadow: inset 6px 6px 12px #aa5704, inset -6px -6px 12px #ff9008;
-}
-
-.resolver.inicio:hover {
-  color: #ffffff;
-  background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
-}
-
-.resolver.evaluar:hover {
-  background: linear-gradient(145deg, #5800d4, #9b00fb);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
-  color: #ffffff;
-}
-
-.red {
-  color: #ffffff;
-  background: linear-gradient(145deg, #ffff00, #ff9306);
-  box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
-  outline: 3px solid rgb(219, 120, 0);
-  outline-offset: -3px;
-}
-
-.blue {
-  background: linear-gradient(145deg, #5800d4, #9b00fb);
-  box-shadow: inset -3px -3px 10px rgb(85, 1, 133), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
-  outline: 3px solid rgb(85, 1, 133);
-  outline-offset: -3px;
-}
-
-.lose {
-  background: linear-gradient(145deg, #d70505, #ff0606);
-  box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
-  outline: 3px solid rgb(117, 2, 2);
-  outline-offset: -3px;
-}
-
-.container {
-  width: 100vw;
-  height: 100vh;
-  background: #15003e;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  top:0px;
-  bottom: 100%;
-}
-.contenedor {
-  display: flex;
-  justify-content: center; /* Centra los puntos horizontalmente */
-  gap: 10px; /* Espacio entre puntos */
-}
-
-.punto {
-  width: 15px; /* Ajusta el tamaño */
-}
-
-/* ---------------------------------------------------------------- light theme ----------------------------------------------------------------*/
-body.light-theme {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -142,12 +13,12 @@ body.light-theme {
   user-select: none;
 }
 
-body.light-theme h1 {
+body h1 {
   transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
   color: #000000;
 }
 
-body.light-theme th {
+body th {
   padding: 12px;
   background-color: #000000; /* Azul profundo */
   color: #ffffff;
@@ -155,7 +26,7 @@ body.light-theme th {
   border: 3px solid #000;
 }
 
-body.light-theme td {
+body td {
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
@@ -169,7 +40,7 @@ body.light-theme td {
   font-weight: bold;
   color: #ffffff;
 }
-body.light-theme .tipo2{
+body .tipo2{
   font-size: 16px;
   font-weight: normal;
   border: 3px solid #000;
@@ -180,54 +51,54 @@ body.light-theme .tipo2{
   font-weight: bold;
 }
 
-body.light-theme .resolver.azulito:hover {
+body .resolver.azulito:hover {
   color: #fffde6;
   background: linear-gradient(145deg, #5800d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
 }
-body.light-theme .resolver.azulito:active {
+body .resolver.azulito:active {
   color: #fffde6;
   background: #01066f;
   box-shadow: inset 6px 6px 12px #000845, inset -6px -6px 12px #12028d;
 }
-body.light-theme .resolver.rojito:hover {
+body .resolver.rojito:hover {
   color: #fffde6;
   background: linear-gradient(145deg, #d70505, #ff0606);
   box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
-body.light-theme .resolver.rojito:active {
+body .resolver.rojito:active {
   color: #fffde6;
   background: #ef0606;
   box-shadow: inset 6px 6px 12px #aa0404, inset -6px -6px 12px #ff0808;
 }
 
-body.light-theme .resolver.inicio:hover {
+body .resolver.inicio:hover {
   color: #fffde6;
   background: linear-gradient(145deg, #d70505, #ff0606);
   box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
 }
 
-body.light-theme .resolver.evaluar:hover {
+body .resolver.evaluar:hover {
   color: #fffde6;
   background: linear-gradient(145deg, #5800d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
 }
 
-body.light-theme .red {
+body .red {
   background: linear-gradient(145deg, #d70505, #ff0606);
   box-shadow: inset -3px -3px 10px rgb(117, 2, 2), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
   outline: 3px solid rgb(117, 2, 2);
   outline-offset: -3px;
 }
 
-body.light-theme .blue {
+body .blue {
   background: linear-gradient(145deg, #5800d4, #0053fb);
   box-shadow: inset -3px -3px 10px rgb(1, 14, 128), inset 2px 2px 10px rgba(90, 120, 255, 0.993);
   outline: 3px solid rgb(1, 14, 128);
   outline-offset: -3px;
 }
 
-body.light-theme .lose {
+body .lose {
   color: #ffffff;
   background: linear-gradient(145deg, #ffff00, #ff9306);
   box-shadow: inset -3px -3px 10px rgb(255, 140, 0), inset 2px 2px 10px rgba(248, 112, 112, 0.993);
@@ -235,13 +106,13 @@ body.light-theme .lose {
   outline-offset: -3px;
 }
 
-body.light-theme .azulito,body.light-theme .rojito,body.light-theme .inicio,body.light-theme .evaluar {
+body .azulito,body .rojito,body .inicio,body .evaluar {
   color: #000;
   background: linear-gradient(145deg, #f4f4f4, #7c7c7c73); /* Ajuste de fondo más oscuro */
   box-shadow: 6px 6px 12px rgba(0, 0, 0, 0.7), inset -3px -3px 10px rgba(0, 0, 0, 0.5);
 }
 
-body.light-theme .container {
+body .container {
   width: 100vw;
   height: 100vh;
   background: #fffde6;

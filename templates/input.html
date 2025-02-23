@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <title>Menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1 id="title" for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;">Ingresa un número</h1>
+    {% if game == '1' %}
+    <h1 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">Entre 0 y 10.000</h1>
+    {% else %}
+    <h1 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">De 4 cifras</h1>
+    {% endif %}
+    <div style="text-align:center; margin: 20px;">
+        <h1 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h1>
+    </div>
+    <input type="text" id="number" name="nickname" required style="margin-top: 15px; padding: 10px; border: 2px solid #007BFF; border-radius: 5px; font-size: 16px;">
+    <button onclick="startGame()" style="margin-top: 15px;" class="resolver evaluar">Enviar</button>
+
+    <script>
+        let centisecondsElapsed = 0;
+        let valid = false;
+        let timerInterval;
+        let game = '{{ game }}'
+
+        function startTimer() {
+            clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                centisecondsElapsed-- // Incrementar en 10 ms
+                updateTimerDisplay();
+                if (centisecondsElapsed === 0) {
+                    stopTimer();
+                    valid = false;
+                }
+            }, 10); // Actualizar cada 10 ms (centésima de segundo)
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
+            return { minutes, seconds, centiseconds, totalCentiseconds: centisecondsElapsed };
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function startGame() {
+            if (valid) {
+                return
+            }
+            const number = document.getElementById('number').value;
+            if (number) {
+                fetch('/games', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ num: number, game: game}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                valid = true;
+                centisecondsElapsed = 700;
+                startTimer();
+                document.getElementById('number').value = ``;
+                if (data.flag) {
+                    document.getElementById('title').textContent = 'Ya tenemos ganador :(';
+                }
+                if (data.aproach === 1) {
+                    window.location.href = '/win'
+                }
+            });
+            }
+        }
+    </script>
+</body>
+</html>

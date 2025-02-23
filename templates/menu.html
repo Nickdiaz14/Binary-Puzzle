@@ -7,15 +7,14 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <img id="image" src="{{ url_for('static', filename='images/logo_M&B.png') }}" style="width: 120px;">
     <div style="text-align:center;">
-        <h1 id="title" style="font-size: 60px; font-weight: bold;">¡Hola, {{ nickname }}!</h1>
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">¡Bienvenido a la celebración del día Pi!</h1>
     </div>
     <div style="text-align:center; margin: 20px;">
         <h1 id="title1" style="font-size: 26px; font-weight: bold;">Juegos</h1>
         <select id="game" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="handleGameChange()">
-            <option value="0h-h1" selected>0h-h1</option>
-            <option value="MindGrid">Mind Games</option>
+            <option value="1" selected>Tendencia</option>
+            <option value="2">Picas y fijas</option>
         </select>
     </div>
     <div style="text-align:center;">
@@ -24,176 +23,18 @@
         <!-- Menú Juego 1 (0h-h1) -->
         <div id="game1-menu" style="text-align:center;">
             <div class="botones">
-                <button onclick="location.href='/0hh1'" class="resolver azulito">0h-h1</button>
-                <button onclick="location.href='/time_trial_0hh1'" class="resolver rojito">Contrarreloj</button>
-            </div>
-            <div class="botones">
-                <button onclick="location.href='/tutorial'" class="resolver rojito">Tutorial</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
+                <button onclick="redirectToGame()" class="resolver azulito">Juego</button>
+                <button onclick="redirectToBoard()" class="resolver rojito">Tablero</button>
             </div>
         </div>
-
-        <!-- Menú Juego 2 (MindGrid) -->
-        <div id="game2-menu" style="text-align:center; display: none;">
-            <div class="botones">
-                <button onclick="location.href='/memory?dif=6'" class="resolver azulito">Unicolor</button>
-                <button onclick="location.href='/memory?dif=5'" class="resolver rojito">Bicolor</button>
-            </div>
-            <div class="botones">
-                <button onclick="location.href='/sequence'" class="resolver rojito">Patrón Perfecto</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
-            </div>
-        </div>
-        <div style="height: 40px;"></div>
-
-        <h1 id="title" style="margin-top: 20px; font-size: 27px; font-weight: bold;">Ajustes</h1>
-
-        <div style="text-align:center;" class="botones">
-            <button id="theme-toggle" class="resolver azulito">Cambiar Tema</button>
-            <button onclick="location.href = '/?ch=si'" class="resolver rojito">Cambiar nombre</button>
-        </div>
-    </div>
     <script>
-        function handleGameChange() {
-            const infoDiv = document.getElementById('algorithm-info');
-            infoDiv.style.display = 'none';
-
-            const gameSelect = document.getElementById("game").value;
-            const game1Menu = document.getElementById("game1-menu");
-            const game2Menu = document.getElementById("game2-menu");
-
-            if (gameSelect === "0h-h1") {
-                game1Menu.style.display = "block";
-                game2Menu.style.display = "none";
-            } else {
-                game1Menu.style.display = "none";
-                game2Menu.style.display = "block";
-            }
+        function redirectToGame() {
+            const gameValue = document.getElementById("game").value;
+            location.href = `/input?game=${gameValue}`;
         }
-
-        // Ejecutar al cargar la página para reflejar la selección actual
-        document.addEventListener("DOMContentLoaded", handleGameChange);
-        function toggleInfo() {
-            const gameSelect = document.getElementById("game").value;
-
-            const infoDiv = document.getElementById('algorithm-info');
-            let description = gameSelect === "0h-h1" ? `
-            1. Todo el tablero debe estar lleno. <br>
-            2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
-            3. No puede haber tres celdas consecutivas del mismo color. <br>
-            4. No puede haber dos filas o columnas idénticas.` :
-            `
-            1. Mira y memoriza el patrón. <br>
-            2. Replica el patrón.`;
-            infoDiv.innerHTML = description;
-            infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
-        }
-        document.addEventListener("DOMContentLoaded", function () {
-            const themeToggle = document.getElementById("theme-toggle");
-            const div = document.getElementById("algorithm-info");
-            const div1 = document.getElementById("game");
-            const image = document.getElementById("image");
-
-            // Recuperar el tema guardado en localStorage (opcional)
-            const savedTheme = localStorage.getItem("theme");
-            if (savedTheme) {
-                document.body.classList.remove("light-theme", "dark-theme");
-                document.body.classList.add(savedTheme);   
-            }
-
-            if (savedTheme === "light-theme") {
-                div.style.color = "#000000";
-                div.style.border = "1px solid #121212";
-                image.style.filter = "none";
-                div1.style.background = "#fffde6";
-                div1.style.color = "#000000";
-                div1.style.border = "1px solid #121212";
-            } else if (savedTheme === "dark-theme"){
-                div.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                div1.style.background = "#000112";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            } else {
-                div.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                div1.style.background = "#15003e";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            }
-
-            themeToggle.addEventListener("click", function () {
-                let currentTheme = document.body.classList.contains("dark-theme")
-                    ? "dark-theme"
-                    : document.body.classList.contains("light-theme")
-                    ? "light-theme"
-                    : "";
-
-                let nextTheme = currentTheme === ""
-                    ? "dark-theme"
-                    : currentTheme === "dark-theme"
-                    ? "light-theme"
-                    : false;
-                document.body.classList.remove("light-theme", "dark-theme");
-                if (nextTheme) {
-                    document.body.classList.add(nextTheme);
-                    localStorage.setItem("theme", nextTheme);
-                } else {
-                    localStorage.removeItem("theme");
-                }
-
-            if (nextTheme === "light-theme") {
-                div.style.color = "#000000";
-                div.style.border = "1px solid #121212";
-                image.style.filter = "none";
-                div1.style.background = "#fffde6";
-                div1.style.color = "#000000";
-                div1.style.border = "1px solid #121212";
-            } else if (nextTheme === "dark-theme"){
-                div.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                div1.style.background = "#000112";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            } else {
-                div.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                div1.style.background = "#15003e";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            }
-            });
-        });
-        const savedTheme = localStorage.getItem("theme");  
-        const div = document.getElementById("algorithm-info");
-        const div1 = document.getElementById("game");
-        const image = document.getElementById("image");
-
-        if (savedTheme === "light-theme") {
-            div.style.color = "#000000";
-            div.style.border = "1px solid #121212";
-            image.style.filter = "none";
-            div1.style.background = "#fffde6";
-            div1.style.color = "#000000";
-            div1.style.border = "1px solid #121212";
-        } else if (savedTheme === "dark-theme"){
-            div.style.color = "#ffffff";
-            div.style.border = "1px solid #ccc";
-            image.style.filter = "invert(90%)";
-            div1.style.background = "#000112";
-            div1.style.color = "#ffffff";
-            div1.style.border = "1px solid #ccc";
-        } else {
-            div.style.color = "#ffffff";
-            div.style.border = "1px solid #ccc";
-            image.style.filter = "invert(90%)";
-            div1.style.background = "#15003e";
-            div1.style.color = "#ffffff";
-            div1.style.border = "1px solid #ccc";
+        function redirectToBoard() {
+            const gameValue = document.getElementById("game").value;
+            location.href = `/leaderboard?game=${gameValue}`;
         }
     </script>
 </body>

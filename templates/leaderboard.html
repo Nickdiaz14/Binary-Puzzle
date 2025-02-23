@@ -8,170 +8,55 @@
     </head>
     <body>
         <div class="js-container container" style="top:0px !important;">
-            <div style="text-align:center; margin: 20px;">
-                <h1 id="title" style="font-size: 30px; font-weight: bold;">Ranking de {{board}}</h1>
-            </div>
-            <h1 for="matrix-size" style="font-size: 22px; font-weight: bold; margin-top: 10px; margin-bottom: 10px">{{ message }}</h1>
             <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
             <div style="text-align:center;" class="botones">
-                <button onclick="reintentar()" class="resolver evaluar">Reintentar</button>
-                <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class= "resolver evaluar">Volver</button>
+                <button onclick="location.href=`/`" class= "resolver evaluar">Volver</button>
             </div>
         </div>
         <script>
-            function reintentar() {
-                if (board === "Contrareloj") {
-                    window.location.href = '/time_trial_0hh1'
-                } else if (board.includes('color')) {
-                    if (board.includes('Bi')) {
-                        window.location.href = '/memory?dif=5'
-                    } else {
-                        window.location.href = '/memory?dif=6'
-                    }
-                } else if (board.includes('Aleatorio') || board.includes('Progresivo')) {
-                    window.location.href = '/sequence'
-                } else {
-                    window.location.href = '/0hh1'
-                }
-            }
-            const best = '{{best}}'
-            const board = '{{board}}'
-            const Confettiful = function (el) {
-                this.el = el;
-                this.containerEl = null;
-                this.confettiFrequency = 3;
-                this.confettiColors = ['#00ff04', '#ff0000', '#ff00e6', '#00a2ff','#ffea00'];
-                this.confettiAnimations = ['slow', 'medium', 'fast'];
-                this._setupElements();
-                this._renderConfetti();
-            };
-
-            Confettiful.prototype._setupElements = function () {
-                const containerEl = document.createElement('div');
-                containerEl.classList.add('confetti-container');
-                this.el.style.position = 'relative';
-                this.el.appendChild(containerEl);
-                this.containerEl = containerEl;
-            };
-
-            Confettiful.prototype._renderConfetti = function () {
-                this.confettiInterval = setInterval(() => {
-                    const confettiEl = document.createElement('div');
-                    const confettiSize = `${Math.floor(Math.random() * 8) + 7}px`;
-                    const confettiBackground = this.confettiColors[Math.floor(Math.random() * this.confettiColors.length)];
-                    const confettiLeft = `${Math.random() * this.el.offsetWidth}px`;
-                    const confettiAnimation = this.confettiAnimations[Math.floor(Math.random() * this.confettiAnimations.length)];
-
-                    confettiEl.classList.add('confetti', `confetti--animation-${confettiAnimation}`);
-                    confettiEl.style.left = confettiLeft;
-                    confettiEl.style.width = confettiSize;
-                    confettiEl.style.height = confettiSize;
-                    confettiEl.style.backgroundColor = confettiBackground;
-
-                    this.containerEl.appendChild(confettiEl);
-
-                    setTimeout(() => {
-                        confettiEl.remove();
-                    }, 3000);
-                }, 25);
-
-                // Detener la animación después de 10 segundos
-                setTimeout(() => {
-                    clearInterval(this.confettiInterval);
-                }, 7000);
-            };
-
-            window.addEventListener('DOMContentLoaded', () => {
-                const container = document.querySelector('.js-container');
-                if(best === "True") {
-                    new Confettiful(container);
-                }
-            });
-            // Obtener los datos del leaderboard pasado desde el backend
-            document.addEventListener("DOMContentLoaded", function() {
-                const savedTheme = localStorage.getItem("theme");
-                if (savedTheme) {
-                    document.body.classList.remove("light-theme", "dark-theme");
-                    document.body.classList.add(savedTheme);
-                }
-            });
             const data = JSON.parse('{{ data | safe }}');
-            const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";
-            const secondPlaceImg = "{{ url_for('static', filename='images/second_place.png') }}";
-            const thirdPlaceImg = "{{ url_for('static', filename='images/third_place.png') }}";
 
-    
-            // Crear encabezados de la tabla
-            let leaderboardDiv = document.getElementById('leaderboard');
-            leaderboardDiv.innerHTML = '';
-            let table = document.createElement('table');
-            table.classList.add("leaderboard");
-            table.style.height = '30px'
-            table.innerHTML = `
-                <tr>
-                    <th>Posición</th>
-                    <th>Nombre</th>
-                    <th>Record</th>
-                </tr>
-            `;
-    
-            data.slice(0, 5).forEach((entry, index) => {
-                let row = document.createElement('tr');
-                let colorClass = "";
-                let place = index + 1; // Por defecto, mostrar el número
-
-                if (index === 0) {
-                    colorClass = "#f1c40f";
-                    place = `<img src="${firstPlaceImg}" alt="1st" width="20">`;
-                } else if (index === 1) {
-                    colorClass = "#7bafb9";
-                    place = `<img src="${secondPlaceImg}" alt="2nd" width="20">`;
-                } else if (index === 2) {
-                    colorClass = "#bd6104";
-                    place = `<img src="${thirdPlaceImg}" alt="3rd" width="20">`;
-                }
-
-                row.innerHTML = `
-                    <td class="tipo2" style="color: ${colorClass}">${place}</td>
-                    <td class="tipo2" style="color: ${colorClass}">${entry[0]}</td>
-                    <td class="tipo2" style="color: ${colorClass}">${entry[1]}</td>
-                `;
-                table.appendChild(row);
-            });
-
-    
-            leaderboardDiv.appendChild(table);
-
-            const userIndex = data.findIndex(entry => entry[2] === localStorage.getItem('userId'));
-
-            if (userIndex !== -1 && userIndex >= 5) { // Si el usuario está en la lista
-                // Espacio entre tabla y nueva sección
-                let space = document.createElement('div');
-                space.style.marginTop = "30px";
-                leaderboardDiv.appendChild(space);
-
-                // Crear una nueva fila con tres celdas separadas
-                let extraTable = document.createElement('table');
-                extraTable.classList.add("leaderboard");
-                extraTable.style.width = table.offsetWidth + 'px'
+            function reset() {
+                let leaderboardDiv = document.getElementById('leaderboard');
+                leaderboardDiv.innerHTML = '';
+                let table = document.createElement('table');
+                table.classList.add("leaderboard");
+                let leaderboardData = data;
         
-                // Crear encabezados de la tabla
-                extraTable.innerHTML = `
+                table.innerHTML = `
                     <tr>
-                        <th>Posición</th>
-                        <th>Nombre</th>
-                        <th>Record</th>
+                        <th>Número</th>
+                        <th>Proporción</th>
                     </tr>
                 `;
-                let extraRow = document.createElement('tr');
-                extraRow.innerHTML = `
-                    <td class="tipo2">${userIndex + 1}</td>
-                    <td class="tipo2">${data[userIndex][0]}</td>
-                    <td class="tipo2">${data[userIndex][1]}</td>
-                `;
-                extraTable.appendChild(extraRow);
-                leaderboardDiv.appendChild(extraTable);
+        
+                leaderboardData.forEach((entry, index) => {
+                    let row = document.createElement('tr');
+        
+                    row.innerHTML = `
+                        <td class="tipo2"">${entry[0]}</td>
+                        <td class="tipo2" style="color: ${entry[2]}">${entry[1]}</td>
+                    `;
+                    table.appendChild(row);
+                });
+        
+                leaderboardDiv.appendChild(table);
             }
+
+            function updateLeaderboard() {
+                fetch(window.location.href)
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, "text/html");
+                        const newData = JSON.parse(doc.querySelector("script").innerHTML.match(/JSON\.parse\('(.+)'\)/)[1].replace(/\\'/g, "'"));
+                        Object.assign(data, newData);
+                        reset();
+                    })
+                    .catch(error => console.error("Error al actualizar el leaderboard:", error));
+            }
+            reset();
+            setInterval(updateLeaderboard, 1000);
         </script>
     </body>
     </html>

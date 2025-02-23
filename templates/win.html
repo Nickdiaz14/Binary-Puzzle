@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6">
+    <title>Menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="js-container container" style="top:0px !important;">
+        <h1 id="title" style="font-size: 100px; font-weight: bold; margin-bottom: 20px;">¡Ganaste!</h1>
+        <div style="text-align:center;" class="botones">
+            <button onclick="restart()" style="margin-top: 15px;" class="resolver evaluar">Volver</button>
+        </div>
+    </div>
+    <script>
+        function restart() {
+            window.location.href = "/"; // O usa location.reload();
+        }
+
+        class Confettiful {
+            constructor(el) {
+                this.el = el;
+                this.containerEl = document.createElement('div');
+                this.containerEl.classList.add('confetti-container');
+                this.el.appendChild(this.containerEl);
+
+                this.confettiFrequency = 3;
+                this.confettiColors = ['#00ff04', '#ff0000', '#ff00e6', '#00a2ff', '#ffea00'];
+                this.confettiAnimations = ['slow', 'medium', 'fast'];
+                
+                this._renderConfetti();
+            }
+
+            _renderConfetti() {
+                this.confettiInterval = setInterval(() => {
+                    const confettiEl = document.createElement('div');
+                    const confettiSize = `${Math.floor(Math.random() * 8) + 7}px`;
+                    const confettiBackground = this.confettiColors[Math.floor(Math.random() * this.confettiColors.length)];
+                    const confettiLeft = `${Math.random() * this.el.offsetWidth}px`;
+                    const confettiAnimation = this.confettiAnimations[Math.floor(Math.random() * this.confettiAnimations.length)];
+
+                    confettiEl.classList.add('confetti', `confetti--animation-${confettiAnimation}`);
+                    confettiEl.style.left = confettiLeft;
+                    confettiEl.style.width = confettiSize;
+                    confettiEl.style.height = confettiSize;
+                    confettiEl.style.backgroundColor = confettiBackground;
+
+                    this.containerEl.appendChild(confettiEl);
+
+                    setTimeout(() => {
+                        confettiEl.remove();
+                    }, 3000);
+                }, 25);
+
+                setTimeout(() => clearInterval(this.confettiInterval), 20000);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            new Confettiful(document.querySelector('.js-container'));
+        });
+    </script>
+</body>
+</html>
