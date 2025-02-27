@@ -141,6 +141,11 @@
         }
 
         function toggleColor(row, col, cell) {
+            const cells = document.querySelectorAll("#matrix td");
+            cells.forEach(cell => {
+                cell.style.removeProperty("outline");
+                cell.style.removeProperty("outline-offset");
+            });
             if (cell.classList.contains('blocked')) {
                 return; // Do nothing if the cell is blocked
             }
