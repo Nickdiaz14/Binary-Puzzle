@@ -10,6 +10,11 @@
 </head>
 <body>
     <div id="countdown-overlay">
+        <label style="font-size: 50px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir modo</label>
+        <div style="text-align:center;" class="botones">
+            <button onclick="setBoardSize(6)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">Unicolor</button>
+            <button onclick="setBoardSize(5)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">Bicolor</button>
+        </div>
     </div>
     <div style="text-align:center;">
         <h1 id="title" style="font-size: 60px; font-weight: bold;">Memoria</h1>
@@ -238,20 +243,16 @@
 
         function setBoardSize(size) {
             let overlay = document.getElementById('countdown-overlay');
+            matrixSize = size; // Asigna el tamaño seleccionado
             overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
             if (matrixSize === 5) {
                 document.getElementById("title").textContent = 'Bicolor';
             } else {
                 document.getElementById("title").textContent = 'Unicolor';
             }
-            matrixSize = size; // Asigna el tamaño seleccionado
             reset(); // Genera el nuevo tablero
             startGame(); // Inicia la cuenta regresiva
         }
-        let dif = '{{ dif }}';
-        matrixSize = parseInt(dif, 10);
-
-        setBoardSize(matrixSize);
         createTable();
     </script>
 </body>
