@@ -15,14 +15,15 @@
         <h1 id="title1" style="font-size: 26px; font-weight: bold;">Juegos</h1>
         <select id="game" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="handleGameChange()">
             <option value="0h-h1" selected>0h-h1</option>
+            <!--<option value="0h-n0">0h-n0</option>-->
             <option value="MindGrid">Mind Games</option>
         </select>
     </div>
     <div style="text-align:center;">
-        <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; margin-left: 210px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
-        <div id="algorithm-info" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
         <!-- Menú Juego 1 (0h-h1) -->
         <div id="game1-menu" style="text-align:center;">
+            <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; margin-left: 210px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
+        <div id="algorithm-info" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
             <div class="botones">
                 <button onclick="location.href='/0hh1'" class="resolver azulito">0h-h1</button>
                 <button onclick="location.href='/time_trial_0hh1'" class="resolver rojito">Contrarreloj</button>
@@ -33,17 +34,25 @@
             </div>
         </div>
 
-        <!-- Menú Juego 2 (MindGrid) -->
+        <!-- Menú Juego 2 (0h-n0) -->
         <div id="game2-menu" style="text-align:center; display: none;">
             <div class="botones">
-                <button onclick="location.href='/memory?dif=6'" class="resolver azulito">Unicolor</button>
-                <button onclick="location.href='/memory?dif=5'" class="resolver rojito">Bicolor</button>
+                <button onclick="location.href='/0hn0'" class="resolver azulito">0h-n0</button>
+            </div>
+        </div>
+
+        <!-- Menú Juego 3 (MindGrid) -->
+        <div id="game3-menu" style="text-align:center; display: none;">
+            <div class="botones">
+                <button onclick="location.href='/memory'" class="resolver azulito">Secuenzo</button>
+                <button onclick="location.href='/speed'" class="resolver rojito">CuentaManía</button>
             </div>
             <div class="botones">
                 <button onclick="location.href='/sequence'" class="resolver rojito">Patrón Perfecto</button>
                 <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
             </div>
         </div>
+
         <div style="height: 40px;"></div>
 
         <h1 id="title" style="margin-top: 20px; font-size: 27px; font-weight: bold;">Ajustes</h1>
@@ -55,40 +64,38 @@
     </div>
     <script>
         function handleGameChange() {
-            const infoDiv = document.getElementById('algorithm-info');
-            infoDiv.style.display = 'none';
-
             const gameSelect = document.getElementById("game").value;
             const game1Menu = document.getElementById("game1-menu");
             const game2Menu = document.getElementById("game2-menu");
+            const game3Menu = document.getElementById("game3-menu");
 
+            // Ocultar todos los menús
+            game1Menu.style.display = "none";
+            game2Menu.style.display = "none";
+            game3Menu.style.display = "none";
+
+            // Mostrar solo el menú del juego seleccionado
             if (gameSelect === "0h-h1") {
                 game1Menu.style.display = "block";
-                game2Menu.style.display = "none";
-            } else {
-                game1Menu.style.display = "none";
+            } else if (gameSelect === "0h-n0") {
                 game2Menu.style.display = "block";
+            } else if (gameSelect === "MindGrid") {
+                game3Menu.style.display = "block";
             }
         }
 
-        // Ejecutar al cargar la página para reflejar la selección actual
-        document.addEventListener("DOMContentLoaded", handleGameChange);
         function toggleInfo() {
-            const gameSelect = document.getElementById("game").value;
-
             const infoDiv = document.getElementById('algorithm-info');
-            let description = gameSelect === "0h-h1" ? `
+            let description = `
             1. Todo el tablero debe estar lleno. <br>
             2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
             3. No puede haber tres celdas consecutivas del mismo color. <br>
-            4. No puede haber dos filas o columnas idénticas.` :
-            `
-            1. Mira y memoriza el patrón. <br>
-            2. Replica el patrón.`;
+            4. No puede haber dos filas o columnas idénticas.`
             infoDiv.innerHTML = description;
             infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
         }
         document.addEventListener("DOMContentLoaded", function () {
+            handleGameChange();
             const themeToggle = document.getElementById("theme-toggle");
             const div = document.getElementById("algorithm-info");
             const div1 = document.getElementById("game");
