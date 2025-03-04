@@ -283,7 +283,7 @@ def update_leaderboard(board, userid, time_string, total_time):
 # Ejemplo de uso
 
 def get_top_scores(board):
-    comp = len(board) <= 3
+    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed']
     connection = connect_db()
     cursor = connection.cursor()
 
