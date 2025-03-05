@@ -1,7 +1,6 @@
-#%%
+#%% ------------------------- 0hh1 -------------------------
 import random
 import numpy as np
-from constraint import Problem
 
 def check_cond_ini(matrix):
     n = len(matrix)
@@ -58,68 +57,6 @@ def check_duplicates(matrix):
 
 def rules(matrix):
     return check_rows(matrix) and check_cols(matrix) and check_duplicates(matrix)
-
-def binary_puzzle_solver(n, matrix, ubi):
-    if n % 2 != 0:
-        raise ValueError("Puzzle size must be even for equal 0s and 1s.")
-    
-    # Create a constraint problem
-    problem = Problem()
-    
-    # Define the grid variables (each cell of the grid)
-    grid = [[f"x{i}-{j}" for j in range(n)] for i in range(n)]
-    
-    # Add variables: each cell can be either 0 or 1
-    for row in grid:
-        for cell in row:
-            problem.addVariable(cell, [0, 1])
-    
-    # Add constraints to ensure equal number of 0s and 1s in each row
-    for row in grid:
-        problem.addConstraint(lambda *row: row.count(0) == row.count(1), row)
-    
-    # Add constraints to ensure equal number of 0s and 1s in each column
-    for col in range(n):
-        problem.addConstraint(lambda *col: col.count(0) == col.count(1), [grid[row][col] for row in range(n)])
-    
-    # Add constraints to prevent more than two consecutive 0s or 1s in rows
-    for row in grid:
-        for i in range(n - 2):
-            problem.addConstraint(lambda x, y, z: not (x == y == z), (row[i], row[i+1], row[i+2]))
-    
-    # Add constraints to prevent more than two consecutive 0s or 1s in columns
-    for col in range(n):
-        for i in range(n - 2):
-            problem.addConstraint(lambda x, y, z: not (x == y == z), (grid[i][col], grid[i+1][col], grid[i+2][col]))
-    
-    # Add constraints for predefined values from 'ubi'
-    for i, j in ubi:
-        problem.addConstraint(lambda x, v=matrix[i][j]: x == v, [f"x{i}-{j}"])
-    
-    # Ensuring that all rows are unique
-    for i in range(n):
-        for j in range(i + 1, n):
-            problem.addConstraint(lambda *row_cells: row_cells[:n] != row_cells[n:], 
-                                  [grid[i][k] for k in range(n)] + [grid[j][k] for k in range(n)])
-
-    # Ensuring that all columns are unique
-    for i in range(n):
-        for j in range(i + 1, n):
-            problem.addConstraint(lambda *col_cells: col_cells[:n] != col_cells[n:], 
-                                  [grid[k][i] for k in range(n)] + [grid[k][j] for k in range(n)])
-    
-    # Solve the puzzle (returns all solutions)
-    solutions = problem.getSolutions()
-    
-    # If solutions are found, format and return all of them
-    all_solutions = []
-    if solutions:
-        for solution in solutions:
-            solution_grid = [[solution[f"x{i}-{j}"] for j in range(n)] for i in range(n)]
-            all_solutions.append(solution_grid)
-        return all_solutions
-    else:
-        return []
 
 def aplicar_reglas_basicas(sudoku):
     n = len(sudoku)
@@ -303,5 +240,5 @@ for ii in range(2,6):
 
     print(f"Archivo sin duplicados guardado como {output_file}")
 
-# %%
+#%% ------------------------- 0h-n0 -------------------------
 

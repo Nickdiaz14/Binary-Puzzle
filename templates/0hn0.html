@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
+    <title>Matrix Game</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="countdown-overlay">
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Tablero aleatorio</h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
+    </div>
+    <div style="text-align:center; margin-bottom: 8px;">
+    </div>
+    <!-- Cronómetro -->
+    <div style="text-align:center; margin: 20px;">
+        <h1 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h1>
+    </div>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            }
+            if (savedTheme === "light-theme") {
+                color0 = "roja";
+                color1 = "azul";
+                border = "rgb(0,0,0)"
+            } else if (savedTheme === "dark-theme"){
+                color0 = "amarilla";
+                color1 = "azul";
+                border = "rgb(255,255,255)"
+            } else {
+                color0 = "amarilla";
+                color1 = "morada";
+                border = "rgb(255,255,255)"
+            }
+        });
+        document.getElementById("title_part").textContent = '';
+        let gamefinished = false;
+        let matrixSize = 4; // Tamaño de la matriz
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+        
+        // Variables para el cronómetro
+        let timerInterval;
+        let centisecondsElapsed = 0;
+
+    
+        function startTimer() {
+            clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
+            centisecondsElapsed = 0;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                centisecondsElapsed++; // Incrementar en 10 ms
+                updateTimerDisplay();
+            }, 10); // Actualizar cada 10 ms (centésima de segundo)
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
+            return { minutes, seconds, centiseconds, totalCentiseconds: centisecondsElapsed };
+}
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
+        }
+        function adjustLockSize() {
+            const lockSizeClass = matrixSize <= 4 ? 'lock-size-40' :
+                                matrixSize <= 6 ? 'lock-size-35' :
+                                matrixSize <= 8 ? 'lock-size-30' : 'lock-size-25';
+
+            // Remover cualquier clase de tamaño de candado previo
+            document.body.classList.remove('lock-size-40', 'lock-size-35', 'lock-size-30', 'lock-size-25');
+
+            // Añadir la nueva clase según el tamaño
+            document.body.classList.add(lockSizeClass);
+        }
+        
+        function reset(){
+            document.getElementById("timer").textContent = `00:00.00`;
+            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            createTable(initial);
+        }
+
+        function adjustCellSize() {
+            const cellSize = matrixSize <= 4 ? 100 :
+                            matrixSize <= 6 ? 80 :
+                            matrixSize <= 8 ? 60 : 50;
+            const cellRadius = matrixSize <= 4 ? 25 :
+                               matrixSize <= 6 ? 20 :
+                               matrixSize <= 8 ? 15 : 10;
+            stopTimer();
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = `${cellSize}px`;
+                cell.style.height = `${cellSize}px`;
+                cell.style.borderRadius = `${cellRadius}px`
+            });
+
+            adjustLockSize(); // Llamar para ajustar el tamaño del candado
+        }
+
+        function createTable() {
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'grey';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
+        }
+
+        function toggleColor(row, col, cell) {
+            const cells = document.querySelectorAll("#matrix td");
+            cells.forEach(cell => {
+                cell.style.removeProperty("outline");
+                cell.style.removeProperty("outline-offset");
+            });
+            if (cell.classList.contains('blocked')) {
+                return; // Do nothing if the cell is blocked
+            }
+            if (cell.className === 'grey') {
+                cell.className = 'red';
+                matrix[row][col] = 0;
+            } else if (cell.className === 'red') {
+                cell.className = 'blue';
+                matrix[row][col] = 1;
+            } else {
+                cell.className = 'grey';
+                matrix[row][col] = -1;
+            }
+            setTimeout(() => {
+                if (all(matrix)) {
+                    evaluateMatrix();
+                }
+                else{
+                    document.getElementById("title_part").textContent = "";
+                }
+                }, 500);
+        }
+
+        function startGame() {
+            const gameMatrix = [[-1,0,0,-1],
+                                [-1,-1,2,-1],
+                                [-1,-1,4,-1],
+                                [1,-1,0,1]];
+            const table = document.getElementById('matrix');
+            matrix = gameMatrix.map(row => [...row]);
+
+            for (let i = 0; i < gameMatrix.length; i++) {
+                for (let j = 0; j < gameMatrix[i].length; j++) {
+                    const cell = table.rows[i].cells[j];
+                    cell.className = gameMatrix[i][j] === -1 ? 'grey' :
+                                    gameMatrix[i][j] === 0 ? 'red blocked' :
+                                    'blue blocked';
+                    cell.innerText = gameMatrix[i][j] > 0 ? gameMatrix[i][j] : '';
+                }
+            }
+            let overlay = document.getElementById('countdown-overlay');
+            let count = 1;
+            const countdownElement = document.getElementById("countdown");
+            countdownElement.textContent = "¡Adelante!";
+
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    overlay.style.display = "none"; // Ocultar overlay al terminar
+                    startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                }
+            }, 800);
+        }
+
+        function setBoardSize(size) {
+            let overlay = document.getElementById('countdown-overlay');
+            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
+            document.getElementById("title").textContent = `Tablero ${size}x${size}`;
+            matrixSize = size; // Asigna el tamaño seleccionado
+            reset(); // Genera el nuevo tablero
+            startGame(); // Inicia la cuenta regresiva
+        }
+
+        function evaluateMatrix() {
+            if (gamefinished) return;
+
+            if (rules_final(matrix)) {
+                gamefinished = true;
+                stopTimer();
+                let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
+                document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
+            }
+        }
+
+        function rules_final(matrix) {
+            const table = document.getElementById('matrix');
+            let control = true;
+            for (let i = 0; i < matrix.length; i++) {
+                for (let j = 0; j < matrix[i].length; j++) {
+                    if (matrix[i][j] > 0 && matrix[i][j] !== 1) {
+                        viewedCells = 0;
+                        up = true;
+                        down = true;
+                        left = true;
+                        right = true;
+                        for (let k = 1; k < matrix.length; k++) {
+                            if (up && i-k >= 0 && matrix[i-k][j] > 0) {
+                                viewedCells += 1;
+                            } else { up = false; }
+                            if (j+k < matrix[0].length && right && matrix[i][j+k] > 0) {
+                                viewedCells += 1;
+                            } else { right = false; }
+                            if (j-k >= 0 && left && matrix[i][j-k] > 0) {
+                                viewedCells += 1;
+                            } else { left = false; }
+                            if (i+k < matrix.length && down && matrix[i+k][j] > 0) {
+                                viewedCells += 1;
+                            } else { down = false; }
+                        }
+                        control = viewedCells == matrix[i][j]? true:false;
+                        if (!control) {
+                            table.rows[i].cells[j].style.outline = `5px solid ${border}`;
+                            table.rows[i].cells[j].style.outlineOffset = "-5px";
+                            if (viewedCells < matrix[i][j]) {
+                                document.getElementById("title_part").textContent = "Esta celda está viendo muy pocas celdas";
+                            } else {
+                                document.getElementById("title_part").textContent = "Esta celda está viendo muchas celdas";
+                            }
+                            return control
+                        }
+                    }
+                }
+            }
+            return control
+        }
+
+        function all(matrix) {
+            return matrix.every(row => row.every(cell => cell !== -1));
+        }
+
+        function sum(array) {
+            return array.reduce((a, b) => a + b, 0);
+        }
+
+        function arraysEqual(a, b) {
+            return JSON.stringify(a) === JSON.stringify(b);
+        }
+        createTable();
+        setBoardSize(4);
+    </script>
+</body>
+</html>
