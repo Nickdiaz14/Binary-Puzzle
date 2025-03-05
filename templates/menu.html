@@ -107,7 +107,9 @@
         }
         document.addEventListener("DOMContentLoaded", function () {
             const games = localStorage.getItem("gameSelected")
-            gameSelected.value = games === ''? '0h-h1' : games
+            if (games) {
+                gameSelected.value = games
+            }
             handleGameChange();
             const themeToggle = document.getElementById("theme-toggle");
             const div = document.getElementById("algorithm-info");
