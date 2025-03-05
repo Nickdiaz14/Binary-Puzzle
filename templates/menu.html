@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        <div style="height: 40px;"></div>
+        <div style="height: 26px;"></div>
 
         <h1 id="title" style="margin-top: 20px; font-size: 27px; font-weight: bold;">Ajustes</h1>
 
@@ -61,6 +61,15 @@
             <button id="theme-toggle" class="resolver azulito">Cambiar Tema</button>
             <button onclick="location.href = '/?ch=si'" class="resolver rojito">Cambiar nombre</button>
         </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-left: 200px;margin-top: 30px;">
+            <a href="https://www.instagram.com/math_and_beer" target="_blank">
+                <img id="image1" src="{{ url_for('static', filename='images/instagram.png') }}" style="width: 20px;">
+            </a>
+            <a id="title1" href="https://www.instagram.com/math_and_beer" target="_blank" style="font-size: 15px; font-weight: bold; text-decoration: none; color: white;">
+                @ math_and_beer
+            </a>
+        </div>
+
     </div>
     <script>
         function handleGameChange() {
@@ -100,6 +109,7 @@
             const div = document.getElementById("algorithm-info");
             const div1 = document.getElementById("game");
             const image = document.getElementById("image");
+            const image1 = document.getElementById("image1");
 
             // Recuperar el tema guardado en localStorage (opcional)
             const savedTheme = localStorage.getItem("theme");
@@ -112,6 +122,7 @@
                 div.style.color = "#000000";
                 div.style.border = "1px solid #121212";
                 image.style.filter = "none";
+                image1.style.filter = "none";
                 div1.style.background = "#fffde6";
                 div1.style.color = "#000000";
                 div1.style.border = "1px solid #121212";
@@ -119,6 +130,7 @@
                 div.style.color = "#ffffff";
                 div.style.border = "1px solid #ccc";
                 image.style.filter = "invert(90%)";
+                image1.style.filter = "invert(90%)";
                 div1.style.background = "#000112";
                 div1.style.color = "#ffffff";
                 div1.style.border = "1px solid #ccc";
@@ -126,6 +138,7 @@
                 div.style.color = "#ffffff";
                 div.style.border = "1px solid #ccc";
                 image.style.filter = "invert(90%)";
+                image1.style.filter = "invert(90%)";
                 div1.style.background = "#15003e";
                 div1.style.color = "#ffffff";
                 div1.style.border = "1px solid #ccc";
@@ -155,6 +168,7 @@
                 div.style.color = "#000000";
                 div.style.border = "1px solid #121212";
                 image.style.filter = "none";
+                image1.style.filter = "none";
                 div1.style.background = "#fffde6";
                 div1.style.color = "#000000";
                 div1.style.border = "1px solid #121212";
@@ -162,6 +176,7 @@
                 div.style.color = "#ffffff";
                 div.style.border = "1px solid #ccc";
                 image.style.filter = "invert(90%)";
+                image1.style.filter = "invert(90%)";
                 div1.style.background = "#000112";
                 div1.style.color = "#ffffff";
                 div1.style.border = "1px solid #ccc";
@@ -169,6 +184,7 @@
                 div.style.color = "#ffffff";
                 div.style.border = "1px solid #ccc";
                 image.style.filter = "invert(90%)";
+                image1.style.filter = "invert(90%)";
                 div1.style.background = "#15003e";
                 div1.style.color = "#ffffff";
                 div1.style.border = "1px solid #ccc";
@@ -184,6 +200,7 @@
             div.style.color = "#000000";
             div.style.border = "1px solid #121212";
             image.style.filter = "none";
+            image1.style.filter = "none";
             div1.style.background = "#fffde6";
             div1.style.color = "#000000";
             div1.style.border = "1px solid #121212";
@@ -191,6 +208,7 @@
             div.style.color = "#ffffff";
             div.style.border = "1px solid #ccc";
             image.style.filter = "invert(90%)";
+            image1.style.filter = "invert(90%)";
             div1.style.background = "#000112";
             div1.style.color = "#ffffff";
             div1.style.border = "1px solid #ccc";
@@ -198,6 +216,7 @@
             div.style.color = "#ffffff";
             div.style.border = "1px solid #ccc";
             image.style.filter = "invert(90%)";
+            image1.style.filter = "invert(90%)";
             div1.style.background = "#15003e";
             div1.style.color = "#ffffff";
             div1.style.border = "1px solid #ccc";
