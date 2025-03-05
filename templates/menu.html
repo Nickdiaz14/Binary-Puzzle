@@ -72,7 +72,9 @@
 
     </div>
     <script>
+        const gameSelected = document.getElementById("game");
         function handleGameChange() {
+            localStorage.setItem("gameSelected", gameSelected.value);
             const gameSelect = document.getElementById("game").value;
             const game1Menu = document.getElementById("game1-menu");
             const game2Menu = document.getElementById("game2-menu");
@@ -104,6 +106,8 @@
             infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
         }
         document.addEventListener("DOMContentLoaded", function () {
+            const games = localStorage.getItem("gameSelected")
+            gameSelected.value = games === ''? '0h-h1' : games
             handleGameChange();
             const themeToggle = document.getElementById("theme-toggle");
             const div = document.getElementById("algorithm-info");
@@ -200,8 +204,10 @@
         });
         const savedTheme = localStorage.getItem("theme");  
         const div = document.getElementById("algorithm-info");
+        const link = document.getElementById("link");
         const div1 = document.getElementById("game");
         const image = document.getElementById("image");
+        const image1 = document.getElementById("image1");
 
         if (savedTheme === "light-theme") {
             div.style.color = "#000000";
@@ -231,6 +237,7 @@
             div1.style.color = "#ffffff";
             div1.style.border = "1px solid #ccc";
         }
+
     </script>
 </body>
 </html>
