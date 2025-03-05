@@ -22,7 +22,7 @@ h1 {
 th {
   padding: 12px;
   background-color: #4a4949;
-  color: #fffde6;
+  color: #efefef;
   font-weight: bold;
   border: 3px solid #4a4949;
 }
@@ -47,7 +47,7 @@ td {
   border: 3px solid #4a4949;
   border-radius: 0px;
   background-color: #000112;
-  color: #fffde6;
+  color: #efefef;
   padding: 11px;
   font-weight: bold;
 }
@@ -271,13 +271,13 @@ body.dark-theme {
 
 body.dark-theme h1 {
   transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
-  color: #fffde6; /* Título en blanco */
+  color: #efefef; /* Título en blanco */
 }
 
 body.dark-theme th {
   padding: 12px;
   background-color: #4a4949;
-  color: #fffde6;
+  color: #efefef;
   font-weight: bold;
   border: 3px solid #4a4949;
 }
@@ -302,7 +302,7 @@ body.dark-theme .tipo2{
   border: 3px solid #4a4949;
   border-radius: 0px;
   background-color: #000112;
-  color: #fffde6;
+  color: #efefef;
   padding: 11px;
   font-weight: bold;
 }
