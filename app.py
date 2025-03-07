@@ -12,10 +12,12 @@ def play_matrix():
     connection = connect_db()
     cursor = connection.cursor()
 
+    cursor.execute('SELECT id FROM "0hh1_game" WHERE size = %s',(str(n),))
+    inds = cursor.fetchall()
+    selected = random.choice(inds)[0]
     cursor.execute("""
-    SELECT board FROM "0hh1_game" WHERE size = %s
-    ORDER BY RANDOM() LIMIT 1;
-    """,(str(n),))
+    SELECT board FROM "0hh1_game" WHERE id = %s
+    """,(selected,))
     board = cursor.fetchone()[0] # Remueve espacios en blanco y saltos de línea
     matrix = eval(board)
 
