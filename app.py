@@ -9,15 +9,10 @@ app = Flask(__name__)
 @app.route('/play/matrix', methods=['POST'])
 def play_matrix():
     n = request.json['matrix'] # Tamaño de la matriz
-    connection = connect_db()
-    cursor = connection.cursor()
-
-    cursor.execute("""
-    SELECT board FROM "0hh1_game" WHERE size = %s
-    ORDER BY RANDOM() LIMIT 1;
-    """,(str(n),))
-    board = cursor.fetchone()[0] # Remueve espacios en blanco y saltos de línea
-    matrix = eval(board)
+    with open(f'retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
+        lineas = file.readlines()
+        linea_especifica = lineas[random.randint(0, len(lineas)-1)].strip()  # Remueve espacios en blanco y saltos de línea
+    matrix = eval(linea_especifica)
 
     return jsonify({'matrix': matrix})
 
