@@ -15,7 +15,7 @@
         <h1 id="title1" style="font-size: 26px; font-weight: bold;">Juegos</h1>
         <select id="game" style="padding: 1px; font-size: 26px; font-weight: bold;text-align: center; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" onchange="handleGameChange()">
             <option value="0h-h1" selected>0h-h1</option>
-            <!--<option value="0h-n0">0h-n0</option>-->
+            <option value="ChessGames">ChessGames</option>
             <option value="MindGrid">Mind Games</option>
         </select>
     </div>
@@ -37,7 +37,8 @@
         <!-- Menú Juego 2 (0h-n0) -->
         <div id="game2-menu" style="text-align:center; display: none;">
             <div class="botones">
-                <button onclick="location.href='/0hn0'" class="resolver azulito">0h-n0</button>
+                <button onclick="location.href='/knight'" class="resolver azulito">Knight</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
             </div>
         </div>
 
@@ -88,7 +89,7 @@
             // Mostrar solo el menú del juego seleccionado
             if (gameSelect === "0h-h1") {
                 game1Menu.style.display = "block";
-            } else if (gameSelect === "0h-n0") {
+            } else if (gameSelect === "ChessGames") {
                 game2Menu.style.display = "block";
             } else if (gameSelect === "MindGrid") {
                 game3Menu.style.display = "block";

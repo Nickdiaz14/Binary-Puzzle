@@ -126,6 +126,12 @@ td {
   width: 15px; /* Ajusta el tamaño */
 }
 
+.black {
+  background: #000000;
+}
+.white {
+  background: #ffffff;
+}
 /* ---------------------------------------------------------------- light theme ----------------------------------------------------------------*/
 body.light-theme {
   display: flex;
@@ -253,6 +259,12 @@ body.light-theme .container {
   bottom: 100%;
 }
 
+body.light-theme .black {
+  background: #000000;
+}
+body.light-theme .white {
+  background: #ffffff;
+}
 /* ---------------------------------------------------------------- dark theme ----------------------------------------------------------------*/
 body.dark-theme {
   display: flex;
@@ -366,6 +378,13 @@ body.dark-theme .container {
   justify-content: center;
   top:0px;
   bottom: 100%;
+}
+
+body.dark-theme .black {
+  background: #000000;
+}
+body.dark-theme .white {
+  background: #ffffff;
 }
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .azulito, .rojito, .inicio, .evaluar {
@@ -535,8 +554,17 @@ label.resolver {
   opacity: 0.1;
 }
 
+.black.blocked::before, .white.blocked::before {
+  content: "";
+  position: absolute;
+  background-image: url('/static/images/knight.png');
+  background-size: cover;
+}
+
 .lock-size-40 .red.blocked::before,
-.lock-size-40 .blue.blocked::before {
+.lock-size-40 .blue.blocked::before,
+.lock-size-40 .black.blocked::before,
+.lock-size-40 .white.blocked::before {
 width: 90px;
 height: 90px;
 top: 10px; /* Ajusta la posición vertical para centrar la imagen */
@@ -544,7 +572,9 @@ right: 9px; /* Ajusta la posición horizontal */
 }
 
 .lock-size-35 .red.blocked::before,
-.lock-size-35 .blue.blocked::before {
+.lock-size-35 .blue.blocked::before,
+.lock-size-35 .black.blocked::before,
+.lock-size-35 .white.blocked::before {
 width: 75px;
 height: 75px;
 top: 8px; /* Ajusta la posición vertical para centrar la imagen */
@@ -552,7 +582,9 @@ right: 8px; /* Ajusta la posición horizontal */
 }
 
 .lock-size-30 .red.blocked::before,
-.lock-size-30 .blue.blocked::before {
+.lock-size-30 .blue.blocked::before,
+.lock-size-30 .black.blocked::before,
+.lock-size-30 .white.blocked::before {
 width: 60px;
 height: 60px;
 top: 6px; /* Ajusta la posición vertical para centrar la imagen */
@@ -560,7 +592,9 @@ right: 5px; /* Ajusta la posición horizontal */
 }
 
 .lock-size-25 .red.blocked::before,
-.lock-size-25 .blue.blocked::before {
+.lock-size-25 .blue.blocked::before,
+.lock-size-25 .black.blocked::before,
+.lock-size-25 .white.blocked::before {
 width: 50px;
 height: 50px;
 top: 6px; /* Ajusta la posición vertical para centrar la imagen */
@@ -568,7 +602,9 @@ right: 5px; /* Ajusta la posición horizontal */
 }
 
 .red.blocked,
-.blue.blocked {
+.blue.blocked,
+.white.blocked,
+.black.blocked {
   position: relative; /* Necesario para posicionar el ::before dentro del elemento */
 }
 
