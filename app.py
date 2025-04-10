@@ -89,7 +89,7 @@ def leader_update():
     elif game == 'knight':
         score = float(point)
         board = "TKnight"
-        better = update_leaderboard(board, id, round(score,3), score*1000)
+        better = update_leaderboard(board, id, round(score,2), score*100)
         return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
@@ -167,7 +167,7 @@ def leader_page():
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
         elif board in ['TKnight']:
-            score = round(float(request.args.get('score')),3)
+            score = round(float(request.args.get('score')),2)
             return render_template('leaderboard.html', board= board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
         else:
             score = int(request.args.get('score'))
