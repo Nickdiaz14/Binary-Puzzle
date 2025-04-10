@@ -184,14 +184,17 @@
             let overlay = document.getElementById('countdown-overlay');
             let count = 2;
             const countdownElement = document.getElementById("countdown");
-            countdownElement.textContent = "¡Adelante!";
+            countdownElement.style.fontSize = "50px"; 
+            countdownElement.textContent = "¡Pasa sobre las celdas resaltadas!";
 
             const countdownInterval = setInterval(() => {
                 count--;
+                countdownElement.style.fontSize = "120px"; 
+                countdownElement.textContent = "¡Adelante!";
                 if (count <= 0) {
                     clearInterval(countdownInterval);
                     overlay.style.display = "none"; // Ocultar overlay al terminar
-                    startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                    startTimer(); // Iniciar el cronómetro
                 }
             }, 800);
         }

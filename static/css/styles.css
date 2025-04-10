@@ -130,7 +130,7 @@ td {
   background: #000000;
 }
 .white {
-  background: #ffffff;
+  background: #ffffffe6;
 }
 /* ---------------------------------------------------------------- light theme ----------------------------------------------------------------*/
 body.light-theme {
@@ -263,7 +263,7 @@ body.light-theme .black {
   background: #000000;
 }
 body.light-theme .white {
-  background: #ffffff;
+  background: #ffffffe6;
 }
 /* ---------------------------------------------------------------- dark theme ----------------------------------------------------------------*/
 body.dark-theme {
@@ -384,7 +384,7 @@ body.dark-theme .black {
   background: #000000;
 }
 body.dark-theme .white {
-  background: #ffffff;
+  background: #ffffffe6;
 }
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .azulito, .rojito, .inicio, .evaluar {
