@@ -18,7 +18,7 @@
 </style>
 <body>
     <div id="countdown-overlay">
-        <div id="countdown" style="font-size: 120px; color: #ffffff;"></div>
+        <div id="countdown" style="color: #ffffff; text-align: center;"></div>
     </div>
     <div style="text-align:center;">
         <h1 id="title" style="font-size: 60px; font-weight: bold;">Tablero aleatorio</h1>
@@ -184,8 +184,8 @@
             let overlay = document.getElementById('countdown-overlay');
             let count = 2;
             const countdownElement = document.getElementById("countdown");
-            countdownElement.style.fontSize = "50px"; 
-            countdownElement.textContent = "¡Pasa sobre las celdas resaltadas!";
+            countdownElement.style.fontSize = "40px"; 
+            countdownElement.textContent = "¡Sigue las casillas marcadas!";
 
             const countdownInterval = setInterval(() => {
                 count--;
