@@ -89,7 +89,7 @@ def leader_update():
     elif game == 'knight':
         score = float(point)
         board = "TKnight"
-        better = update_leaderboard(board, id, round(score,3), score)
+        better = update_leaderboard(board, id, round(score,3), score*100)
         return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
