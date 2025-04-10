@@ -58,33 +58,38 @@ def speed():
 @app.route('/leaderboard/update', methods=['POST'])
 def leader_update():
     game = request.json['game']
-    score = int(request.json['score'])
+    point = request.json['score']
     id = request.json['userID']
-    print(game,score)
     if game == '0hh1':
+        score = int(point)
         n = int(request.json['n'])
         board = f'T{n}'
         better = update_leaderboard(board, id,f'{(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}', score)
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'TT0hh1':
+        score = int(point)
         board = "TContrareloj"
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'mindgrid1':
+        score = int(point)
         board = "TUnicolor"
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'mindgrid2':
+        score = int(point)
         board = "TBicolor"
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'speed':
+        score = int(point)
         board = "TSpeed"
         better = update_leaderboard(board, id,f'{(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}', score)
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'knight':
+        score = float(point)
         board = "TKnight"
-        better = update_leaderboard(board, id, score, score)
+        better = update_leaderboard(board, id, round(score,3), score)
         return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
@@ -162,7 +167,7 @@ def leader_page():
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
         elif board in ['TKnight']:
-            score = float(request.args.get('score'))
+            score = round(float(request.args.get('score')),3)
             return render_template('leaderboard.html', board= board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
         else:
             score = int(request.args.get('score'))
