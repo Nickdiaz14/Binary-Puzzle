@@ -63,6 +63,7 @@
         let i;
         let j;
         let pairs;
+        let movements = 0;
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         
         // Variables para el cronómetro
@@ -150,6 +151,7 @@
             const isMove = moves.some(pos => pos[0] === row && pos[1] === col);
             const isImp = pairs.some(pair => pair[0] === row && pair[1] === col);
             if (isMove) {
+                movements++;
                 const table = document.getElementById('matrix');
                 const cells = table.rows[i].cells[j];
                 cells.classList.remove('blocked');
@@ -212,6 +214,7 @@
             gamefinished = true;
             stopTimer();
             let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
+            let puntaje = points(tiempo.totalCentiseconds/100,movements);
             document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
             setTimeout(() => {
             }, 500);
@@ -221,7 +224,7 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    score: tiempo.totalCentiseconds,
+                    score: puntaje,
                     userID: localStorage.getItem('userId'),
                     game: 'knight'
                 })
@@ -237,6 +240,10 @@
 
         function rint() {
            return Math.floor(Math.random() * matrixSize);
+        }
+
+        function points(T,M) {
+            return 10000.0/((T+1)*(M+1));
         }
 
         function generateUniquePairs() {

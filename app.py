@@ -84,7 +84,7 @@ def leader_update():
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'knight':
         board = "TKnight"
-        better = update_leaderboard(board, id,f'{(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}', score)
+        better = update_leaderboard(board, id, score, score)
         return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
@@ -154,15 +154,16 @@ def leader_page():
                 return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
             else:
                 return render_template('leaderboard.html', board=board[1:] if board != 'TSpeed' else "CuentaManía", data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
-        elif board in ['T4', 'T6', 'T8', 'T10', 'TSpeed', 'TKnight']:
+        elif board in ['T4', 'T6', 'T8', 'T10', 'TSpeed']:
             score = int(request.args.get('score'))
             if board == 'TSpeed':
                 aux = 'CuentaManía'
-            elif board == 'TKnight':
-                aux = 'Knight'
             else:
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
+        elif board in ['TKnight']:
+            score = int(request.args.get('score'))
+            return render_template('leaderboard.html', board= board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
         else:
             score = int(request.args.get('score'))
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
@@ -258,7 +259,7 @@ def connect_db():
 
 # Insertar o actualizar un registro en la base de datos
 def update_leaderboard(board, userid, time_string, total_time):
-    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed', 'TKnight']
+    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed']
     better = False
     connection = connect_db()
     cursor = connection.cursor()
@@ -299,7 +300,7 @@ def update_leaderboard(board, userid, time_string, total_time):
 # Ejemplo de uso
 
 def get_top_scores(board):
-    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed', 'TKnight']
+    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed']
     connection = connect_db()
     cursor = connection.cursor()
 
