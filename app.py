@@ -162,7 +162,7 @@ def leader_page():
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
         elif board in ['TKnight']:
-            score = int(request.args.get('score'))
+            score = float(request.args.get('score'))
             return render_template('leaderboard.html', board= board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
         else:
             score = int(request.args.get('score'))
