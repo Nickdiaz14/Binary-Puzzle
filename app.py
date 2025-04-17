@@ -93,6 +93,7 @@ def leader_update():
         return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
+        score = int(point)
         board = f'T{mode}'
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
