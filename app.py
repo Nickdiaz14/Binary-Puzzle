@@ -34,7 +34,7 @@ def attendance():
         futuros_eventos = request.form['futuros_eventos']
         comentario = request.form['comentario']
         now = datetime.now()
-        fecha = f'{str(now.day).zfill(2)}/{str(now.month).zfill(2)}/{now.year}'
+        fecha = f'{now.year}/{str(now.month).zfill(2)}/{str(now.day).zfill(2)}'
         cursor.execute("""
                 INSERT INTO attendance 
                 ("Fecha", "Nombre", "Identificación", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
