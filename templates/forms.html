@@ -176,32 +176,28 @@
     </div>
     
     <h1 style="font-size: 50px; text-align: center;">Asistencia Math & Beer</h1>
-    <form id="your-form-id" onsubmit="submitForm(event)">
-        <label class="titulo-pregunta">Nombre Completo</label>
+    <form id="your-form-id" onsubmit="submitForm(event)" style="margin-bottom: 15px;">
+        <label class="titulo-pregunta">Nombre Completo <span style="color: red;">*</span></label>
         <input type="text" name="nombre_completo" required><br>
 
-        <label class="titulo-pregunta">Número de Identificación</label>
+        <label class="titulo-pregunta">Número de Identificación <span style="color: red;">*</span></label>
         <input type="text" name="numero_identificacion" required><br>
 
-        <label class="titulo-pregunta">Sexo:</label>
+        <label class="titulo-pregunta">Sexo: <span style="color: red;">*</span></label>
         <div class="opcion-multiple">
-            <input type="radio" name="sexo" value="masculino">
+            <input type="radio" name="sexo" value="Masculino">
             <label>Masculino</label>
         </div>
         <div class="opcion-multiple">
-            <input type="radio" name="sexo" value="femenino">
+            <input type="radio" name="sexo" value="Femenino">
             <label>Femenino</label>
         </div>
         <div class="opcion-multiple">
-            <input type="radio" name="sexo" value="Otro">
+            <input type="radio" name="sexo" value="Otro" required>
             <label>Otro</label>
         </div>
-        <div class="opcion-multiple">
-            <input type="radio" name="sexo" value="Prefiero no decirlo">
-            <label>Prefiero no decirlo</label>
-        </div>
 
-        <label class="titulo-pregunta">Edad</label>
+        <label class="titulo-pregunta">Edad <span style="color: red;">*</span></label>
         <div class="opcion-multiple">
             <input type="radio" name="edad" value="Menor de 18">
             <label>Menor de 18</label>
@@ -223,14 +219,14 @@
             <label>51 - 65</label>
         </div>
         <div class="opcion-multiple">
-            <input type="radio" name="edad" value="Mayor de 65">
+            <input type="radio" name="edad" value="Mayor de 65" required>
             <label>Mayor de 65</label>
         </div>
 
-        <label class="titulo-pregunta">Correo Electrónico</label>
+        <label class="titulo-pregunta">Correo Electrónico <span style="color: red;">*</span></label>
         <input type="email" name="correo_electronico" required><br>
 
-        <label class="titulo-pregunta">Rol</label>
+        <label class="titulo-pregunta">Rol <span style="color: red;">*</span></label>
         <div class="opcion-multiple">
             <input type="radio" name="rol" value="Asistente ocasional">
             <label>Asistente ocasional</label>
@@ -244,11 +240,11 @@
             <label>Egresado de la Konrad Lorenz</label>
         </div>
         <div class="opcion-multiple">
-            <input type="radio" name="rol" value="Docente de la Konrad Lorenz">
+            <input type="radio" name="rol" value="Docente de la Konrad Lorenz" required>
             <label>Docente de la Konrad Lorenz</label>
         </div>
 
-        <label class="titulo-pregunta">¿Cómo te pareció el contenido y desarrollo del evento?</label>
+        <label class="titulo-pregunta">¿Cómo te pareció el contenido y desarrollo del evento? <span style="color: red;">*</span></label>
         <label>¡Califícalo del 1 al 5!</label>
         <div class="rating">
             <img src="/static/images/logo_M&B_b.png" style="width: 80px; height: 80px;" alt="1 estrella" onclick="updateRating(1)">
@@ -259,13 +255,13 @@
         </div>
         <input type="hidden" name="calificacion" id="calificacion">
 
-        <label class="titulo-pregunta">¿Quieres que te invitemos a nuestras próximas ediciones del Math&Beer?</label>
+        <label class="titulo-pregunta">¿Quieres que te invitemos a nuestras próximas ediciones del Math&Beer? <span style="color: red;">*</span></label>
         <div class="opcion-multiple">
             <input type="radio" name="futuros_eventos" value="¡Por supuesto!">
             <label>¡Por supuesto!</label>
         </div>
         <div class="opcion-multiple">
-            <input type="radio" name="futuros_eventos" value="No, gracias.">
+            <input type="radio" name="futuros_eventos" value="No, gracias." required>
             <label>No, gracias.</label>
         </div>
 
@@ -288,24 +284,6 @@
                     radio.checked = true;
                 }
             });
-        });
-
-        form.addEventListener('submit', function(event) {
-            let valid = true;
-
-            ['sexo', 'edad', 'rol', 'futuros_eventos'].forEach(name => {
-                const radios = document.querySelectorAll(`input[name="${name}"]`);
-                const checked = Array.from(radios).some(radio => radio.checked);
-
-                if (!checked) {
-                    valid = false;
-                }
-            });
-
-            if (!valid) {
-                event.preventDefault();
-                alert('Por favor completa todos los campos obligatorios.');
-            }
         });
 
         const logos = [];
