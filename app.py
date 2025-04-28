@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify
+from datetime import datetime
 import psycopg2
 import random
 import json
@@ -15,6 +16,38 @@ def play_matrix():
     matrix = eval(linea_especifica)
 
     return jsonify({'matrix': matrix})
+
+@app.route('/attendance', methods=['POST'])
+def attendance():
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+
+        # Procesar los datos
+        nombre_completo = request.form['nombre_completo']
+        numero_identificacion = request.form['numero_identificacion']
+        sexo = request.form['sexo']
+        edad = request.form['edad']
+        correo_electronico = request.form['correo_electronico']
+        rol = request.form['rol']
+        calificacion = request.form['calificacion']
+        futuros_eventos = request.form['futuros_eventos']
+        comentario = request.form['comentario']
+        now = datetime.now()
+        fecha = f'{str(now.day).zfill(2)}/{str(now.month).zfill(2)}/{now.year}'
+        cursor.execute("""
+                INSERT INTO attendance 
+                ("Fecha", "Nombre", "Identificación", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """, (fecha, nombre_completo, numero_identificacion, sexo, edad, correo_electronico, rol, calificacion, futuros_eventos, comentario))
+
+        connection.commit()
+        cursor.close()
+        connection.close()  
+        return jsonify({'success': True})
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({'success': False})
 
 @app.route('/memory', methods=['POST'])
 def memory():

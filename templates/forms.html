@@ -56,7 +56,7 @@
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             width: 80%;
-            max-height: 80vh; /* Establece una altura máxima */
+            max-height: 90vh; /* Establece una altura máxima */
             overflow-y: auto; /* Habilita el desplazamiento vertical */
         }
 
@@ -148,12 +148,35 @@
         .rating img.active {
             opacity: 1;
         }
+
+        #overlay { 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-items: center;
+            color: white;
+            font-size: 15vw;
+            font-family: 'Rubik', sans-serif;
+            z-index: 1000;
+        }
     </style>
 </head>
 
 <body>
-    <form>
-        <h1>Control de Asistencia</h1>
+    <div id="overlay">
+        <label id="overlay-label" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;"></label>
+        <div id="overlay-buttons"></div>
+    </div>
+    
+    <h1 style="font-size: 60px;">Asistencia Math & Beer</h1>
+    <form id="your-form-id" onsubmit="submitForm(event)">
         <label class="titulo-pregunta">Nombre Completo</label>
         <input type="text" name="nombre_completo" required><br>
 
@@ -225,33 +248,37 @@
             <label>Docente de la Konrad Lorenz</label>
         </div>
 
-        <label class="titulo-pregunta">Calificación</label>
+        <label class="titulo-pregunta">¿Cómo te pareció el contenido y desarrollo del evento?</label>
+        <label>¡Califícalo del 1 al 5!</label>
         <div class="rating">
             <img src="/static/images/logo_M&B_b.png" style="width: 80px; height: 80px;" alt="1 estrella" onclick="updateRating(1)">
             <img src="/static/images/logo_M&B_b.png" style="width: 80px; height: 80px;" alt="2 estrellas" onclick="updateRating(2)">
             <img src="/static/images/logo_M&B_b.png" style="width: 80px; height: 80px;" alt="3 estrellas" onclick="updateRating(3)">
             <img src="/static/images/logo_M&B_b.png" style="width: 80px; height: 80px;" alt="4 estrellas" onclick="updateRating(4)">
             <img src="/static/images/logo_M&B_b.png" style="width: 80px; height: 80px;" alt="5 estrellas" onclick="updateRating(5)">
- </div>
+        </div>
         <input type="hidden" name="calificacion" id="calificacion">
 
-        <label class="titulo-pregunta">¿Te gustaría participar en futuros eventos?</label>
+        <label class="titulo-pregunta">¿Quieres que te invitemos a nuestras próximas ediciones del Math&Beer?</label>
         <div class="opcion-multiple">
-            <input type="radio" name="futuros_eventos" value="si">
-            <label>Sí</label>
+            <input type="radio" name="futuros_eventos" value="¡Por supuesto!">
+            <label>¡Por supuesto!</label>
         </div>
         <div class="opcion-multiple">
-            <input type="radio" name="futuros_eventos" value="no">
-            <label>No</label>
+            <input type="radio" name="futuros_eventos" value="No, gracias.">
+            <label>No, gracias.</label>
         </div>
 
-        <label class="titulo-pregunta">Comentario</label>
+        <label class="titulo-pregunta">¿Tienes algún comentario o recomendación?</label>
+        <label>Tu opinión es muy importante y nos ayuda a mejorar.</label>
         <textarea name="comentario" rows="5" placeholder="Escribe tus comentarios aquí..."></textarea><br>
-
-        <button type="submit">Enviar</button>
+        <button id="enviar" type="submit">Enviar</button>
     </form>
 
     <script>
+        let overlay = document.getElementById('overlay');
+        overlay.style.display = "none"; // Ocultar overlay al empezar
+
         const form = document.querySelector('form');
 
         document.querySelectorAll('.opcion-multiple').forEach(opcion => {
@@ -341,6 +368,42 @@
             });
             document.getElementById('calificacion').value = rating;
         }
+
+        async function submitForm(event) {
+            event.preventDefault(); // Evitar recargar página
+            const submitButton = document.getElementById('enviar');
+            submitButton.textContent = 'Enviando...'; // Cambiar texto del botón
+            submitButton.style.backgroundColor = '#ccc'; // Cambiar color del botón
+            submitButton.disabled = true; // Deshabilitar el botón de envío
+            
+            const formData = new FormData(event.target);
+
+            const response = await fetch('/attendance', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'flex'; // Mostrar overlay al enviar el formulario
+            const overlayContent = document.createElement('div');
+            const overlayLabel = document.getElementById('overlay-label');
+            const overlayButtons = document.getElementById('overlay-buttons');
+
+            if (result.success) {
+                overlayLabel.textContent = 'Información cargada correctamente. ¿Desea cargar otro registro?';
+                overlayButtons.innerHTML = `
+                    <button onclick="location.href='/forms'" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-top: 20px;">Nuevo Registro</button>
+                `;
+            } else {
+                overlayLabel.textContent = 'No se subió la información debido a un error.';
+                overlayButtons.innerHTML = ''; // Limpiamos botones
+                setTimeout(() => {
+                    window.location.reload(); // Recargar página después de 5 segundos
+                }, 5000);
+            }
+        }
+
     </script>
 </body>
 </html>
