@@ -112,6 +112,10 @@ def index():
 def solve_page():
     return render_template('solve.html')
 
+@app.route('/forms')
+def forms_page():
+    return render_template('forms.html')
+
 @app.route('/knight')
 def knight_page():
     return render_template('knight.html')
