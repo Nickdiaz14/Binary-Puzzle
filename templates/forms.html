@@ -171,11 +171,11 @@
 
 <body>
     <div id="overlay">
-        <label id="overlay-label" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;"></label>
+        <label id="overlay-label" style="font-size: 30px; margin-bottom: 20px; text-align: center;"></label>
         <div id="overlay-buttons"></div>
     </div>
     
-    <h1 style="font-size: 55px;">Asistencia Math & Beer</h1>
+    <h1 style="font-size: 50px; text-align: center;">Asistencia Math & Beer</h1>
     <form id="your-form-id" onsubmit="submitForm(event)">
         <label class="titulo-pregunta">Nombre Completo</label>
         <input type="text" name="nombre_completo" required><br>
@@ -391,7 +391,7 @@
             const overlayButtons = document.getElementById('overlay-buttons');
 
             if (result.success) {
-                overlayLabel.textContent = 'Información cargada correctamente. ¿Desea cargar otro registro?';
+                overlayLabel.innerHTML = 'Información cargada correctamente.<br>¿Desea cargar otro registro?';
                 overlayButtons.innerHTML = `
                     <button onclick="location.href='/forms'" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-top: 20px;">Nuevo Registro</button>
                 `;
