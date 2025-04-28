@@ -25,7 +25,6 @@ def attendance():
 
         # Procesar los datos
         nombre_completo = request.form['nombre_completo']
-        numero_identificacion = request.form['numero_identificacion']
         sexo = request.form['sexo']
         edad = request.form['edad']
         correo_electronico = request.form['correo_electronico']
@@ -37,9 +36,9 @@ def attendance():
         fecha = f'{now.year}/{str(now.month).zfill(2)}/{str(now.day).zfill(2)}'
         cursor.execute("""
                 INSERT INTO attendance 
-                ("Fecha", "Nombre", "Identificación", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-            """, (fecha, nombre_completo, numero_identificacion, sexo, edad, correo_electronico, rol, calificacion, futuros_eventos, comentario))
+                ("Fecha", "Nombre", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """, (fecha, nombre_completo, sexo, edad, correo_electronico, rol, calificacion, futuros_eventos, comentario))
 
         connection.commit()
         cursor.close()
