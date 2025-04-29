@@ -3,6 +3,7 @@ from datetime import datetime
 import psycopg2
 import random
 import json
+import pytz
 import os
 
 app = Flask(__name__)
@@ -32,13 +33,15 @@ def attendance():
         calificacion = request.form['calificacion']
         futuros_eventos = request.form['futuros_eventos']
         comentario = request.form['comentario']
-        now = datetime.now()
-        fecha = f'{now.year}/{str(now.month).zfill(2)}/{str(now.day).zfill(2)}'
+        timezone = pytz.timezone('America/Bogota')
+        now = datetime.now(timezone)
+        fecha_corta = now.strftime('%Y/%m/%d')
+        fecha_larga = now.strftime('%Y/%m/%d %H:%M')
         cursor.execute("""
                 INSERT INTO attendance 
-                ("Fecha", "Nombre", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
-            """, (fecha, nombre_completo, sexo, edad, correo_electronico, rol, calificacion, futuros_eventos, comentario))
+                (created_at, "Fecha", "Nombre", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """, (fecha_larga, fecha_corta, nombre_completo, sexo, edad, correo_electronico, rol, calificacion, futuros_eventos, comentario))
 
         connection.commit()
         cursor.close()
