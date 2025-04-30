@@ -28,18 +28,6 @@
             margin-bottom: 20px;
         }
 
-        @keyframes float {
-            0% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-20px) rotate(180deg);
-            }
-            100% {
-                transform: translate(-50%, -50%) translateY(0px) rotate(360deg);
-            }
-        }
-
         .background-logo {
             pointer-events: none;
             animation: float 10s ease-in-out infinite;
@@ -174,8 +162,7 @@
         <label id="overlay-label" style="font-size: 33px; margin-bottom: 20px; text-align: center;"></label>
         <div id="overlay-buttons"></div>
     </div>
-    
-    <h1 style="font-size: 6vw; text-align: center; white-space: nowrap;">Asistencia Math & Beer</h1>
+    <h1 style="font-size: 8vw; text-align: center; white-space: nowrap;">Asistencia Math & Beer</h1>
     <form id="your-form-id" onsubmit="submitForm(event)" style="margin-bottom: 10px;">
         <label class="titulo-pregunta">Nombre Completo <span style="color: red;">*</span></label>
         <input type="text" name="nombre_completo" required><br>
@@ -294,7 +281,7 @@
 
         const logos = [];
 
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 100; i++) {
             const img = document.createElement('img');
             img.src = "/static/images/logo_M&B_b.png";
             img.className = 'background-logo';
@@ -305,13 +292,17 @@
             img.style.zIndex = '-1';
             img.style.pointerEvents = 'none';
 
+            const width = parseFloat(img.style.width);
+
             const logo = {
                 element: img,
                 x: Math.random() * window.innerWidth,
                 y: Math.random() * window.innerHeight,
                 vx: (Math.random() - 0.5) * 1.5,
                 vy: (Math.random() - 0.5) * 1.5,
-                width: parseFloat(img.style.width)
+                width: width,
+                angle: Math.random() * 360,  // Ángulo inicial
+                rotationSpeed: (Math.random() - 0.5) * 2.5 // Velocidad angular aleatoria
             };
 
             img.style.left = `${logo.x}px`;
@@ -325,6 +316,7 @@
             for (const logo of logos) {
                 logo.x += logo.vx;
                 logo.y += logo.vy;
+                logo.angle += logo.rotationSpeed;
 
                 if (logo.x <= 0 || logo.x + logo.width >= window.innerWidth) {
                     logo.vx *= -1;
@@ -335,6 +327,7 @@
 
                 logo.element.style.left = `${logo.x}px`;
                 logo.element.style.top = `${logo.y}px`;
+                logo.element.style.transform = `rotate(${logo.angle}deg)`;
             }
             requestAnimationFrame(animate);
         }
