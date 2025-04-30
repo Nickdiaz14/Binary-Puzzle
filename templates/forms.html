@@ -56,7 +56,7 @@
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             width: 80%;
-            max-height: 68vh; /* Establece una altura máxima */
+            max-height: 80vh; /* Establece una altura máxima */
             overflow-y: auto; /* Habilita el desplazamiento vertical */
         }
 
@@ -175,7 +175,7 @@
         <div id="overlay-buttons"></div>
     </div>
     
-    <h1 style="font-size: 40px; text-align: center;">Asistencia Math & Beer</h1>
+    <h1 style="font-size: 6vw; text-align: center; white-space: nowrap;">Asistencia Math & Beer</h1>
     <form id="your-form-id" onsubmit="submitForm(event)" style="margin-bottom: 10px;">
         <label class="titulo-pregunta">Nombre Completo <span style="color: red;">*</span></label>
         <input type="text" name="nombre_completo" required><br>
@@ -267,9 +267,15 @@
         <textarea name="comentario" rows="2" placeholder="Escribe tus comentarios aquí..."></textarea><br>
         <button id="enviar" type="submit">Enviar</button>
     </form>
-    <label style="font-size: 10px; text-align: center; margin-bottom: 30px;">Si quiere más información sobre el trabajo del equipo Math&Beer ingresa <a id="link" href="https://trello.com/b/QlcXyEHR/math-and-beer" target="_blank" style="font-size: 10px; text-decoration: underline; color: #ffffff; text-underline-offset: 1px;">
-        aquí
-    </a></label>
+    <div style="text-align: center; margin-bottom: 30px; padding: 0 10px;">
+        <label style="font-size: clamp(10px, 2.5vw, 14px); display: inline-block; max-width: 100%; color: #ffffff;">
+          Si quiere más información sobre el trabajo del equipo Math&Beer ingresa
+          <a id="link" href="https://trello.com/b/QlcXyEHR/math-and-beer" target="_blank"
+             style="font-size: inherit; text-decoration: underline; color: #ffffff; text-underline-offset: 1px;">
+            aquí
+          </a>
+        </label>
+      </div>
 
     <script>
         let overlay = document.getElementById('overlay');
