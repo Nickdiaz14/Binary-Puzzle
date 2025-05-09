@@ -3,25 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
-    <title>knight Game</title>
+    <title>Light Out</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<style>
-    .red.blocked::before{
-        content: "";
-        position: absolute;
-        background-image: url('/static/images/knight.png'); /* Imagen del candado */
-        background-size: cover;
-    }
-</style>
 <body>
     <div id="countdown-overlay">
         <div id="countdown" style="color: #ffffff; text-align: center;"></div>
     </div>
     <div style="text-align:center;">
-        <h1 id="title" style="font-size: 60px; font-weight: bold;">Tablero aleatorio</h1>
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Light Out</h1>
     </div>
     <div style="text-align:center;">
         <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
@@ -43,26 +35,10 @@
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
-            if (savedTheme === "light-theme") {
-                color0 = "rojas";
-                color1 = "azules";
-                border = "rgb(0,0,0)"
-            } else if (savedTheme === "dark-theme"){
-                color0 = "amarillas";
-                color1 = "azules";
-                border = "rgb(255,255,255)"
-            } else {
-                color0 = "amarillas";
-                color1 = "moradas";
-                border = "rgb(255,255,255)"
-            }
         });
         document.getElementById("title_part").textContent = 'Monimientos: 0';
         let gamefinished = false;
-        let matrixSize = 8; // Tamaño de la matriz
-        let i;
-        let j;
-        let pairs;
+        let matrixSize = 5; // Tamaño de la matriz
         let movements = 0;
         let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         
@@ -135,9 +111,7 @@
                 const row = document.createElement('tr');
                 for (let j = 0; j < matrixSize; j++) {
                     const cell = document.createElement('td');
-                    cell.className = (i+j)%2 === 0 ? 'white' : 'black';
-                    cell.style.outline = `3px solid black`;
-                    document.getElementById('matrix').style.border = `10px solid black`;
+                    cell.className = 'grey'; // Clase inicial para todas las celdas
                     cell.onclick = () => toggleColor(i, j, cell);
                     row.appendChild(cell);
                 }
@@ -147,44 +121,53 @@
         }
 
         function toggleColor(row, col, cell) {
-            let moves = [[i-2, j-1], [i-2, j+1], [i+2, j-1], [i+2, j+1], [i-1, j-2], [i+1, j-2], [i-1, j+2], [i+1, j+2]];
-            const isMove = moves.some(pos => pos[0] === row && pos[1] === col);
-            const isImp = pairs.some(pair => pair[0] === row && pair[1] === col);
-            if (isMove) {
-                movements++;
-                const table = document.getElementById('matrix');
-                const cells = table.rows[i].cells[j];
-                cells.classList.remove('blocked');
-                cell.className = (col + row) % 2 === 0 ? 'white blocked' : 'black blocked';
-                i = row;
-                j = col;
-                if(isImp){
-                    pairs = pairs.filter(pair => !(pair[0] === row && pair[1] === col));
+            const change = [
+                [0, 0], // Current cell
+                [-1, 0], // Up
+                [1, 0], // Down
+                [0, -1], // Left
+                [0, 1] // Right
+            ];
+            movements++;
+            const table = document.getElementById('matrix');
+            change.forEach(([dx, dy]) => {
+                const newRow = row + dx;
+                const newCol = col + dy;
+                if (newRow >= 0 && newRow < matrixSize && newCol >= 0 && newCol < matrixSize) {
+                    const cellToChange = table.rows[newRow].cells[newCol];
+
+                    cellToChange.classList.toggle('black');
+                    cellToChange.classList.toggle('white');
+                    matrix[newRow][newCol] = matrix[newRow][newCol] === 1 ? 0 : 1; // Cambiar el valor de la celda
                 }
-                document.getElementById("title_part").textContent = `Movimientos: ${movements}`;
-            }
-            if (pairs.length === 0) {
+            });
+            document.getElementById("title_part").textContent = `Movimientos: ${movements}`;
+            if (all(matrix)) {
+                document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
                 gamefinish();
             }
             
         }
 
         function startGame() {
-            const gameMatrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
-            const table = document.getElementById('matrix');
-            matrix = gameMatrix.map(row => [...row]);
-
-            pairs = generateUniquePairs();
-            pairs.slice(0, 5).forEach(pair => {
-                table.rows[pair[0]].cells[pair[1]].className = 'red';
-            });
-            i = pairs[5][0];
-            j = pairs[5][1];
-            const cell = table.rows[i].cells[j];
-            cell.classList.add('blocked');
-            pairs = pairs.filter(pair => !(pair[0] === i && pair[1] === j));
-
-            let overlay = document.getElementById('countdown-overlay');
+            fetch('/light_out', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({size:matrixSize}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const gameMatrix = data.matrix;
+                const table = document.getElementById('matrix');
+                matrix = gameMatrix.map(row => [...row]);
+                user_matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+                for (let i = 0; i < gameMatrix.length; i++) {
+                    for (let j = 0; j < gameMatrix[i].length; j++) {
+                        const cell = table.rows[i].cells[j];
+                        cell.className = gameMatrix[i][j] === 0 ? 'white' :'black';
+                    }
+                }
+                let overlay = document.getElementById('countdown-overlay');
             let count = 2;
             const countdownElement = document.getElementById("countdown");
             countdownElement.style.fontSize = "40px"; 
@@ -200,12 +183,13 @@
                     startTimer(); // Iniciar el cronómetro
                 }
             }, 800);
+            });
         }
 
         function setBoardSize(size) {
             let overlay = document.getElementById('countdown-overlay');
             overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
-            document.getElementById("title").textContent = `Tablero ${size}x${size}`;
+            document.getElementById("title").textContent = `Light Out ${size}x${size}`;
             matrixSize = size; // Asigna el tamaño seleccionado
             startGame(); // Inicia la cuenta regresiva
         }
@@ -227,7 +211,7 @@
                 body: JSON.stringify({
                     score: puntaje,
                     userID: localStorage.getItem('userId'),
-                    game: 'knight'
+                    game: 'light'
                 })
             }).then(response => response.json())
             .then(data => {
@@ -240,30 +224,15 @@
         }
 
         function rint() {
-           return Math.floor(Math.random() * matrixSize);
+           return Math.floor(Math.random() * 2);
         }
 
         function points(T,M) {
             return 100000.0/((T+1)*(M+1));
         }
 
-        function generateUniquePairs() {
-            const pairs = [];
-
-            while (pairs.length < 6) {
-                const a = rint();
-                const b = rint();
-                const newPair = [a, b];
-
-                // Verifica si la dupla ya existe
-                const exists = pairs.some(pair => pair[0] === a && pair[1] === b);
-
-                if (!exists) {
-                    pairs.push(newPair);
-                }
-            }
-
-            return pairs;
+        function all(matrix) {
+            return matrix.every(row => row.every(cell => cell === 1));
         }
         createTable();
         setBoardSize(matrixSize);

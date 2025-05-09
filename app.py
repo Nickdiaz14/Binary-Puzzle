@@ -18,39 +18,6 @@ def play_matrix():
 
     return jsonify({'matrix': matrix})
 
-@app.route('/attendance', methods=['POST'])
-def attendance():
-    try:
-        connection = connect_db()
-        cursor = connection.cursor()
-
-        # Procesar los datos
-        nombre_completo = request.form['nombre_completo']
-        sexo = request.form['sexo']
-        edad = request.form['edad']
-        correo_electronico = request.form['correo_electronico']
-        rol = request.form['rol']
-        calificacion = request.form['calificacion']
-        futuros_eventos = request.form['futuros_eventos']
-        comentario = request.form['comentario']
-        timezone = pytz.timezone('America/Bogota')
-        now = datetime.now(timezone)
-        fecha_corta = now.strftime('%Y/%m/%d')
-        fecha_larga = now.strftime('%Y/%m/%d %H:%M')
-        cursor.execute("""
-                INSERT INTO attendance 
-                (created_at, "Fecha", "Nombre", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-            """, (fecha_larga, fecha_corta, nombre_completo, sexo, edad, correo_electronico, rol, calificacion, futuros_eventos, comentario))
-
-        connection.commit()
-        cursor.close()
-        connection.close()  
-        return jsonify({'success': True})
-    except Exception as e:
-        print("Error:", e)
-        return jsonify({'success': False})
-
 @app.route('/memory', methods=['POST'])
 def memory():
     cells = int(request.json['cells']) + 3
@@ -67,6 +34,24 @@ def memory():
                 else:
                     matrix[a[0]][a[1]] = random.randint(0,1)
                 break
+    return jsonify({'matrix': matrix})
+
+@app.route('/light_out', methods=['POST'])
+def light_out():
+    n = int(request.json['size'])
+    change = [[0,0],[0,1],[0,-1],[1,0],[-1,0]]
+    matrix = [[1] * n for _ in range(n)]  # Matriz para llevar el control de los colores
+    inds = []
+    for i in range(random.randint(5,10)):
+        while True:
+            a = random.choices(range(n), k=2)
+            if a not in inds:
+                inds.append(a)
+                for x, y in change:
+                    if 0 <= a[0]+x < n and 0 <= a[1]+y < n:
+                        matrix[a[0]+x][a[1]+y] = 1 - matrix[a[0]+x][a[1]+y]
+                break
+        
     return jsonify({'matrix': matrix})
 
 @app.route('/sequence', methods=['POST'])
@@ -126,6 +111,11 @@ def leader_update():
         board = "TKnight"
         better = update_leaderboard(board, id, round(score,2), score*100)
         return jsonify({'better': better,'score':score,'board':board})
+    elif game == 'light':
+        score = float(point)
+        board = "TLight"
+        better = update_leaderboard(board, id, round(score,2), score*100)
+        return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
         score = int(point)
@@ -150,6 +140,10 @@ def solve_page():
 @app.route('/forms')
 def forms_page():
     return render_template('forms.html')
+
+@app.route('/light_out')
+def light_out_page():
+    return render_template('light_out.html')
 
 @app.route('/knight')
 def knight_page():
@@ -206,9 +200,13 @@ def leader_page():
             else:
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
-        elif board in ['TKnight']:
+        elif board in ['TKnight', 'TLight']:
+            if board == 'TLight':
+                aux = 'Light Out'
+            else:
+                aux = board[1:]
             score = round(float(request.args.get('score')),2)
-            return render_template('leaderboard.html', board= board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
+            return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
         else:
             score = int(request.args.get('score'))
             return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
@@ -222,7 +220,7 @@ def leaders_page():
     if game == '0h-h1':
         boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
     elif game == 'MindGrid':
-        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed']
+        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight']
     else:
         boards = ['TKnight']
     for board in boards:
@@ -363,6 +361,40 @@ def get_top_scores(board):
     connection.close()
     
     return results
+
+#-------------------------------------------- Attendance -------------------------------------------------------------------------
+@app.route('/attendance', methods=['POST'])
+def attendance():
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+
+        # Procesar los datos
+        nombre_completo = request.form['nombre_completo']
+        sexo = request.form['sexo']
+        edad = request.form['edad']
+        correo_electronico = request.form['correo_electronico']
+        rol = request.form['rol']
+        calificacion = request.form['calificacion']
+        futuros_eventos = request.form['futuros_eventos']
+        comentario = request.form['comentario']
+        timezone = pytz.timezone('America/Bogota')
+        now = datetime.now(timezone)
+        fecha_corta = now.strftime('%Y/%m/%d')
+        fecha_larga = now.strftime('%Y/%m/%d %H:%M')
+        cursor.execute("""
+                INSERT INTO attendance 
+                (created_at, "Fecha", "Nombre", "Sexo", "Edad", "Correo", "Rol", "Calificación", "Futuros_eventos", "Comentario")
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+            """, (fecha_larga, fecha_corta, nombre_completo, sexo, edad, correo_electronico, rol, calificacion, futuros_eventos, comentario))
+
+        connection.commit()
+        cursor.close()
+        connection.close()  
+        return jsonify({'success': True})
+    except Exception as e:
+        print("Error:", e)
+        return jsonify({'success': False})
 
 if __name__ == "__main__":
     app.run()

@@ -157,7 +157,7 @@
                 matrix[row][col] = 1;
                 document.getElementById("title_part").textContent = "¡Sigue intentándolo!";
                 stopTimer();
-                games = matrixSize === 5 ? 'mindgrid2' : 'mindgrid1';
+                let games = matrixSize === 5 ? 'mindgrid2' : 'mindgrid1';
                 fetch('/leaderboard/update', {
                     method: 'POST',
                     headers: {

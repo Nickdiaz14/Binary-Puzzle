@@ -532,7 +532,7 @@ label.resolver {
 .botones {
   display: flex;
   margin-top: 20px;
-  justify-content: space-between;
+  justify-content: center;
 }
 .botones button {
   margin: 0 15px;
