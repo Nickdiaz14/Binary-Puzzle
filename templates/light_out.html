@@ -106,12 +106,14 @@
 
         function createTable() {
             const table = document.getElementById('matrix');
+            document.getElementById('matrix').style.border = `10px solid black`;
             table.innerHTML = ''; // Limpiar contenido de la tabla existente
             for (let i = 0; i < matrixSize; i++) {
                 const row = document.createElement('tr');
                 for (let j = 0; j < matrixSize; j++) {
                     const cell = document.createElement('td');
                     cell.className = 'grey'; // Clase inicial para todas las celdas
+                    cell.style.outline = `3px solid black`;
                     cell.onclick = () => toggleColor(i, j, cell);
                     row.appendChild(cell);
                 }
@@ -168,28 +170,34 @@
                     }
                 }
                 let overlay = document.getElementById('countdown-overlay');
-            let count = 2;
+            let count = 3;
             const countdownElement = document.getElementById("countdown");
-            countdownElement.style.fontSize = "40px"; 
-            countdownElement.textContent = "¡Sigue las casillas marcadas!";
+            countdownElement.style.fontSize = "35px"; 
+            countdownElement.style.textAlign = "center"; 
+            countdownElement.innerHTML = "Al presionar una casilla, <br> ella y sus cuatro vecinas cambian de color";
 
             const countdownInterval = setInterval(() => {
                 count--;
-                countdownElement.style.fontSize = "120px"; 
-                countdownElement.textContent = "¡Adelante!";
+                if (count === 2) {
+                    countdownElement.style.fontSize = "60px"; 
+                    countdownElement.textContent = "¡Apaga todas las casillas!";
+                } else {
+                    countdownElement.style.fontSize = "120px"; 
+                    countdownElement.textContent = "¡Adelante!";
+                }
                 if (count <= 0) {
                     clearInterval(countdownInterval);
                     overlay.style.display = "none"; // Ocultar overlay al terminar
                     startTimer(); // Iniciar el cronómetro
                 }
-            }, 800);
+            }, 1200);
             });
         }
 
         function setBoardSize(size) {
             let overlay = document.getElementById('countdown-overlay');
             overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
-            document.getElementById("title").textContent = `Light Out ${size}x${size}`;
+            document.getElementById("title").textContent = `Light Out`;
             matrixSize = size; // Asigna el tamaño seleccionado
             startGame(); // Inicia la cuenta regresiva
         }
