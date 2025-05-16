@@ -170,9 +170,9 @@
                     }
                 }
                 let overlay = document.getElementById('countdown-overlay');
-            let count = 3;
+            let count = 4;
             const countdownElement = document.getElementById("countdown");
-            countdownElement.style.fontSize = "35px"; 
+            countdownElement.style.fontSize = "50px"; 
             countdownElement.style.textAlign = "center"; 
             countdownElement.innerHTML = "Al presionar una casilla, <br> ella y sus cuatro vecinas <br> cambian de estado";
 
@@ -181,7 +181,7 @@
                 if (count === 2) {
                     countdownElement.style.fontSize = "60px"; 
                     countdownElement.textContent = "¡Apaga todas las casillas!";
-                } else {
+                } else if (count === 1) {
                     countdownElement.style.fontSize = "120px"; 
                     countdownElement.textContent = "¡Adelante!";
                 }
@@ -190,7 +190,7 @@
                     overlay.style.display = "none"; // Ocultar overlay al terminar
                     startTimer(); // Iniciar el cronómetro
                 }
-            }, 1200);
+            }, 1500);
             });
         }
 
