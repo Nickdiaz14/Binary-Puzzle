@@ -45,7 +45,7 @@
                 document.body.classList.add(savedTheme);
             }
         });
-        document.getElementById("title_part").textContent = '¡Adivina la ecuación!';
+        document.getElementById("title_part").textContent = '¡Adivina la igualdad!';
         let gamefinished = false;
         let matrixSize = 10; // Tamaño de la matriz
         let guesses = 0;
@@ -264,7 +264,7 @@
         }
 
         function keyboard(value) {
-            document.getElementById("title_part").textContent = "¡Adivina la ecuación!";
+            document.getElementById("title_part").textContent = "¡Adivina la igualdad!";
             const table = document.getElementById('matrix');
             for (let j = 0; j < matrixSize; j++) {
                 const cell = table.rows[guesses].cells[j];
@@ -294,7 +294,7 @@
                 const countdownElement = document.getElementById("countdown");
                 countdownElement.style.fontSize = "50px"; 
                 countdownElement.style.textAlign = "center"; 
-                countdownElement.innerHTML = "Adivina la ecuación<br>en el menor tiempo posible";
+                countdownElement.innerHTML = "Adivina la igualdad<br>en el menor tiempo posible";
 
                 const countdownInterval = setInterval(() => {
                     count--;
@@ -313,7 +313,7 @@
             let overlay = document.getElementById('countdown-overlay');
             overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
             document.getElementById("title").textContent = `Nerdle`;
-            document.getElementById("title_part").textContent = "¡Adivina la ecuación!";
+            document.getElementById("title_part").textContent = "¡Adivina la igualdad!";
             matrixSize = size; // Asigna el tamaño seleccionado
             startGame(); // Inicia la cuenta regresiva
         }
