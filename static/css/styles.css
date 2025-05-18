@@ -132,6 +132,14 @@ td {
 .white {
   background: #ffffffe6;
 }
+
+.correct_place {
+  background: #138e00;
+}
+.correct_character {
+  background: #d46d00;
+}
+
 /* ---------------------------------------------------------------- light theme ----------------------------------------------------------------*/
 body.light-theme {
   display: flex;
@@ -265,6 +273,15 @@ body.light-theme .black {
 body.light-theme .white {
   background: #ffffffe6;
 }
+
+body.light-theme .correct_place {
+  color:#000000;
+  background: #138e00;
+}
+body.light-theme .correct_character {
+  color:#000000;
+  background: #d46d00;
+}
 /* ---------------------------------------------------------------- dark theme ----------------------------------------------------------------*/
 body.dark-theme {
   display: flex;
@@ -385,6 +402,14 @@ body.dark-theme .black {
 }
 body.dark-theme .white {
   background: #ffffffe6;
+}
+
+
+body.dark-theme .correct_place {
+  background: #138e00;
+}
+body.dark-theme .correct_character {
+  background: #d46d00;
 }
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .azulito, .rojito, .inicio, .evaluar {

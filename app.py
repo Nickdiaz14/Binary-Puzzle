@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
+import numpy as np
 import psycopg2
 import random
 import json
@@ -53,6 +54,33 @@ def light_out():
                 break
         
     return jsonify({'matrix': matrix})
+
+@app.route('/nerdle', methods=['POST'])
+def nerdle():
+    intento = request.json['intento']
+    igualdad = request.json['igualdad']
+    if intento != '':
+        try:
+            productos, suma = intento.split('=')
+            if int(eval(productos)) == int(suma):
+                vector = [0] * len(intento)
+                array_fixed = []
+                for i in range(len(igualdad)):
+                    if intento[i]==igualdad[i]:
+                        vector[i] = 2
+                        array_fixed.append(intento[i])
+                    elif (intento[i] in igualdad) & (intento[i:].count(intento[i])==1) & (intento[i] not in array_fixed):
+                        vector[i] = 1
+                return jsonify({'success': True, 'vector': vector})
+            else:
+                return jsonify({'success': False})
+        except:
+            return jsonify({'success': False})
+    with open(f'retos/igualdades.txt', 'r', encoding='utf-8') as file:
+        lineas = file.readlines()
+        linea_especifica = lineas[random.randint(0, len(lineas)-1)].strip()
+    print(linea_especifica)
+    return jsonify({'igualdad': linea_especifica})
 
 @app.route('/sequence', methods=['POST'])
 def sequence():
@@ -116,6 +144,11 @@ def leader_update():
         board = "TLight"
         better = update_leaderboard(board, id, round(score,2), score*100)
         return jsonify({'better': better,'score':score,'board':board})
+    elif game == 'nerdle':
+        score = float(point)
+        board = "TNerdle"
+        better = update_leaderboard(board, id, round(score,2), score*100)
+        return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
         score = int(point)
@@ -136,6 +169,10 @@ def index():
 @app.route('/solve')
 def solve_page():
     return render_template('solve.html')
+
+@app.route('/nerdle')
+def nerdle_page():
+    return render_template('nerdle.html')
 
 @app.route('/forms')
 def forms_page():
@@ -200,7 +237,7 @@ def leader_page():
             else:
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
-        elif board in ['TKnight', 'TLight']:
+        elif board in ['TKnight', 'TLight', 'TNerdle']:
             if board == 'TLight':
                 aux = 'Light Out'
             else:
@@ -220,7 +257,7 @@ def leaders_page():
     if game == '0h-h1':
         boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
     elif game == 'MindGrid':
-        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight']
+        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight', 'TNerdle']
     else:
         boards = ['TKnight']
     for board in boards:
