@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
-import numpy as np
 import psycopg2
 import random
 import json
