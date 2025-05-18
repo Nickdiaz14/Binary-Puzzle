@@ -139,7 +139,9 @@ td {
 .correct_character {
   background: #d46d00;
 }
-
+.nowhere {
+  background: rgba(43, 43, 43, 0.29);
+}
 /* ---------------------------------------------------------------- light theme ----------------------------------------------------------------*/
 body.light-theme {
   display: flex;
@@ -282,6 +284,10 @@ body.light-theme .correct_character {
   color:#000000;
   background: #d46d00;
 }
+body.light-theme .nowhere {
+  color:#000000;
+  background: rgba(43, 43, 43, 0.29);
+}
 /* ---------------------------------------------------------------- dark theme ----------------------------------------------------------------*/
 body.dark-theme {
   display: flex;
@@ -410,6 +416,9 @@ body.dark-theme .correct_place {
 }
 body.dark-theme .correct_character {
   background: #d46d00;
+}
+body.dark-theme .nowhere {
+  background: rgba(43, 43, 43, 0.29);
 }
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
 .azulito, .rojito, .inicio, .evaluar {

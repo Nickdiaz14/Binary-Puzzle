@@ -34,11 +34,6 @@
         <!-- JavaScript will generate the inputs table here -->
     </table>
     </div>
-    <div style="text-align:center;">
-    <table id="sends">
-        <!-- JavaScript will generate the sends table here -->
-    </table>
-    </div>
     <div class="botones">
         <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     </div>
@@ -55,6 +50,9 @@
         let matrixSize = 10; // Tamaño de la matriz
         let guesses = 0;
         let igualdad = ''
+        const eliminar = "{{ url_for('static', filename='images/eliminar.png') }}";
+        const borrar = "{{ url_for('static', filename='images/borrar.png') }}";
+        const enter = "{{ url_for('static', filename='images/enter.png') }}";
         
         // Variables para el cronómetro
         let timerInterval;
@@ -131,27 +129,45 @@
             let values = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '+', '-', '*', '/', '='];
             for (let i = 0; i < 3; i++) {
                 const row = document.createElement('tr');
-                for (let j = 0; j < 5; j++) {
+                for (let j = 0; j < 6; j++) {
                     const cell = document.createElement('td');
                     cell.className = 'grey'; // Clase inicial para todas las celdas
-                    cell.innerText = values[i * 5 + j];
-                    cell.onclick = () => keyboard(cell.innerText);
+                    if (j === 5) {
+                        let invertion = localStorage.getItem('theme') === 'light-theme' ? 'invert(0)' : 'invert(1)';
+                        if (i === 0) {
+                            const img = document.createElement('img');
+                            img.src = eliminar;
+                            img.width = 40;
+                            img.style.filter = invertion;
+                            img.style.marginTop = '10px';
+                            cell.appendChild(img);
+                            cell.onclick = () => send("Eliminar");
+                        } else if (i === 1) {
+                            const img = document.createElement('img');
+                            img.src = borrar;
+                            img.width = 40;
+                            img.style.filter = invertion;
+                            img.style.marginTop = '10px';
+                            cell.appendChild(img);
+                            cell.onclick = () => send("Borrar");
+                        } else {
+                            const img = document.createElement('img');
+                            img.src = enter;
+                            img.width = 40;
+                            img.style.filter = invertion;
+                            img.style.marginTop = '10px';
+                            cell.appendChild(img);
+                            cell.onclick = () => send("Enviar");
+                        } 
+                    }
+                    else {
+                        cell.innerText = values[i * 5 + j];
+                        cell.onclick = () => keyboard(cell.innerText);
+                    }
                     row.appendChild(cell);
                 }
                 inputsTable.appendChild(row);
             }
-            const sendsTable = document.getElementById('sends');
-            sendsTable.innerHTML = ''; // Limpiar contenido de la tabla de inputs existente
-            const sendRow = document.createElement('tr');
-            for (let j = 0; j < 2; j++) {
-                const cell = document.createElement('td');
-                cell.className = 'grey'; // Clase inicial para todas las celdas
-                cell.style.fontSize = '20px'; // Ajustar el ancho de las celdas
-                cell.innerText = j === 0 ? 'Enviar' : 'Borrar';
-                cell.onclick = () => send(cell.innerText);
-                sendRow.appendChild(cell);
-            }
-            sendsTable.appendChild(sendRow);
             adjustCellSize(); // Ajustar tamaño de las celdas y candados después de crear la tabla
         }
 
@@ -181,20 +197,29 @@
                     let count = 0
                     const countdownInterval = setInterval(() => {
                         table.rows[guesses-1].cells[count].className = vector[count] === 2 ? 'correct_place' :
-                                                                         vector[count] === 1 ? 'correct_character' : 'grey'; // Cambiar a verde
-                        if (table.rows[guesses-1].cells[count].className === 'correct_place') {
+                                                                         vector[count] === 1 ? 'correct_character' : 'nowhere'; // Cambiar a verde
+                        let currentCell = table.rows[guesses-1].cells[count];
+                        if (currentCell.className === 'correct_place') {
                             for (let i = 0; i < 3; i++) {
                                 for (let j = 0; j < 5; j++) {
-                                    if (inputsTable.rows[i].cells[j].innerText === table.rows[guesses-1].cells[count].innerText) {
+                                    if (inputsTable.rows[i].cells[j].innerText === currentCell.innerText) {
                                         inputsTable.rows[i].cells[j].className = 'correct_place'; // Cambiar a verde
                                     }
                                 }
                             }
-                        } else if (table.rows[guesses-1].cells[count].className === 'correct_character') {
+                        } else if (currentCell.className === 'correct_character') {
                             for (let i = 0; i < 3; i++) {
                                 for (let j = 0; j < 5; j++) {
-                                    if ((inputsTable.rows[i].cells[j].innerText === table.rows[guesses-1].cells[count].innerText) && inputsTable.rows[i].cells[j].className !== 'correct_place') {
+                                    if ((inputsTable.rows[i].cells[j].innerText === currentCell.innerText) && inputsTable.rows[i].cells[j].className !== 'correct_place') {
                                         inputsTable.rows[i].cells[j].className = 'correct_character'; // Cambiar a amarillo
+                                    }
+                                }
+                            }
+                        } else if (currentCell.className === 'nowhere') {
+                            for (let i = 0; i < 3; i++) {
+                                for (let j = 0; j < 5; j++) {
+                                    if ((inputsTable.rows[i].cells[j].innerText === currentCell.innerText) && inputsTable.rows[i].cells[j].className !== 'correct_place' && inputsTable.rows[i].cells[j].className !== 'correct_character') {
+                                        inputsTable.rows[i].cells[j].className = 'nowhere'; // Cambiar a amarillo
                                     }
                                 }
                             }
@@ -228,6 +253,12 @@
                         cell.innerText = '';
                         break;
                     }
+                }
+            } else if (value === 'Eliminar') {
+                const table = document.getElementById('matrix');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = table.rows[guesses].cells[j];
+                    cell.innerText = '';
                 }
             }
         }
