@@ -272,13 +272,21 @@
                     cell.innerText = value;
                     break;
                 }
-            }
-            if (all(matrix)) {
-                document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
-                //gamefinish();
-            }
-            
+            }    
         }
+
+        document.addEventListener('keydown', function(event) {
+            const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/', '='];
+
+            // Algunos teclados usan "Enter" para el igual
+            if (event.key === 'Enter') {
+                send("Enviar");
+            } else if (event.key === 'Backspace') {
+                send("Borrar");
+            } else if (validKeys.includes(event.key)) {
+                keyboard(event.key);
+            }
+        });
 
         function startGame() {
             fetch('/nerdle', {
