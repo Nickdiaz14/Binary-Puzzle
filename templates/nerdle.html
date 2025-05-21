@@ -231,6 +231,7 @@
                                 document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
                                 gamefinish();
                             }
+                            if (gamefinished) return;
                             const row = document.createElement('tr');
                             for (let j = 0; j < matrixSize; j++) {
                                 const cell = document.createElement('td');
