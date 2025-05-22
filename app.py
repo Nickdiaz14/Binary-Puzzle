@@ -18,6 +18,16 @@ def play_matrix():
 
     return jsonify({'matrix': matrix})
 
+@app.route('/play/matrix_0hn0', methods=['POST'])
+def play_0hn0_matrix():
+    n = request.json['matrix'] # Tamaño de la matriz
+    with open(f'retos/aleatorios_ohno{n}.txt', 'r', encoding='utf-8') as file:
+        lineas = file.readlines()
+        linea_especifica = lineas[random.randint(0, len(lineas)-1)].strip()  # Remueve espacios en blanco y saltos de línea
+    matrix = eval(linea_especifica)
+
+    return jsonify({'matrix': matrix})
+
 @app.route('/memory', methods=['POST'])
 def memory():
     cells = int(request.json['cells']) + 3
@@ -148,6 +158,12 @@ def leader_update():
         board = "TNerdle"
         better = update_leaderboard(board, id, round(score,2), score*100)
         return jsonify({'better': better,'score':score,'board':board})
+    if game == '0hn0':
+        score = int(point)
+        n = int(request.json['n'])
+        board = f'T0{n}'
+        better = update_leaderboard(board, id,f'{(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}', score)
+        return jsonify({'better': better,'score':score,'board':board})
     else:
         mode = request.json['mode']
         score = int(point)
@@ -189,6 +205,10 @@ def knight_page():
 def tutorial_page():
     return render_template('tutorial.html')
 
+@app.route('/tutorial_0hn0')
+def tutorial_0hn0_page():
+    return render_template('tutorial_0hn0.html')
+
 @app.route('/sequence')
 def sequence_page():
     return render_template('sequence.html')
@@ -226,16 +246,19 @@ def leader_page():
     if finish is None:
         if better:
             if len(board) <= 3:
-                return render_template('leaderboard.html', board=f'{board[1:]}x{board[1:]}', data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
+                aux  = f'{board[1:]}x{board[1:]}' if 'T0' not in board else f'{board[-1]}x{board[-1]}'
+                return render_template('leaderboard.html', board=aux, data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!", game = board)
             else:
                 return render_template('leaderboard.html', board=board[1:] if board != 'TSpeed' else "CuentaManía", data=json.dumps(get_top_scores(board)), best = True, message = "¡Superaste tu record!")
-        elif board in ['T4', 'T6', 'T8', 'T10', 'TSpeed']:
+        elif board in ['T4', 'T6', 'T8', 'T10', 'TSpeed', 'T04', 'T05', 'T06', 'T07']:
             score = int(request.args.get('score'))
-            if board == 'TSpeed':
+            if 'T0' in board:
+                aux = f'{board[-1]}x{board[-1]}'
+            elif board == 'TSpeed':
                 aux = 'CuentaManía'
             else:
                 aux = f'{board[1:]}x{board[1:]}'
-            return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!')
+            return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!', game = board)
         elif board in ['TKnight', 'TLight', 'TNerdle']:
             if board == 'TLight':
                 aux = 'Light Out'
@@ -257,6 +280,8 @@ def leaders_page():
         boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
     elif game == 'MindGrid':
         boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight', 'TNerdle']
+    elif game == '0h-n0':
+        boards = ['T04', 'T05', 'T06', 'T07']
     else:
         boards = ['TKnight']
     for board in boards:
@@ -315,7 +340,6 @@ def menu():
         connection.commit()
         cursor.close()
         connection.close()   
-        return render_template('tutorial.html', init = True)     
 
     # Guardar los cambios en la base de datos
     connection.commit()
@@ -338,7 +362,7 @@ def connect_db():
 
 # Insertar o actualizar un registro en la base de datos
 def update_leaderboard(board, userid, time_string, total_time):
-    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed']
+    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed', 'T04', 'T05', 'T06', 'T07']
     better = False
     connection = connect_db()
     cursor = connection.cursor()
@@ -379,7 +403,7 @@ def update_leaderboard(board, userid, time_string, total_time):
 # Ejemplo de uso
 
 def get_top_scores(board):
-    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed']
+    comp = board in ['T4', 'T6', 'T8', 'T10', 'TSpeed', 'T04', 'T05', 'T06', 'T07']
     connection = connect_db()
     cursor = connection.cursor()
 

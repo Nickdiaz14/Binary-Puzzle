@@ -34,12 +34,15 @@
                     window.location.href = '/light_out'
                 } else if (board.includes('Nerdle')) {
                     window.location.href = '/nerdle'
+                } else if (game.includes('T0')) {
+                    window.location.href = '/0hn0'
                 } else {
                     window.location.href = '/0hh1'
                 }
             }
             const best = '{{best}}'
             const board = '{{board}}'
+            const game = '{{game}}'
             const Confettiful = function (el) {
                 this.el = el;
                 this.containerEl = null;

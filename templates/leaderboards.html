@@ -77,8 +77,11 @@
                 matrixSelect.innerHTML += '<option value="Speed">CuentaManía</option>';
                 matrixSelect.innerHTML += '<option value="Light">Light Out</option>';
                 matrixSelect.innerHTML += '<option value="Nerdle">Nerdle</option>';
-            } else {
+            } else if (game === "ChessGames") {
                 matrixSelect.innerHTML += '<option value="Knight">Knight</option>';
+            } else if (game === "0h-n0") {
+                matrixSelect.innerHTML += '<option value="04">4 x 4</option>';
+                matrixSelect.innerHTML += '<option value="05">5 x 5</option>';
             }
         
             // Restaurar la selección guardada después de poblar las opciones

@@ -17,13 +17,16 @@
             <option value="0h-h1" selected>0h-h1</option>
             <option value="ChessGames">ChessGames</option>
             <option value="MindGrid">MindGames</option>
+            <option value="0h-n0">0h-n0</option>
         </select>
     </div>
     <div style="text-align:center;">
         <!-- Menú Juego 1 (0h-h1) -->
         <div id="game1-menu" style="text-align:center;">
-            <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; margin-left: 210px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
-        <div id="algorithm-info" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
+            <div class="botones">
+                <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
+            </div>
+            <div id="algorithm-info_1" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
             <div class="botones">
                 <button onclick="location.href='/0hh1'" class="resolver azulito">0h-h1</button>
                 <button onclick="location.href='/time_trial_0hh1'" class="resolver rojito">Contrarreloj</button>
@@ -58,7 +61,21 @@
             </div>
         </div>
 
-        <div style="height: 26px;"></div>
+        <!-- Menú Juego 4 (0hn0) -->
+        <div id="game4-menu" style="text-align:center; display: none;">
+            <div class="botones">
+                <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
+            </div>
+            <div id="algorithm-info_2" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
+            <div class="botones">
+                <button onclick="location.href='/0hn0'" class="resolver rojito">0h n0</button>
+                <button onclick="location.href='/tutorial_0hn0'" class="resolver azulito">Tutorial</button>
+            </div>
+            <div class="botones">
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="right: 80px;">Rankings</button>
+            </div>
+        </div>
+
 
         <h1 id="title" style="margin-top: 20px; font-size: 27px; font-weight: bold;">Ajustes</h1>
 
@@ -74,177 +91,118 @@
                 @ math_and_beer
             </a>
         </div>
-
     </div>
     <script>
         const gameSelected = document.getElementById("game");
-        function handleGameChange() {
-            localStorage.setItem("gameSelected", gameSelected.value);
-            const gameSelect = document.getElementById("game").value;
-            const game1Menu = document.getElementById("game1-menu");
-            const game2Menu = document.getElementById("game2-menu");
-            const game3Menu = document.getElementById("game3-menu");
-
-            // Ocultar todos los menús
-            game1Menu.style.display = "none";
-            game2Menu.style.display = "none";
-            game3Menu.style.display = "none";
-
-            // Mostrar solo el menú del juego seleccionado
-            if (gameSelect === "0h-h1") {
-                game1Menu.style.display = "block";
-            } else if (gameSelect === "ChessGames") {
-                game2Menu.style.display = "block";
-            } else if (gameSelect === "MindGrid") {
-                game3Menu.style.display = "block";
-            }
-        }
-
-        function toggleInfo() {
-            const infoDiv = document.getElementById('algorithm-info');
-            let description = `
-            1. Todo el tablero debe estar lleno. <br>
-            2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
-            3. No puede haber tres celdas consecutivas del mismo color. <br>
-            4. No puede haber dos filas o columnas idénticas.`
-            infoDiv.innerHTML = description;
-            infoDiv.style.display = infoDiv.style.display === 'none' ? 'block' : 'none';
-        }
-        document.addEventListener("DOMContentLoaded", function () {
-            const games = localStorage.getItem("gameSelected")
-            if (games) {
-                gameSelected.value = games
-            }
-            handleGameChange();
-            const themeToggle = document.getElementById("theme-toggle");
-            const div = document.getElementById("algorithm-info");
-            const link = document.getElementById("link");
-            const div1 = document.getElementById("game");
-            const image = document.getElementById("image");
-            const image1 = document.getElementById("image1");
-
-            // Recuperar el tema guardado en localStorage (opcional)
-            const savedTheme = localStorage.getItem("theme");
-            if (savedTheme) {
-                document.body.classList.remove("light-theme", "dark-theme");
-                document.body.classList.add(savedTheme);   
-            }
-
-            if (savedTheme === "light-theme") {
-                div.style.color = "#000000";
-                link.style.color = "#000000";
-                div.style.border = "1px solid #121212";
-                image.style.filter = "none";
-                image1.style.filter = "none";
-                div1.style.background = "#fffde6";
-                div1.style.color = "#000000";
-                div1.style.border = "1px solid #121212";
-            } else if (savedTheme === "dark-theme"){
-                div.style.color = "#ffffff";
-                link.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                image1.style.filter = "invert(90%)";
-                div1.style.background = "#000112";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            } else {
-                div.style.color = "#ffffff";
-                link.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                image1.style.filter = "invert(90%)";
-                div1.style.background = "#15003e";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            }
-
-            themeToggle.addEventListener("click", function () {
-                let currentTheme = document.body.classList.contains("dark-theme")
-                    ? "dark-theme"
-                    : document.body.classList.contains("light-theme")
-                    ? "light-theme"
-                    : "";
-
-                let nextTheme = currentTheme === ""
-                    ? "dark-theme"
-                    : currentTheme === "dark-theme"
-                    ? "light-theme"
-                    : false;
-                document.body.classList.remove("light-theme", "dark-theme");
-                if (nextTheme) {
-                    document.body.classList.add(nextTheme);
-                    localStorage.setItem("theme", nextTheme);
-                } else {
-                    localStorage.removeItem("theme");
-                }
-
-            if (nextTheme === "light-theme") {
-                div.style.color = "#000000";
-                link.style.color = "#000000";
-                div.style.border = "1px solid #121212";
-                image.style.filter = "none";
-                image1.style.filter = "none";
-                div1.style.background = "#fffde6";
-                div1.style.color = "#000000";
-                div1.style.border = "1px solid #121212";
-            } else if (nextTheme === "dark-theme"){
-                div.style.color = "#ffffff";
-                link.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                image1.style.filter = "invert(90%)";
-                div1.style.background = "#000112";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            } else {
-                div.style.color = "#ffffff";
-                link.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
-                image.style.filter = "invert(90%)";
-                image1.style.filter = "invert(90%)";
-                div1.style.background = "#15003e";
-                div1.style.color = "#ffffff";
-                div1.style.border = "1px solid #ccc";
-            }
-            });
-        });
-        const savedTheme = localStorage.getItem("theme");  
-        const div = document.getElementById("algorithm-info");
         const link = document.getElementById("link");
         const div1 = document.getElementById("game");
         const image = document.getElementById("image");
         const image1 = document.getElementById("image1");
 
-        if (savedTheme === "light-theme") {
-            div.style.color = "#000000";
-            link.style.color = "#000000";
-            div.style.border = "1px solid #121212";
-            image.style.filter = "none";
-            image1.style.filter = "none";
-            div1.style.background = "#fffde6";
-            div1.style.color = "#000000";
-            div1.style.border = "1px solid #121212";
-        } else if (savedTheme === "dark-theme"){
-            div.style.color = "#ffffff";
-            link.style.color = "#ffffff";
-            div.style.border = "1px solid #ccc";
-            image.style.filter = "invert(90%)";
-            image1.style.filter = "invert(90%)";
-            div1.style.background = "#000112";
-            div1.style.color = "#ffffff";
-            div1.style.border = "1px solid #ccc";
-        } else {
-            div.style.color = "#ffffff";
-            link.style.color = "#ffffff";
-            div.style.border = "1px solid #ccc";
-            image.style.filter = "invert(90%)";
-            image1.style.filter = "invert(90%)";
-            div1.style.background = "#15003e";
-            div1.style.color = "#ffffff";
-            div1.style.border = "1px solid #ccc";
+        let color0 = "", color01 = "", color1 = "";
+
+        function handleGameChange() {
+            localStorage.setItem("gameSelected", gameSelected.value);
+            const gameSelect = gameSelected.value;
+            document.getElementById("game1-menu").style.display = "none";
+            document.getElementById("game2-menu").style.display = "none";
+            document.getElementById("game3-menu").style.display = "none";
+            document.getElementById("game4-menu").style.display = "none";
+
+            if (gameSelect === "0h-h1") {
+                document.getElementById("game1-menu").style.display = "block";
+            } else if (gameSelect === "ChessGames") {
+                document.getElementById("game2-menu").style.display = "block";
+            } else if (gameSelect === "MindGrid") {
+                document.getElementById("game3-menu").style.display = "block";
+            } else if (gameSelect === "0h-n0") {
+                document.getElementById("game4-menu").style.display = "block";
+            }
         }
 
+        function toggleInfo() {
+            const savedTheme = localStorage.getItem("theme");
+            applyTheme(savedTheme);
+            const gameSelected = document.getElementById("game");
+            const div = gameSelected.value === "0h-h1" ? document.getElementById("algorithm-info_1") : document.getElementById("algorithm-info_2");
+            const description = gameSelected.value === "0h-h1" ? `
+                1. Todo el tablero debe estar lleno. <br>
+                2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
+                3. No puede haber tres celdas consecutivas del mismo color. <br>
+                4. No puede haber dos filas o columnas idénticas.` : `
+                1. Todo el tablero debe estar lleno. <br>
+                2. Las celdas ${color0} bloquean la vista en cualquier dirección. <br>
+                3. Las celdas ${color1} con número indican cuántas celdas ${color1} pueden ver en línea recta, sin que una ${color01} las bloquee. <br>
+                4. Todos los números deben cumplirse exactamente.`;
+            div.innerHTML = description;
+            div.style.display = div.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function applyTheme(theme) {
+            const gameSelected = document.getElementById("game");
+            const div = gameSelected.value === "0h-h1" ? document.getElementById("algorithm-info_1") : document.getElementById("algorithm-info_2");
+            document.body.classList.remove("light-theme", "dark-theme");
+            if (theme) document.body.classList.add(theme);
+
+            if (theme === "light-theme") {
+                color0 = "rojas"; color01 = "roja"; color1 = "azules";
+                div.style.color = "#000000";
+                link.style.color = "#000000";
+                div.style.border = "1px solid #121212";
+                image.style.filter = "none";
+                image1.style.filter = "none";
+                div1.style.background = "#fffde6";
+                div1.style.color = "#000000";
+                div1.style.border = "1px solid #121212";
+            } else if (theme === "dark-theme") {
+                color0 = "amarillas"; color01 = "amarilla"; color1 = "azules";
+                div.style.color = "#ffffff";
+                link.style.color = "#ffffff";
+                div.style.border = "1px solid #ccc";
+                image.style.filter = "invert(90%)";
+                image1.style.filter = "invert(90%)";
+                div1.style.background = "#000112";
+                div1.style.color = "#ffffff";
+                div1.style.border = "1px solid #ccc";
+            } else {
+                color0 = "amarillas"; color01 = "amarilla"; color1 = "moradas";
+                div.style.color = "#ffffff";
+                link.style.color = "#ffffff";
+                div.style.border = "1px solid #ccc";
+                image.style.filter = "invert(90%)";
+                image1.style.filter = "invert(90%)";
+                div1.style.background = "#15003e";
+                div1.style.color = "#ffffff";
+                div1.style.border = "1px solid #ccc";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedGame = localStorage.getItem("gameSelected");
+            if (savedGame) gameSelected.value = savedGame;
+            handleGameChange();
+
+            const savedTheme = localStorage.getItem("theme");
+            applyTheme(savedTheme);
+
+            document.getElementById("theme-toggle").addEventListener("click", () => {
+                const current = document.body.classList.contains("dark-theme") ? "dark-theme"
+                            : document.body.classList.contains("light-theme") ? "light-theme"
+                            : "";
+                const next = current === "" ? "dark-theme"
+                            : current === "dark-theme" ? "light-theme"
+                            : "";
+                if (next) {
+                    document.body.classList.add(next);
+                    localStorage.setItem("theme", next);
+                } else {
+                    localStorage.removeItem("theme");
+                }
+                applyTheme(next);
+                toggleInfo();
+                toggleInfo();
+            });
+        });
     </script>
 </body>
 </html>

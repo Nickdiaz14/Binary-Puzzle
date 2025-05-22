@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6, user-scalable=no">
+    <title>Tutorial</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div style="text-align:center;">
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Tutorial 0h-n0</h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold; height: 70px;"></h1>
+    </div>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    {% if init %}
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Omitir</button>
+    {% endif %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            }
+        });
+        document.getElementById("title_part").textContent = '';
+        let color0;
+        let color1;
+        let border;
+        let step = 0;
+        let matrixSize = 4; // Tamaño de la matriz
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-2));
+        const table = document.getElementById('matrix');
+
+        function createTable() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "light-theme") {
+                color0 = "rojas";
+                color1 = "azules";
+                border = "rgb(0,0,0)"
+            } else if (savedTheme === "dark-theme"){
+                color0 = "amarillas";
+                color1 = "azules";
+                border = "rgb(255,255,255)"
+            } else {
+                color0 = "amarillas";
+                color1 = "moradas";
+                border = "rgb(255,255,255)"
+            }
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < matrixSize; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < matrixSize; j++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'grey locked';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            const cells = document.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.style.width = "100px";
+                cell.style.height = "100px";
+                cell.style.borderRadius = "25px";
+            });
+            document.body.classList.add('lock-size-40');
+        }
+
+        function toggleColor(row, col, cell) {
+            let countdownElement = document.getElementById("title_part")
+            if (cell.classList.contains('locked')) {
+                return; // Do nothing if the cell is blocked
+            }
+            if (cell.className === 'grey') {
+                cell.className = 'blue';
+                matrix[row][col] = 0;
+            } else if (cell.className === 'blue') {
+                cell.className = 'red';
+                matrix[row][col] = -1;
+            } else {
+                cell.className = 'grey';
+                matrix[row][col] = -2;
+            }
+            if ((matrix[0][1] === 0) && (matrix[0][2] === 0) && (step === 0)) {
+                step++;
+                table.rows[0].cells[1].style.removeProperty("outline");
+                table.rows[0].cells[1].style.removeProperty("outline-offset");
+                table.rows[0].cells[1].classList.add('locked');
+                
+                table.rows[0].cells[2].style.removeProperty("outline");
+                table.rows[0].cells[2].style.removeProperty("outline-offset");
+                table.rows[0].cells[2].classList.add('locked');
+
+                table.rows[0].cells[3].classList.remove('locked');
+                table.rows[0].cells[3].style.outline = `5px solid ${border}`;
+                table.rows[0].cells[3].style.outlineOffset = "-5px";
+                countdownElement.innerHTML = `Ahora, tapemos la visión del 2. <br> Presiona la celda dos veces para volverla ${color0.substr(0, color0.length-1)}.`;
+
+            } else if ((matrix[0][3] === -1) && (step === 1)) {
+                step++;
+                let count = 2;
+                table.rows[0].cells[3].style.removeProperty("outline");
+                table.rows[0].cells[3].style.removeProperty("outline-offset");
+                table.rows[0].cells[3].classList.add('locked');
+
+                table.rows[1].cells[3].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[3].style.outlineOffset = "-5px";
+                countdownElement.textContent = `Esta celda ya está viendo todas las celdas ${color1} que debe ver.`;
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    if (count === 1) {
+                        table.rows[1].cells[3].style.removeProperty("outline");
+                        table.rows[1].cells[3].style.removeProperty("outline-offset");
+
+                        table.rows[1].cells[2].classList.remove('locked');
+                        table.rows[1].cells[2].style.outline = `5px solid ${border}`;
+                        table.rows[1].cells[2].style.outlineOffset = "-5px";
+                        countdownElement.textContent = `Una celda ${color0.substr(0, color0.length-1)} debe ir acá para tapar su visión.`;
+                    } if (count <= 0) {
+                        clearInterval(countdownInterval);
+                    }
+                }, 3600);
+            } else if ((matrix[1][2] === -1) && (step === 2)) {
+                step++;
+                let count = 2;
+                table.rows[1].cells[2].style.removeProperty("outline");
+                table.rows[1].cells[2].style.removeProperty("outline-offset");
+                table.rows[1].cells[2].classList.add('locked');
+
+                table.rows[1].cells[1].style.outline = `5px solid ${border}`;
+                table.rows[1].cells[1].style.outlineOffset = "-5px";
+                countdownElement.innerHTML = `Este 3 no puede ver ni a la derecha ni a la izquierda. <br> Pero ve la celda de arriba.`;
+                const countdownInterval = setInterval(() => {
+                    count--;
+                    if (count === 1) {
+                        table.rows[1].cells[1].style.removeProperty("outline");
+                        table.rows[1].cells[1].style.removeProperty("outline-offset");
+
+                        table.rows[2].cells[1].classList.remove('locked');
+                        table.rows[2].cells[1].style.outline = `5px solid ${border}`;
+                        table.rows[2].cells[1].style.outlineOffset = "-5px";
+
+                        table.rows[3].cells[1].classList.remove('locked');
+                        table.rows[3].cells[1].style.outline = `5px solid ${border}`;
+                        table.rows[3].cells[1].style.outlineOffset = "-5px";
+                        countdownElement.textContent = `Para que vea 3 ${color1} debe ver dos más.`;
+                    } if (count <= 0) {
+                        clearInterval(countdownInterval);
+                    }
+                }, 3600);
+            } else if ((matrix[2][1] === 0) && (matrix[3][1] === 0) && (step === 3)) {
+                step++;
+                table.rows[2].cells[1].style.removeProperty("outline");
+                table.rows[2].cells[1].style.removeProperty("outline-offset");
+                table.rows[2].cells[1].classList.add('locked');
+
+                table.rows[3].cells[1].style.removeProperty("outline");
+                table.rows[3].cells[1].style.removeProperty("outline-offset");
+                table.rows[3].cells[1].classList.add('locked');
+
+                table.rows[3].cells[2].classList.remove('locked');
+                table.rows[3].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[3].cells[2].style.outlineOffset = "-5px";
+
+                table.rows[2].cells[2].classList.remove('locked');
+                table.rows[2].cells[2].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[2].style.outlineOffset = "-5px";
+
+                table.rows[2].cells[0].classList.remove('locked');
+                table.rows[2].cells[0].style.outline = `5px solid ${border}`;
+                table.rows[2].cells[0].style.outlineOffset = "-5px";
+
+                countdownElement.textContent = `¿Puedes completar el tablero?`;
+            } else if ((matrix[3][2] === -1) && (matrix[2][2] === 0) && (matrix[2][0] === -1) && (step === 4)) {
+                step++;
+                table.rows[3].cells[2].style.removeProperty("outline");
+                table.rows[3].cells[2].style.removeProperty("outline-offset");
+                table.rows[3].cells[2].classList.add('locked');
+
+                table.rows[2].cells[2].style.removeProperty("outline");
+                table.rows[2].cells[2].style.removeProperty("outline-offset");
+                table.rows[2].cells[2].classList.add('locked');
+
+                table.rows[2].cells[0].style.removeProperty("outline");
+                table.rows[2].cells[0].style.removeProperty("outline-offset");
+                table.rows[2].cells[0].classList.add('locked');
+                let values = [5,2,5,2,4]
+                for (let i = 0; i < matrix.length; i++) {
+                    for (let j = 0; j < matrix.length; j++) {
+                        const cell = table.rows[i].cells[j];
+                        if (matrix[i][j] === 0) {
+                            cell.innerText = values.shift();
+                        }
+                    }
+                }
+                countdownElement.innerHTML = `El tablero está completo. <br> ¡Buen trabajo!.`;
+                setTimeout(() => {
+                    const user = localStorage.getItem('userId');
+                    window.location.href = `/menu?userID=${user}`
+                }, 500);
+            }
+            
+        }
+
+        function startGame() {
+            const gameMatrix = [[2, -2, -2, -2],[-1, 3, -2, 1],[-2, -2, -2, 3],[1, -2, -2, -1]];      
+            const table = document.getElementById('matrix');
+            matrix = gameMatrix.map(row => [...row]);
+            let count = 11;
+            let countdownElement = document.getElementById("title_part")
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (count <= 10) {
+                    countdownElement.innerHTML = `Las celdas ${color1} pueden ver otras celdas <br> en su propia fila y columna.`;
+                    for (let i = 0; i < gameMatrix.length; i++) {
+                        for (let j = 0; j < gameMatrix[i].length; j++) {
+                            const cell = table.rows[i].cells[j];
+                            if (matrix[i][j] >= 0){
+                                cell.className = 'blue blocked';
+                            }
+                        }
+                    }
+                } if (count <= 8) {
+                    countdownElement.innerHTML = `Las celdas ${color0} son muros, es decir <br> bloquean la vista de las azules.`;
+                    for (let i = 0; i < gameMatrix.length; i++) {
+                        for (let j = 0; j < gameMatrix[i].length; j++) {
+                            const cell = table.rows[i].cells[j];
+                            if (matrix[i][j] === -1) {
+                                cell.className = 'red blocked';
+                            }
+                        }
+                    }
+                } if (count <= 6) {
+                    countdownElement.innerHTML = `Las números indican cuántas celdas ${color1} deben ver.`;
+                    for (let i = 0; i < gameMatrix.length; i++) {
+                        for (let j = 0; j < gameMatrix[i].length; j++) {
+                            const cell = table.rows[i].cells[j];
+                            if (cell.className === 'blue blocked') {
+                                cell.innerText = gameMatrix[i][j] > 0 ? gameMatrix[i][j] : '';
+                            }
+                        }
+                    }
+                } if (count <= 4) {
+                    countdownElement.innerHTML = `Este 2 ve dos celdas <br> entonces deben ser las de la derecha.`;
+                    table.rows[0].cells[0].style.outline = `5px solid ${border}`;
+                    table.rows[0].cells[0].style.outlineOffset = "-5px";
+                } if (count <= 2) {
+                    table.rows[0].cells[0].style.removeProperty("outline");
+                    table.rows[0].cells[0].style.removeProperty("outline-offset");
+
+                    table.rows[0].cells[1].classList.remove('locked');
+                    table.rows[0].cells[1].style.outline = `5px solid ${border}`;
+                    table.rows[0].cells[1].style.outlineOffset = "-5px";
+
+                    table.rows[0].cells[2].classList.remove('locked');
+                    table.rows[0].cells[2].style.outline = `5px solid ${border}`;
+                    table.rows[0].cells[2].style.outlineOffset = "-5px";
+                    countdownElement.textContent = `Presionalas una vez para volverlas ${color1}.`;
+                    clearInterval(countdownInterval);
+                }
+            }, 1800);
+        }
+        createTable();
+        startGame();
+    </script>
+</body>
+</html>
