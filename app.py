@@ -281,9 +281,9 @@ def leaders_page():
     elif game == 'MindGrid':
         boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight']
     elif game == '0h-n0':
-        boards = ['T04', 'T05', 'T06', 'T07']
+        boards = ['T04', 'T05']
     elif game == 'MathGames':
-        boards = ["TMini-Nerdle", "TMaxi-Nerdle", "TNerdle"]
+        boards = ["TMini-Nerdle", "TNerdle", "TMaxi-Nerdle"]
     else:
         boards = ['TKnight']
     for board in boards:
