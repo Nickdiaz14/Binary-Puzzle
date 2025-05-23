@@ -18,6 +18,7 @@
             <option value="ChessGames">ChessGames</option>
             <option value="MindGrid">MindGames</option>
             <option value="0h-n0">0h-n0</option>
+            <option value="MathGames">MathGames</option>
         </select>
     </div>
     <div style="text-align:center;">
@@ -56,7 +57,6 @@
                 <button onclick="location.href='/light_out'" class="resolver rojito">Light out</button>
             </div>
             <div class="botones">
-                <button onclick="location.href='/nerdle'" class="resolver rojito">Nerdle</button>
                 <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="right: 80px;">Rankings</button>
             </div>
         </div>
@@ -72,6 +72,14 @@
                 <button onclick="location.href='/tutorial_0hn0'" class="resolver azulito">Tutorial</button>
             </div>
             <div class="botones">
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="right: 80px;">Rankings</button>
+            </div>
+        </div>
+
+        <!-- Menú Juego 5 (MathGames)) -->
+        <div id="game5-menu" style="text-align:center; display: none;">
+            <div class="botones">
+                <button onclick="location.href='/nerdle'" class="resolver rojito">Nerdle</button>
                 <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="right: 80px;">Rankings</button>
             </div>
         </div>
@@ -108,6 +116,7 @@
             document.getElementById("game2-menu").style.display = "none";
             document.getElementById("game3-menu").style.display = "none";
             document.getElementById("game4-menu").style.display = "none";
+            document.getElementById("game5-menu").style.display = "none";
 
             if (gameSelect === "0h-h1") {
                 document.getElementById("game1-menu").style.display = "block";
@@ -117,6 +126,8 @@
                 document.getElementById("game3-menu").style.display = "block";
             } else if (gameSelect === "0h-n0") {
                 document.getElementById("game4-menu").style.display = "block";
+            } else if (gameSelect === "MathGames") {
+                document.getElementById("game5-menu").style.display = "block";
             }
         }
 

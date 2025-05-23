@@ -68,6 +68,7 @@ def light_out():
 def nerdle():
     intento = request.json['intento']
     igualdad = request.json['igualdad']
+    n = request.json['n']
     if intento != '':
         try:
             productos, suma = intento.split('=')
@@ -85,10 +86,9 @@ def nerdle():
                 return jsonify({'success': False})
         except:
             return jsonify({'success': False})
-    with open(f'retos/igualdades.txt', 'r', encoding='utf-8') as file:
+    with open(f'retos/igualdades{n}.txt', 'r', encoding='utf-8') as file:
         lineas = file.readlines()
         linea_especifica = lineas[random.randint(0, len(lineas)-1)].strip()
-    print(linea_especifica)
     return jsonify({'igualdad': linea_especifica})
 
 @app.route('/sequence', methods=['POST'])
@@ -153,9 +153,9 @@ def leader_update():
         board = "TLight"
         better = update_leaderboard(board, id, round(score,2), score*100)
         return jsonify({'better': better,'score':score,'board':board})
-    elif game == 'nerdle':
+    elif "nerdle" in game:
         score = float(point)
-        board = "TNerdle"
+        board = board = "TMini-Nerdle" if "mini" in game else "TMaxi-Nerdle" if "maxi" in game else "TNerdle"
         better = update_leaderboard(board, id, round(score,2), score*100)
         return jsonify({'better': better,'score':score,'board':board})
     if game == '0hn0':
@@ -259,7 +259,7 @@ def leader_page():
             else:
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!', game = board)
-        elif board in ['TKnight', 'TLight', 'TNerdle']:
+        elif board in ['TKnight', 'TLight', 'TNerdle', 'TMini-Nerdle', 'TMaxi-Nerdle']:
             if board == 'TLight':
                 aux = 'Light Out'
             else:
@@ -279,9 +279,11 @@ def leaders_page():
     if game == '0h-h1':
         boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
     elif game == 'MindGrid':
-        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight', 'TNerdle']
+        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight']
     elif game == '0h-n0':
         boards = ['T04', 'T05', 'T06', 'T07']
+    elif game == 'MathGames':
+        boards = ["TMini-Nerdle", "TMaxi-Nerdle", "TNerdle"]
     else:
         boards = ['TKnight']
     for board in boards:

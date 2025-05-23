@@ -10,7 +10,14 @@
 </head>
 <body>
     <div id="countdown-overlay">
-        <div id="countdown" style="color: #ffffff; text-align: center;"></div>
+        <label style="font-size: 50px; font-weight: bold; margin-right: 10px; color: #f9f9f9">Elegir modo</label>
+        <div style="text-align:center;" class="botones">
+            <button onclick="setBoardSize(6)" class="resolver azulito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">Mini-Nerdle</button>
+            <button onclick="setBoardSize(8)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">Nerdle</button>
+        </div>
+        <div style="text-align:center;" class="botones">
+            <button onclick="setBoardSize(10)" class="resolver rojito" style="font-size: 20px; font-weight: bold; margin-right: 10px;">Maxi-Nerdle</button>
+        </div>
     </div>
     <div style="text-align:center;">
         <h1 id="title" style="font-size: 60px; font-weight: bold;">Nerdle</h1>
@@ -47,7 +54,7 @@
         });
         document.getElementById("title_part").textContent = '¡Adivina la igualdad!';
         let gamefinished = false;
-        let matrixSize = 10; // Tamaño de la matriz
+        let matrixSize = 6; // Tamaño de la matriz
         let guesses = 0;
         let igualdad = ''
         const eliminar = "{{ url_for('static', filename='images/eliminar.png') }}";
@@ -69,6 +76,12 @@
             }, 10); // Actualizar cada 10 ms (centésima de segundo)
         }
 
+        function reset(){
+            document.getElementById("timer").textContent = `00:00.00`;
+            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            createTable(initial);
+        }
+        
         function stopTimer() {
             clearInterval(timerInterval);
             const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
@@ -187,7 +200,7 @@
                 fetch('/nerdle', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({intento:intento, igualdad:igualdad}),
+                body: JSON.stringify({intento:intento, igualdad:igualdad, n:matrixSize}),
             })
             .then(response => response.json())
             .then(data => {
@@ -293,7 +306,7 @@
             fetch('/nerdle', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({intento:igualdad, igualdad:igualdad}),
+                body: JSON.stringify({intento:igualdad, igualdad:igualdad, n:matrixSize}),
             })
             .then(response => response.json())
             .then(data => {
@@ -324,6 +337,7 @@
             document.getElementById("title").textContent = `Nerdle`;
             document.getElementById("title_part").textContent = "¡Adivina la igualdad!";
             matrixSize = size; // Asigna el tamaño seleccionado
+            reset();
             startGame(); // Inicia la cuenta regresiva
         }
 
@@ -334,6 +348,7 @@
             let tiempo = stopTimer(); // Detener el cronómetro si el jugador gana
             let puntaje = points(tiempo.totalCentiseconds/100,guesses);
             document.getElementById("title_part").textContent = "¡Felicidades, has ganado!";
+            let game = matrixSize === 6 ? 'mini-nerdle' : matrixSize === 8 ? 'nerdle' : 'maxi-nerdle';
             setTimeout(() => {
             }, 500);
             fetch('/leaderboard/update', {
@@ -344,7 +359,7 @@
                 body: JSON.stringify({
                     score: puntaje,
                     userID: localStorage.getItem('userId'),
-                    game: 'nerdle',
+                    game: game,
                 })
             }).then(response => response.json())
             .then(data => {
@@ -368,7 +383,6 @@
             return matrix.every(row => row.every(cell => cell === 1));
         }
         createTable();
-        setBoardSize(matrixSize);
     </script>
 </body>
 </html>
