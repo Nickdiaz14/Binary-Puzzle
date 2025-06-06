@@ -128,6 +128,11 @@ def leader_update():
         board = "TContrareloj"
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
+    elif game == 'Color':
+        score = int(point)
+        board = "TCruzado"
+        better = update_leaderboard(board, id,f'{score} tabs', score)
+        return jsonify({'better': better,'score':score,'board':board})
     elif game == 'mindgrid1':
         score = int(point)
         board = "TUnicolor"
@@ -192,6 +197,10 @@ def nerdle_page():
 @app.route('/forms')
 def forms_page():
     return render_template('forms.html')
+
+@app.route('/colors')
+def colors_page():
+    return render_template('colors.html')
 
 @app.route('/light_out')
 def light_out_page():
@@ -268,7 +277,10 @@ def leader_page():
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
         else:
             score = int(request.args.get('score'))
-            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
+            aux = board[1:]
+            if board == 'TCruzado':
+                aux = "Colores Cruzados"
+            return render_template('leaderboard.html', board=aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
     else:
         return render_template('leaderboard.html', board="CuentaManía", data=json.dumps(get_top_scores(board)), message = f'¡Intentalo nuevamente!')
 
@@ -279,7 +291,7 @@ def leaders_page():
     if game == '0h-h1':
         boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
     elif game == 'MindGrid':
-        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TLight']
+        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TCruzado']
     elif game == '0h-n0':
         boards = ['T04', 'T05']
     elif game == 'MathGames':

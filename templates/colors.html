@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
+    <title>Colores Cruzados</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div id="countdown-overlay">
+        <h1 id="countdown" style="font-size: 120px;color: #ffffff;"></h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title" style="font-size: 60px; font-weight: bold;">Colores</h1>
+    </div>
+    <div style="text-align:center;">
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
+    </div>
+    <div style="text-align:center; margin-bottom: 8px;">
+    </div>
+    <!-- Cronómetro -->
+    <div style="text-align:center; margin: 20px;">
+        <h1 id="timer" style="font-size: 24px; font-weight: bold;">01:00.00</h1>
+    </div>
+    <table id="matrix">
+        <!-- JavaScript will generate the table here -->
+    </table>
+    <div style="text-align:center; margin: 30px;">
+    <table id="inputs">
+        <!-- JavaScript will generate the inputs table here -->
+    </table>
+    </div>
+    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <script>
+        const savedTheme = localStorage.getItem("theme");
+        document.addEventListener("DOMContentLoaded", function() {
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            }
+        });
+        document.getElementById("title_part").textContent = "¿La palabra de arriba dice el color del texto de abajo?";
+        let timerInterval;
+        let boards_solved = 0;
+        let centisecondsElapsed = 6000;
+        let colors = ['#ff0c0c', '#2db003', '#007bff', '#fff300', '#ff8000', '#e6007e'];
+        let nombres = ['Rojo', 'Verde', 'Azul', 'Amarillo', 'Naranja', 'Rosa'];
+
+
+    
+        function startTimer() {
+            clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
+            updateTimerDisplay(false);
+
+            timerInterval = setInterval(() => {
+                centisecondsElapsed--; // Incrementar en 10 ms
+                updateTimerDisplay(false);
+                if (centisecondsElapsed <= 0) {
+                    document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
+                    stopTimer();
+                    fetch('/leaderboard/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            score: boards_solved,
+                            userID: localStorage.getItem('userId'),
+                            game: 'Color'
+                        })
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.better) {
+                            window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&better=si&board=${data.board}`;
+                        } else {
+                            window.location.href = `/leaderboard?userID=${localStorage.getItem('userId')}&score=${data.score}&board=${data.board}`;
+                        }
+                    });
+                }
+            }, 10); // Actualizar cada 10 ms (centésima de segundo)
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
+}
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
+            const timerElement = document.getElementById("timer");
+            if (centisecondsElapsed <= 1000) {
+                if (centisecondsElapsed% 120 === 0) {
+                    timerElement.style.color = "#f00";
+                    setTimeout(() => {
+                        timerElement.style.removeProperty("color");
+                    }, 500);
+                }
+            }
+            timerElement.textContent = `${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function createTable() {
+            const table = document.getElementById('matrix');
+            table.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < 2; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 1; j++) {
+                    const cell = document.createElement('td');
+                    cell.style.fontSize = '100px';
+                    cell.style.width = "460px";
+                    cell.style.height = "120px";
+                    cell.style.borderRadius = "25px";
+                    row.appendChild(cell);
+                }
+                table.appendChild(row);
+            }
+            
+            const table_inputs = document.getElementById('inputs');
+            table_inputs.innerHTML = ''; // Limpiar contenido de la tabla existente
+            for (let i = 0; i < 1; i++) {
+                const row = document.createElement('tr');
+                for (let j = 0; j < 2; j++) {
+                    const cell = document.createElement('td');
+                    cell.style.width = "100px";
+                    cell.style.height = "70px";
+                    cell.style.borderRadius = "25px";
+                    cell.innerText = j === 0 ? 'Sí' : 'No';
+                    if (savedTheme === 'light-theme') {
+                        cell.style.color = '#000000';
+                    }
+                    cell.style.color = 'center';
+                    cell.onclick = () => toggleColor(i, j, cell);
+                    row.appendChild(cell);
+                }
+                table_inputs.appendChild(row);
+            }
+            const cells = document.querySelectorAll('td');
+            if (savedTheme !== 'light-theme') {
+                cells.forEach(cell => {
+                    cell.style.backgroundColor = '#ffffff0f';
+                });
+            }
+            document.body.classList.add('lock-size-40');
+            
+        }
+
+        function toggleColor(row, col, cell) {
+            let combs = [
+                ['Rojo',     '#ff0c0c'],
+                ['Verde',    '#2db003'],
+                ['Azul',     '#007bff'],
+                ['Amarillo', '#fff300'],
+                ['Naranja',  '#ff8000'],
+                ['Rosa',     '#e6007e']
+            ];
+            let table = document.getElementById('matrix');
+            let text = table.rows[0].cells[0].innerText;
+            let colorRgb = getComputedStyle(table.rows[1].cells[0]).color;
+            let colorHex = rgbToHex(colorRgb);
+
+            const valid = combs.some(pos => pos[0] === text && pos[1].toLowerCase() === colorHex.toLowerCase());
+
+            setTimeout(() => {
+                let cell_color;
+
+                if ((cell.innerText === 'Sí' && valid) || (cell.innerText === 'No' && !valid)) {
+                    boards_solved += 1;
+                    cell_color = '#278b02';  // verde
+                } else {
+                    cell_color = '#e60000';  // rojo
+                }
+
+                // Ahora que cell_color está definido, aplicamos el color
+                for (let i = 0; i < 2; i++) {
+                    for (let j = 0; j < 1; j++) {
+                        const cell = table.rows[i].cells[j];
+                        cell.innerText = '';
+                        cell.style.backgroundColor = cell_color;
+                    }
+                }
+            }, 200);
+
+            // Restaurar colores luego de 3 segundos
+            setTimeout(() => {
+                const cells = document.querySelectorAll('td');
+                const bgColor = (savedTheme !== 'light-theme') ? '#ffffff0f' : '#c8c4b4';
+                cells.forEach(cell => {
+                    cell.style.backgroundColor = bgColor;
+                });
+                startGame();
+            }, 700);
+        }
+
+
+        function startGame() {
+            const table = document.getElementById('matrix');
+            // Probabilidad de coincidencia (por ejemplo, 0.7 = 70%)
+            const probabilidadCoincidencia = 0.45;
+            table.rows[0].cells[0].style.color = colors[Math.floor(Math.random() * nombres.length)];
+            table.rows[1].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+
+            if (Math.random() < probabilidadCoincidencia) {
+                // Coinciden texto y color
+                const idx = Math.floor(Math.random() * nombres.length);
+                table.rows[0].cells[0].innerText = nombres[idx];
+                table.rows[1].cells[0].style.color = colors[idx];
+            } else {
+                // No coinciden: elegir texto y color diferentes
+                const idxTexto = Math.floor(Math.random() * nombres.length);
+                let idxColor;
+                do {
+                    idxColor = Math.floor(Math.random() * colors.length);
+                } while (idxColor === idxTexto);
+                table.rows[0].cells[0].innerText = nombres[idxTexto];
+                table.rows[1].cells[0].style.color = colors[idxColor];
+            }
+
+            let overlay = document.getElementById('countdown-overlay');
+            let count = 2;
+            const countdownElement = document.getElementById("countdown");
+            countdownElement.style.fontSize = "50px"; 
+            countdownElement.style.textAlign = "center"; 
+            countdownElement.innerHTML = "¿La palabra de arriba dice <br> el color del texto de abajo?";
+
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdownElement.style.fontSize = "120px"; 
+                countdownElement.textContent = "¡Adelante!";
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    overlay.style.display = "none"; // Ocultar overlay al terminar
+                    startTimer(); // Iniciar el cronómetro después de la cuenta regresiva
+                }
+            }, 1200);
+        }
+
+        function rgbToHex(rgb) {
+            const result = rgb.match(/\d+/g).map(n => parseInt(n).toString(16).padStart(2, '0'));
+            return '#' + result.slice(0, 3).join('');
+        }
+
+        createTable();
+        startGame();
+    </script>
+</body>
+</html>
