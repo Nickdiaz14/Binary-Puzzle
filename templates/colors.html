@@ -44,9 +44,18 @@
         document.getElementById("title_part").textContent = "¿La palabra de arriba dice el color del texto de abajo?";
         let timerInterval;
         let boards_solved = 0;
+        let total_attempts = 0;
         let centisecondsElapsed = 6000;
         let colors = ['#ff0c0c', '#2db003', '#007bff', '#fff300', '#ff8000', '#e6007e'];
         let nombres = ['Rojo', 'Verde', 'Azul', 'Amarillo', 'Naranja', 'Rosa'];
+        let combs = [
+                ['Rojo',     '#ff0c0c'],
+                ['Verde',    '#2db003'],
+                ['Azul',     '#007bff'],
+                ['Amarillo', '#fff300'],
+                ['Naranja',  '#ff8000'],
+                ['Rosa',     '#e6007e']
+            ];
 
 
     
@@ -66,7 +75,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            score: boards_solved,
+                            score: boards_solved * Math.pow((boards_solved / total_attempts), 2),
                             userID: localStorage.getItem('userId'),
                             game: 'Color'
                         })
@@ -134,7 +143,6 @@
                     if (savedTheme === 'light-theme') {
                         cell.style.color = '#000000';
                     }
-                    cell.style.color = 'center';
                     cell.onclick = () => toggleColor(i, j, cell);
                     row.appendChild(cell);
                 }
@@ -151,14 +159,7 @@
         }
 
         function toggleColor(row, col, cell) {
-            let combs = [
-                ['Rojo',     '#ff0c0c'],
-                ['Verde',    '#2db003'],
-                ['Azul',     '#007bff'],
-                ['Amarillo', '#fff300'],
-                ['Naranja',  '#ff8000'],
-                ['Rosa',     '#e6007e']
-            ];
+            total_attempts++;
             let table = document.getElementById('matrix');
             let text = table.rows[0].cells[0].innerText;
             let colorRgb = getComputedStyle(table.rows[1].cells[0]).color;

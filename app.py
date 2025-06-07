@@ -129,9 +129,9 @@ def leader_update():
         better = update_leaderboard(board, id,f'{score} tabs', score)
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'Color':
-        score = int(point)
+        score = float(point)
         board = "TCruzado"
-        better = update_leaderboard(board, id,f'{score} tabs', score)
+        better = update_leaderboard(board, id,round(score,2), score)
         return jsonify({'better': better,'score':score,'board':board})
     elif game == 'mindgrid1':
         score = int(point)
@@ -268,19 +268,18 @@ def leader_page():
             else:
                 aux = f'{board[1:]}x{board[1:]}'
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {(score//6000):02}:{((score%6000)//100):02}.{(score%100):02}, bien hecho!', game = board)
-        elif board in ['TKnight', 'TLight', 'TNerdle', 'TMini-Nerdle', 'TMaxi-Nerdle']:
+        elif board in ['TKnight', 'TLight', 'TNerdle', 'TMini-Nerdle', 'TMaxi-Nerdle', 'TCruzado']:
             if board == 'TLight':
                 aux = 'Light Out'
+            elif board == 'TCruzado':
+                aux = "Colores Cruzados"
             else:
                 aux = board[1:]
             score = round(float(request.args.get('score')),2)
             return render_template('leaderboard.html', board= aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} puntos, bien hecho!')
         else:
             score = int(request.args.get('score'))
-            aux = board[1:]
-            if board == 'TCruzado':
-                aux = "Colores Cruzados"
-            return render_template('leaderboard.html', board=aux, data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
+            return render_template('leaderboard.html', board=board[1:], data=json.dumps(get_top_scores(board)), best = better, message = f'¡Hiciste {score} tableros, bien hecho!')
     else:
         return render_template('leaderboard.html', board="CuentaManía", data=json.dumps(get_top_scores(board)), message = f'¡Intentalo nuevamente!')
 
