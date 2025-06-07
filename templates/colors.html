@@ -16,13 +16,13 @@
         <h1 id="title" style="font-size: 60px; font-weight: bold;">Colores</h1>
     </div>
     <div style="text-align:center;">
-        <h1 id="title_part" style="font-size: 30px; font-weight: bold;"></h1>
+        <h1 id="title_part" style="font-size: 30px; font-weight: bold; height: 32px;"></h1>
     </div>
     <div style="text-align:center; margin-bottom: 8px;">
     </div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
-        <h1 id="timer" style="font-size: 24px; font-weight: bold;">01:00.00</h1>
+        <h1 id="timer" style="font-size: 24px; font-weight: bold;">01:45.00</h1>
     </div>
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
@@ -41,11 +41,20 @@
                 document.body.classList.add(savedTheme);
             }
         });
-        document.getElementById("title_part").textContent = "¿La palabra de arriba dice el color del texto de abajo?";
+        document.getElementById("title_part").textContent = "";
         let timerInterval;
         let boards_solved = 0;
         let total_attempts = 0;
-        let centisecondsElapsed = 6000;
+        let centisecondsElapsed = 10500;
+        let question;
+        let questions = [
+            "¿Texto arriba = Color abajo?",
+            "¿Color arriba = Texto abajo?",
+            "¿Texto arriba = Texto abajo?",
+            "¿Color arriba = Color abajo?",
+            "¿Texto arriba = Color arriba?",
+            "¿Texto abajo = Color abajo?"
+        ];
         let colors = ['#ff0c0c', '#2db003', '#007bff', '#fff300', '#ff8000', '#e6007e'];
         let nombres = ['Rojo', 'Verde', 'Azul', 'Amarillo', 'Naranja', 'Rosa'];
         let combs = [
@@ -160,12 +169,18 @@
 
         function toggleColor(row, col, cell) {
             total_attempts++;
+            const in_cells = document.querySelectorAll('#inputs td');
+            in_cells.forEach(cell => {
+                cell.classList.add('locked');
+            });
             let table = document.getElementById('matrix');
-            let text = table.rows[0].cells[0].innerText;
-            let colorRgb = getComputedStyle(table.rows[1].cells[0]).color;
-            let colorHex = rgbToHex(colorRgb);
 
-            const valid = combs.some(pos => pos[0] === text && pos[1].toLowerCase() === colorHex.toLowerCase());
+            const valid = question === 0 ? combs.some(pos => pos[0] === table.rows[0].cells[0].innerText && pos[1].toLowerCase() === rgbToHex(getComputedStyle(table.rows[1].cells[0]).color).toLowerCase()) :
+                          question === 1 ? combs.some(pos => pos[0] === table.rows[1].cells[0].innerText && pos[1].toLowerCase() === rgbToHex(getComputedStyle(table.rows[0].cells[0]).color).toLowerCase()) :
+                          question === 2 ? table.rows[0].cells[0].innerText === table.rows[1].cells[0].innerText :
+                          question === 3 ? rgbToHex(getComputedStyle(table.rows[0].cells[0]).color).toLowerCase() === rgbToHex(getComputedStyle(table.rows[1].cells[0]).color).toLowerCase() :
+                          question === 4 ? combs.some(pos => pos[0] === table.rows[0].cells[0].innerText && pos[1].toLowerCase() === rgbToHex(getComputedStyle(table.rows[0].cells[0]).color).toLowerCase()) :
+                          combs.some(pos => pos[0] === table.rows[1].cells[0].innerText && pos[1].toLowerCase() === rgbToHex(getComputedStyle(table.rows[1].cells[0]).color).toLowerCase());
 
             setTimeout(() => {
                 let cell_color;
@@ -194,40 +209,72 @@
                 cells.forEach(cell => {
                     cell.style.backgroundColor = bgColor;
                 });
+                in_cells.forEach(cell => {
+                    cell.classList.remove('locked');
+                });
                 startGame();
             }, 700);
         }
 
 
         function startGame() {
+            question = Math.floor(Math.random() * questions.length)
+            document.getElementById("title_part").textContent = questions[question];
             const table = document.getElementById('matrix');
             // Probabilidad de coincidencia (por ejemplo, 0.7 = 70%)
-            const probabilidadCoincidencia = 0.45;
-            table.rows[0].cells[0].style.color = colors[Math.floor(Math.random() * nombres.length)];
-            table.rows[1].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+            const probabilidadCoincidencia = 0.53;
 
             if (Math.random() < probabilidadCoincidencia) {
-                // Coinciden texto y color
                 const idx = Math.floor(Math.random() * nombres.length);
-                table.rows[0].cells[0].innerText = nombres[idx];
-                table.rows[1].cells[0].style.color = colors[idx];
-            } else {
-                // No coinciden: elegir texto y color diferentes
-                const idxTexto = Math.floor(Math.random() * nombres.length);
-                let idxColor;
-                do {
-                    idxColor = Math.floor(Math.random() * colors.length);
-                } while (idxColor === idxTexto);
-                table.rows[0].cells[0].innerText = nombres[idxTexto];
-                table.rows[1].cells[0].style.color = colors[idxColor];
-            }
+                if (question === 0) {
+                    table.rows[0].cells[0].innerText = nombres[idx];
+                    table.rows[1].cells[0].style.color = colors[idx];
 
+                    table.rows[1].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                    table.rows[0].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+                } else if (question === 1) {
+                    table.rows[1].cells[0].innerText = nombres[idx];
+                    table.rows[0].cells[0].style.color = colors[idx];
+
+                    table.rows[0].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                    table.rows[1].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+                } else if (question === 2) {
+                    table.rows[1].cells[0].innerText = nombres[idx];
+                    table.rows[0].cells[0].innerText = nombres[idx];
+
+                    table.rows[0].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+                    table.rows[1].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+                } else if (question === 3) {
+                    table.rows[1].cells[0].style.color = colors[idx];
+                    table.rows[0].cells[0].style.color = colors[idx];
+
+                    table.rows[0].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                    table.rows[1].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                } else if (question === 4) {
+                    table.rows[0].cells[0].innerText = nombres[idx];
+                    table.rows[0].cells[0].style.color = colors[idx];
+
+                    table.rows[1].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                    table.rows[1].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+                } else if (question === 5) {
+                    table.rows[1].cells[0].innerText = nombres[idx];
+                    table.rows[1].cells[0].style.color = colors[idx];
+
+                    table.rows[0].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                    table.rows[0].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+                }
+            } else {
+                table.rows[0].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                table.rows[0].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+                table.rows[1].cells[0].innerText = nombres[Math.floor(Math.random() * nombres.length)];
+                table.rows[1].cells[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+            }
             let overlay = document.getElementById('countdown-overlay');
             let count = 2;
             const countdownElement = document.getElementById("countdown");
             countdownElement.style.fontSize = "50px"; 
             countdownElement.style.textAlign = "center"; 
-            countdownElement.innerHTML = "¿La palabra de arriba dice <br> el color del texto de abajo?";
+            countdownElement.innerHTML = "Lee la pregunta y responde";
 
             const countdownInterval = setInterval(() => {
                 count--;
