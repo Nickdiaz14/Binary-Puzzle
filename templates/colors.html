@@ -66,7 +66,7 @@
             timerInterval = setInterval(() => {
                 centisecondsElapsed--; // Incrementar en 10 ms
                 updateTimerDisplay(false);
-                if (centisecondsElapsed <= 0) {
+                if (centisecondsElapsed === 0) {
                     document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                     stopTimer();
                     fetch('/leaderboard/update', {
