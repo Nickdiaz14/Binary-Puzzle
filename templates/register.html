@@ -51,7 +51,7 @@
             }
         }
         if (ind && ind.toString() !== "si") {
-            localStorage.setItem('userId', ind);
+            localStorage.setItem('userId', crypto.randomUUID());
             window.location.href = `/menu?userID=${localStorage.getItem('userId')}`
         }
     </script>

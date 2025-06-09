@@ -350,10 +350,6 @@ def menu():
         """, (id, nom))
         final_nom = nom
 
-        connection.commit()
-        cursor.close()
-        connection.close()   
-
     # Guardar los cambios en la base de datos
     connection.commit()
 
