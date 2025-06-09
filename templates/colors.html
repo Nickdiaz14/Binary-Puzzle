@@ -22,7 +22,7 @@
     </div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
-        <h1 id="timer" style="font-size: 24px; font-weight: bold;">01:45.00</h1>
+        <h1 id="timer" style="font-size: 24px; font-weight: bold;">01:10.00</h1>
     </div>
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
@@ -45,7 +45,7 @@
         let timerInterval;
         let boards_solved = 0;
         let total_attempts = 0;
-        let centisecondsElapsed = 10500;
+        let centisecondsElapsed = 7000;
         let question;
         let questions = [
             "¿Texto arriba = Color abajo?",
@@ -75,7 +75,12 @@
             timerInterval = setInterval(() => {
                 centisecondsElapsed--; // Incrementar en 10 ms
                 updateTimerDisplay(false);
-                if (centisecondsElapsed === 0) {
+                if (centisecondsElapsed <= 0) {
+                    const in_cells = document.querySelectorAll('#inputs td');
+                    in_cells.forEach(cell => {
+                        cell.classList.add('locked');
+                    });
+                    document.getElementById("timer").innerText = '00:00.00'
                     document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                     stopTimer();
                     fetch('/leaderboard/update', {
