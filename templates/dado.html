@@ -151,8 +151,6 @@
                     valorFinal_2 = Math.floor(Math.random() * 6) + 1; 
                   }
                 }
-                dadoImg_1.src = `/static/images/${valorFinal_1}.png`;
-                dadoImg_2.src = `/static/images/${valorFinal_2}.png`;
                 
                 // Aplicar rotación ANTES de verificar si termina
                 rotacionActual_1 += 90; // Rotación más suave
@@ -161,6 +159,8 @@
                 dadoImg_2.style.transform = `rotate(${rotacionActual_2}deg)`;
                 
                 if (tiempoPasado >= tiempoAnimacion) {
+                    dadoImg_1.src = `/static/images/${valorFinal_1}.png`;
+                    dadoImg_2.src = `/static/images/${valorFinal_2}.png`;
                     clearInterval(animacion);
                     // Remover transición al final para evitar efectos no deseados
                     setTimeout(() => {
