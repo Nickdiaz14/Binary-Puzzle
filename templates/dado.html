@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Juego del Dado</title>
+  <title>Agalludo</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=0.6, user-scale=no, maximum-scale=0.6">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -16,11 +16,18 @@
       opacity: 0.4;
       pointer-events: none;
     }
+
+    #imagen-dado {
+        transition: transform 0.3s ease-in-out;
+    }
+
   </style>
 </head>
 <body>
-  <h1>¡Agalludo!</h1>
-    <div style="text-align:center; margin: 20px;">
+  <div style="text-align:center;">
+      <h1 id="title" style="font-size: 80px; font-weight: bold;">¡Agalludo!</h1>
+  </div>
+    <div style="text-align:center; margin: 5px;">
         <h1 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h1>
     </div>
   <div id="dado" class="dado">
@@ -108,34 +115,39 @@
         }
         if (cooldown) return;
 
-        let tiempoAnimacion = 800;
-        let intervalo = 40;
-        let tiempoPasado = 0;
         const dadoImg = document.getElementById("imagen-dado");
+        let tiempoAnimacion = 800;
+        let intervalo = 100;
+        let tiempoPasado = 0;
+        let rotacionActual = 0;
 
         const animacion = setInterval(() => {
             const valorTemporal = Math.floor(Math.random() * 6) + 1;
             dadoImg.src = `/static/images/${valorTemporal}.png`;
-            dadoImg.style.transform = `rotate(${Math.random() * 1440}deg)`;
+            rotacionActual += 360; // Gira en múltiplos de 360 para dar vueltas completas
+            dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
+
             tiempoPasado += intervalo;
-
             if (tiempoPasado >= tiempoAnimacion) {
-            clearInterval(animacion);
-            const valorFinal = Math.floor(Math.random() * 6) + 1;
-            dadoImg.src = `/static/images/${valorFinal}.png`;
-            dadoImg.style.transform = `rotate(${Math.random() * 360}deg)`;
+                clearInterval(animacion);
 
-            if (valorFinal === 1) {
-                puntaje = 0;
-                actualizarPuntaje();
-                iniciarCooldown(5, "¡Pierdes agalludo!");
-            } else {
-                puntaje += valorFinal;
-                actualizarPuntaje();
-            }
+                const valorFinal = Math.floor(Math.random() * 6) + 1;
+                dadoImg.src = `/static/images/${valorFinal}.png`;
+                rotacionActual += 360 + (valorFinal * 10); // pequeño offset para variedad
+                dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
+
+                if (valorFinal === 1) {
+                    puntaje = 0;
+                    actualizarPuntaje();
+                    iniciarCooldown(5, "¡Pierdes agalludo!");
+                } else {
+                    puntaje += valorFinal;
+                    actualizarPuntaje();
+                }
             }
         }, intervalo);
-        }
+    }
+
 
     function quedarse() {
       if (cooldown) return;
