@@ -12,6 +12,10 @@
       margin: 20px;
       transition: transform 0.5s ease-in-out;
     }
+    .azul {
+      filter: sepia(1) saturate(10) hue-rotate(190deg);
+    }
+
     .cooldown {
       opacity: 0.4;
       pointer-events: none;
@@ -30,9 +34,14 @@
     <div style="text-align:center; margin: 5px;">
         <h1 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h1>
     </div>
-  <div id="dado" class="dado">
-    <img id="imagen-dado" src="{{ url_for('static', filename='images/1.png') }}" width="120" alt="Dado">
+    <div style="display: flex; justify-content: center; gap: 50px; align-items: center;">
+  <div id="dado_1" class="dado">
+    <img id="imagen-dado-1" src="{{ url_for('static', filename='images/1.png') }}" width="100" alt="Dado">
   </div>
+  <div id="dado_2" class="dado">
+    <img id="imagen-dado-2" src="{{ url_for('static', filename='images/1.png') }}" width="100" alt="Dado" style="filter: sepia(1) saturate(10) hue-rotate(190deg);">
+  </div>
+</div>
   <h1>Puntaje actual: <span id="puntaje">0</span></h1>
   <h1>Puntaje total: <span id="total">0</span></h1>
   <div class="botones">
@@ -42,7 +51,8 @@
   <h1 id="mensaje" style="font-size: 20px; height: 21px"></h1>
 
   <script>
-    const dadoEl = document.getElementById("dado");
+    const dado1El = document.getElementById("dado_1");
+    const dado2El = document.getElementById("dado_2");
     const lanzarBtn = document.getElementById("lanzar");
     const quedarseBtn = document.getElementById("quedarse");
     const puntajeEl = document.getElementById("puntaje");
@@ -58,19 +68,6 @@
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
-            }
-            if (savedTheme === "light-theme") {
-                color0 = "rojas";
-                color1 = "azules";
-                border = "rgb(0,0,0)"
-            } else if (savedTheme === "dark-theme"){
-                color0 = "amarillas";
-                color1 = "azules";
-                border = "rgb(255,255,255)"
-            } else {
-                color0 = "amarillas";
-                color1 = "moradas";
-                border = "rgb(255,255,255)"
             }
         });
         let gamefinished = true;
@@ -106,43 +103,87 @@
             document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
         }
 
-    function lanzarDado() {
+     function lanzarDado() {
         if (gamefinished) {
             gamefinished = false;
             startTimer();
         }
         if (cooldown) return;
 
-        const dadoImg = document.getElementById("imagen-dado");
+        const dadoImg_1 = document.getElementById("imagen-dado-1");
+        const dadoImg_2 = document.getElementById("imagen-dado-2");
         let tiempoAnimacion = 800;
-        let intervalo = 200;
+        let intervalo = 50;
         let tiempoPasado = 0;
-        let rotacionActual = 0;
-        let valorFinal = 0;
+        let rotacionActual_1 = 0;
+        let rotacionActual_2 = 0;
+        let valorFinal_1 = 0;
+        let valorFinal_2 = 0;
+
+        // Agregar transición CSS para suavizar la rotación
+        dadoImg_1.style.transition = 'transform 0.2s ease-in-out';
+        dadoImg_2.style.transition = 'transform 0.2s ease-in-out';
 
         const animacion = setInterval(() => {
-            if (tiempoPasado + 400 >= tiempoAnimacion) {
-                if (valorFinal === 0) {
-                  valorFinal = Math.floor(Math.random() * 6) + 1;
+            if (tiempoPasado + 200 >= tiempoAnimacion) {
+                if ((valorFinal_1 === 0) || (valorFinal_2 === 0)) {
+                    valorFinal_1 = Math.floor(Math.random() * 6) + 1;
+                    valorFinal_2 = Math.floor(Math.random() * 6) + 1;
                 }
-                dadoImg.src = `/static/images/${valorFinal}.png`;
+                dadoImg_1.src = `/static/images/${valorFinal_1}.png`;
+                dadoImg_2.src = `/static/images/${valorFinal_2}.png`;
+                
+                // Aplicar rotación ANTES de verificar si termina
+                rotacionActual_1 += 90; // Rotación más suave
+                rotacionActual_2 += 90;
+                dadoImg_1.style.transform = `rotate(${rotacionActual_1}deg)`;
+                dadoImg_2.style.transform = `rotate(${rotacionActual_2}deg)`;
+                
                 if (tiempoPasado >= tiempoAnimacion) {
-                  clearInterval(animacion);
-                  dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
-                  if (valorFinal === 1) {
-                      puntaje = 0;
-                      actualizarPuntaje();
-                      iniciarCooldown(5, "¡Pierdes agalludo!");
-                  } else {
-                      puntaje += valorFinal;
-                      actualizarPuntaje();
-                  }
+                    clearInterval(animacion);
+                    // Remover transición al final para evitar efectos no deseados
+                    setTimeout(() => {
+                        dadoImg_1.style.transition = '';
+                        dadoImg_2.style.transition = '';
+                    }, 200);
+                    
+                    if ((valorFinal_1 === 1) || (valorFinal_2 === 1)) {
+                        puntaje = 0;
+                        // CORRECCIÓN: Usar && en lugar de ===
+                        if (valorFinal_1 === 1 && valorFinal_2 === 1) {
+                            total = 0;
+                            fetch('/dice', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    total: total, 
+                                    time: document.getElementById("timer").textContent, 
+                                    total_time: centisecondsElapsed, 
+                                    id: localStorage.getItem('userId')
+                                }),
+                            });
+                            actualizarPuntaje();
+                            iniciarCooldown(2, "¡Pierdes agalludo!");
+                        } else {
+                            actualizarPuntaje();
+                            iniciarCooldown(5, "¡Pierdes agalludo!");
+                        }
+                    } else {
+                        puntaje += valorFinal_1 + valorFinal_2;
+                        actualizarPuntaje();
+                    }
                 }
             } else {
-              const valorTemporal = Math.floor(Math.random() * 6) + 1;
-              dadoImg.src = `/static/images/${valorTemporal}.png`;
-              rotacionActual += 360; // Gira en múltiplos de 360 para dar vueltas completas
-              dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
+                const valorTemporal_1 = Math.floor(Math.random() * 6) + 1;
+                const valorTemporal_2 = Math.floor(Math.random() * 6) + 1;
+                dadoImg_1.src = `/static/images/${valorTemporal_1}.png`;
+                dadoImg_2.src = `/static/images/${valorTemporal_2}.png`;
+                
+                // Aplicar rotación AQUÍ, durante la animación
+                rotacionActual_1 += 360;
+                rotacionActual_2 += 360;
+                dadoImg_1.style.transform = `rotate(${rotacionActual_1}deg) scale(${Math.max(Math.random() + 1, 1.5)})`;
+                dadoImg_2.style.transform = `rotate(${rotacionActual_2}deg) scale(${Math.max(Math.random() + 1, 1.5)})`;
             }
             tiempoPasado += intervalo;
         }, intervalo);
@@ -159,12 +200,12 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({total:total, time:document.getElementById("timer").textContent, total_time:centisecondsElapsed, id:localStorage.getItem('userId')}),
-    }).then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                stopTimer();
-                window.location.href = "/win"}
-        });
+      }).then(response => response.json())
+      .then(data => {
+        if (data.success) {
+            stopTimer();
+            window.location.href = "/win"}
+      });
     }
 
     function actualizarPuntaje() {
