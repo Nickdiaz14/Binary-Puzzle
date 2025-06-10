@@ -49,11 +49,10 @@
                     matrixSelect.value = matrixSelect.options[0].value; // Asignar el primer valor disponible
                     localStorage.setItem("selectedMatrix", matrixSelect.value); // Guardarlo en localStorage
                 }
-        
-                reset(); // Llamar para asegurarse de que el leaderboard se carga con la selección guardada
+                updateLeaderboard()
             });
         
-            const data = JSON.parse('{{ data | safe }}');
+            let data = [];
             const firstPlaceImg = "{{ url_for('static', filename='images/first_place.png') }}";
             const secondPlaceImg = "{{ url_for('static', filename='images/second_place.png') }}";
             const thirdPlaceImg = "{{ url_for('static', filename='images/third_place.png') }}";
@@ -97,7 +96,7 @@
                 localStorage.setItem("selectedMatrix", matrixSelect.value);
                 reset();
             });
-        
+            
             function reset() {
                 let leaderboardDiv = document.getElementById('leaderboard');
                 leaderboardDiv.innerHTML = '';
@@ -138,6 +137,15 @@
                     table.appendChild(row);
                 });
         
+                while (table.rows.length < 11) { // 1 para el encabezado + 10 filas de datos
+                    let emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td class="tipo2">-</td>
+                        <td class="tipo2">-</td>
+                        <td class="tipo2">-</td>
+                    `;
+                    table.appendChild(emptyRow);
+                }
                 leaderboardDiv.appendChild(table);
         
                 const userIndex = leaderboardData.findIndex(entry => entry[2] === localStorage.getItem('userId'));
@@ -170,20 +178,22 @@
             }
         
             function updateLeaderboard() {
-                fetch(window.location.href)
-                    .then(response => response.text())
-                    .then(html => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, "text/html");
-                        const newData = JSON.parse(doc.querySelector("script").innerHTML.match(/JSON\.parse\('(.+)'\)/)[1].replace(/\\'/g, "'"));
-                        Object.assign(data, newData);
-                        reset();
-                    })
-                    .catch(error => console.error("Error al actualizar el leaderboard:", error));
+                fetch("/api/leaderboards", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ game: game })
+                })
+                .then(response => response.json())
+                .then(json => {
+                    data = json.data;
+                    reset();
+                })
+                .catch(error => console.error("Error al actualizar el leaderboard:", error));
             }
-        
-            setInterval(updateLeaderboard, 10000); // Actualizar cada 10 segundos
-        
+
+            setInterval(updateLeaderboard, 8000);
             reset();
         </script>        
     </body>
