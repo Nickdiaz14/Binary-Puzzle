@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Juego del Dado</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.9, user-scale=no, maximum-scale=0.9">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    .dado {
+      font-size: 120px;
+      margin: 20px;
+      transition: transform 0.5s ease-in-out;
+    }
+    .cooldown {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>¡Agalludo!</h1>
+    <div style="text-align:center; margin: 20px;">
+        <h1 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h1>
+    </div>
+  <div id="dado" class="dado">
+    <img id="imagen-dado" src="{{ url_for('static', filename='images/1.png') }}" width="120" alt="Dado">
+  </div>
+  <h1>Puntaje actual: <span id="puntaje">0</span></h1>
+  <h1>Puntaje total: <span id="total">0</span></h1>
+  <div class="botones">
+    <button id="lanzar" class="resolver azulito">Lanzar</button>
+    <button id="quedarse" class="resolver rojito">Quedarse</button>
+  </div>
+  <h1 id="mensaje" style="font-size: 20px;"></h1>
+
+  <script>
+    const dadoEl = document.getElementById("dado");
+    const lanzarBtn = document.getElementById("lanzar");
+    const quedarseBtn = document.getElementById("quedarse");
+    const puntajeEl = document.getElementById("puntaje");
+    const totalEl = document.getElementById("total");
+    const mensaje = document.getElementById("mensaje");
+
+    let puntaje = 0;
+    let total = 0;
+    let cooldown = false;
+
+    document.addEventListener("DOMContentLoaded", function() {
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+            }
+            if (savedTheme === "light-theme") {
+                color0 = "rojas";
+                color1 = "azules";
+                border = "rgb(0,0,0)"
+            } else if (savedTheme === "dark-theme"){
+                color0 = "amarillas";
+                color1 = "azules";
+                border = "rgb(255,255,255)"
+            } else {
+                color0 = "amarillas";
+                color1 = "moradas";
+                border = "rgb(255,255,255)"
+            }
+        });
+        let gamefinished = true;
+        let matrixSize = 4; // Tamaño de la matriz
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+        
+        // Variables para el cronómetro
+        let timerInterval;
+        let centisecondsElapsed = 0;
+
+    
+        function startTimer() {
+            clearInterval(timerInterval); // Reiniciar el cronómetro si ya estaba en marcha
+            centisecondsElapsed = 0;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                centisecondsElapsed++; // Incrementar en 10 ms
+                updateTimerDisplay();
+            }, 10); // Actualizar cada 10 ms (centésima de segundo)
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const centiseconds = (centisecondsElapsed % 100).toString().padStart(2, '0').replace(/^0/, ''); // Remover ceros iniciales
+            return { minutes, seconds, centiseconds, totalCentiseconds: centisecondsElapsed };
+}
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(centisecondsElapsed / 6000).toString().padStart(2, '0');
+            const seconds = Math.floor((centisecondsElapsed % 6000) / 100).toString().padStart(2, '0');
+            const milliseconds = (centisecondsElapsed % 100).toString().padStart(2, '0');
+            document.getElementById("timer").textContent = `${minutes}:${seconds}.${milliseconds}`;
+        }
+
+    function lanzarDado() {
+        if (gamefinished) {
+            gamefinished = false;
+            startTimer();
+        }
+        if (cooldown) return;
+
+        let tiempoAnimacion = 800;
+        let intervalo = 40;
+        let tiempoPasado = 0;
+        const dadoImg = document.getElementById("imagen-dado");
+
+        const animacion = setInterval(() => {
+            const valorTemporal = Math.floor(Math.random() * 6) + 1;
+            dadoImg.src = `/static/images/${valorTemporal}.png`;
+            dadoImg.style.transform = `rotate(${Math.random() * 1440}deg)`;
+            tiempoPasado += intervalo;
+
+            if (tiempoPasado >= tiempoAnimacion) {
+            clearInterval(animacion);
+            const valorFinal = Math.floor(Math.random() * 6) + 1;
+            dadoImg.src = `/static/images/${valorFinal}.png`;
+            dadoImg.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+            if (valorFinal === 1) {
+                puntaje = 0;
+                actualizarPuntaje();
+                iniciarCooldown(5, "¡Pierdes agalludo!");
+            } else {
+                puntaje += valorFinal;
+                actualizarPuntaje();
+            }
+            }
+        }, intervalo);
+        }
+
+    function quedarse() {
+      if (cooldown) return;
+      total += puntaje;
+      puntaje = 0;
+      actualizarPuntaje();
+      iniciarCooldown(8, "¡Guardaste tu puntaje!");
+      fetch('/dice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({total:total, time:document.getElementById("timer").textContent, id:localStorage.getItem('userId')}),
+    }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "/win"}
+        });
+    }
+
+    function actualizarPuntaje() {
+      puntajeEl.textContent = puntaje;
+      totalEl.textContent = total;
+    }
+
+    function iniciarCooldown(segundos, texto) {
+      cooldown = true;
+      lanzarBtn.classList.add("cooldown");
+      quedarseBtn.classList.add("cooldown");
+      mensaje.textContent = texto + ` Espera ${segundos} segundos...`;
+
+      let tiempo = segundos;
+      const interval = setInterval(() => {
+        tiempo--;
+        mensaje.textContent = texto + ` Espera ${tiempo} segundos...`;
+        if (tiempo <= 0) {
+          clearInterval(interval);
+          mensaje.textContent = "";
+          cooldown = false;
+          lanzarBtn.classList.remove("cooldown");
+          quedarseBtn.classList.remove("cooldown");
+        }
+      }, 1000);
+    }
+
+    lanzarBtn.addEventListener("click", lanzarDado);
+    quedarseBtn.addEventListener("click", quedarse);
+  </script>
+</body>
+</html>

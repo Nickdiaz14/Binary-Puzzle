@@ -299,7 +299,27 @@ def leaders_page():
         boards = ['TKnight']
     for board in boards:
         dictionary[board] = list(get_top_scores(board))
-    return render_template('leaderboards.html', data=json.dumps(dictionary), game = game)
+    return render_template('leaderboards.html', game = game)
+
+@app.route('/api/leaderboards', methods=['POST'])
+def get_leaderboards_data():
+    game = request.json['game']
+    dictionary = {}
+    if game == '0h-h1':
+        boards = ['T4', 'T6', 'T8', 'T10', 'TContrareloj']
+    elif game == 'MindGrid':
+        boards = ['TUnicolor', 'TBicolor', 'TProgresivo', 'TAleatorio','TSpeed','TCruzado']
+    elif game == '0h-n0':
+        boards = ['T04', 'T05']
+    elif game == 'MathGames':
+        boards = ["TMini-Nerdle", "TNerdle", "TMaxi-Nerdle"]
+    else:
+        boards = ['TKnight']
+    for board in boards:
+        dictionary[board] = list(get_top_scores(board))
+    return {
+        "data": dictionary
+    }
 
 @app.route('/menu')
 def menu():
@@ -463,6 +483,120 @@ def attendance():
         return jsonify({'success': True})
     except Exception as e:
         print("Error:", e)
+        return jsonify({'success': False})
+
+#-----------------------------------------------------dice---------------------------------------------------------------
+
+
+@app.route('/win')
+def win_page():
+    return render_template('win.html')
+
+@app.route('/dado')
+def dado_page():
+    return render_template('dado.html')
+
+@app.route('/dice_leaderboards')
+def dl_page():
+    return render_template('dice_leaderboards.html',data1=json.dumps(get_top_less_AAAAA()),data2=json.dumps(get_top_more_AAAAA()))
+
+@app.route('/api/dice_leaderboards')
+def get_dice_leaderboards_data():
+    return {
+        "data1": get_top_less_AAAAA(),
+        "data2": get_top_more_AAAAA()
+    }
+
+def get_top_less_AAAAA():
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT total FROM agalludo 
+    WHERE id = %s;
+    """,("AAAAA",))
+
+    limite = cursor.fetchone()[0]
+
+    cursor.execute("""
+    SELECT n.nickname, a.total FROM agalludo a
+    LEFT JOIN nickname n ON n.userid = a.id
+    WHERE a.total < %s AND a.id != 'AAAAA';
+    """,(limite,))
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    
+    return results
+
+def get_top_more_AAAAA():
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT total FROM agalludo 
+    WHERE id = %s;
+    """,("AAAAA",))
+
+    limite = cursor.fetchone()[0]
+
+    cursor.execute("""
+    SELECT n.nickname, a.total FROM agalludo a
+    LEFT JOIN nickname n ON n.userid = a.id
+    WHERE a.total >= %s AND a.id != 'AAAAA';
+    """,(limite,))
+
+    results = cursor.fetchall()
+
+    cursor.close()
+    connection.close()
+    
+    return results
+
+@app.route('/dice', methods=['POST'])
+def dice():
+    total = request.json['total']
+    time = request.json['time']
+    id = request.json['id']
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+            SELECT id FROM agalludo
+                WHERE id = %s;
+        """, (id,))
+    
+    valid = cursor.fetchone()
+
+    if valid:
+        cursor.execute("""
+            UPDATE agalludo
+            SET time = %s, total = %s
+            WHERE id = %s;
+            """, (time, total, id))
+    else:
+        cursor.execute("""
+            INSERT INTO agalludo 
+            (id, total, time)
+            VALUES (%s, %s, %s);
+        """, (id, total, time))
+
+    cursor.execute("""
+            SELECT total FROM agalludo
+                WHERE id = %s;
+        """, ("AAAAA",))
+    
+    regla = int(cursor.fetchone()[0])
+
+    connection.commit()
+    cursor.close()
+    connection.close()  
+
+    if total >= regla:
+        return jsonify({'success': True})
+    else:
         return jsonify({'success': False})
 
 if __name__ == "__main__":

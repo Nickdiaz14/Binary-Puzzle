@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=0.9, user-scale=no, maximum-scale=0.9">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+        <title>Leaderboards</title>
+    </head>
+    <body>
+        <div class="js-container container" style="top:0px !important;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 40px;">
+                <div id="leaderboard1" style="text-align: center;"></div>
+                <div id="leaderboard2" style="text-align: center;"></div>
+            </div>
+            <div style="text-align:center;" class="botones">
+                <button onclick="location.href=`/`" class="resolver evaluar">Volver</button>
+            </div>
+        </div>
+    </body>
+        <script>
+            let leaderboardData1 = [];
+            let leaderboardData2 = [];
+
+            function reset() {
+                let leaderboardDiv = document.getElementById('leaderboard1');
+                leaderboardDiv.innerHTML = '';
+                let table = document.createElement('table');
+                table.classList.add("leaderboard1");
+        
+                table.innerHTML =`
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Total</th>
+                    </tr>
+                `
+        
+                leaderboardData1.forEach((entry, index) => {
+                    let row = document.createElement('tr');
+        
+                    row.innerHTML = `
+                        <td class="tipo2">${entry[0]}</td>
+                        <td class="tipo2">${entry[1]}</td>
+                    `;
+                    table.appendChild(row);
+                });
+        
+                // Asegurar al menos 10 filas vacías si no hay suficientes datos
+                while (table.rows.length < 11) { // 1 para el encabezado + 10 filas de datos
+                    let emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td class="tipo2">-</td>
+                        <td class="tipo2">-</td>
+                    `;
+                    table.appendChild(emptyRow);
+                }
+                leaderboardDiv.appendChild(table);
+
+                let leaderboardDiv2 = document.getElementById('leaderboard2');
+                leaderboardDiv2.innerHTML = '';
+                let table2 = document.createElement('table');
+                table2.classList.add("leaderboard1");
+        
+                table2.innerHTML =`
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Total</th>
+                    </tr>
+                `
+        
+                leaderboardData2.forEach((entry, index) => {
+                    let row = document.createElement('tr');
+        
+                    row.innerHTML = `
+                        <td class="tipo2">${entry[0]}</td>
+                        <td class="tipo2">${entry[1]}</td>
+                    `;
+                    table2.appendChild(row);
+                });
+        
+                // Asegurar al menos 10 filas vacías si no hay suficientes datos
+                while (table2.rows.length < 11) { // 1 para el encabezado + 10 filas de datos
+                    let emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td class="tipo2">-</td>
+                        <td class="tipo2">-</td>
+                    `;
+                    table2.appendChild(emptyRow);
+                }
+                leaderboardDiv2.appendChild(table2);
+            }
+
+            function updateLeaderboard() {
+                fetch("/api/dice_leaderboards")
+                    .then(response => response.json())
+                    .then(json => {
+                        leaderboardData1 = json.data1;
+                        leaderboardData2 = json.data2;
+                        reset();
+                    })
+                    .catch(error => console.error("Error al actualizar el leaderboard:", error));
+            }
+
+            setInterval(updateLeaderboard, 1000);
+            reset();
+        </script>
+    </html>
