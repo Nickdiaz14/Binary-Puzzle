@@ -543,7 +543,7 @@ def get_top_more_AAAAA():
     limite = cursor.fetchone()[0]
 
     cursor.execute("""
-    SELECT n.nickname, a.total FROM agalludo a
+    SELECT n.nickname, a.time FROM agalludo a
     LEFT JOIN nickname n ON n.userid = a.id
     WHERE a.total >= %s AND a.id != 'AAAAA';
     """,(limite,))
