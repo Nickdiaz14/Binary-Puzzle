@@ -521,7 +521,8 @@ def get_top_less_AAAAA():
     cursor.execute("""
     SELECT n.nickname, a.total FROM agalludo a
     LEFT JOIN nickname n ON n.userid = a.id
-    WHERE a.total < %s AND a.id != 'AAAAA';
+    WHERE a.total < %s AND a.id != 'AAAAA'
+    ORDER BY a.total DESC;
     """,(limite,))
 
     results = cursor.fetchall()
@@ -545,7 +546,8 @@ def get_top_more_AAAAA():
     cursor.execute("""
     SELECT n.nickname, a.time FROM agalludo a
     LEFT JOIN nickname n ON n.userid = a.id
-    WHERE a.total >= %s AND a.id != 'AAAAA';
+    WHERE a.total >= %s AND a.id != 'AAAAA'
+    ORDER BY a.total_time ASC;
     """,(limite,))
 
     results = cursor.fetchall()
@@ -559,6 +561,7 @@ def get_top_more_AAAAA():
 def dice():
     total = request.json['total']
     time = request.json['time']
+    total_time = request.json['total_time']
     id = request.json['id']
     connection = connect_db()
     cursor = connection.cursor()
@@ -573,15 +576,15 @@ def dice():
     if valid:
         cursor.execute("""
             UPDATE agalludo
-            SET time = %s, total = %s
+            SET time = %s, total = %s, total_time = %s
             WHERE id = %s;
-            """, (time, total, id))
+            """, (time, total, total_time, id))
     else:
         cursor.execute("""
             INSERT INTO agalludo 
-            (id, total, time)
-            VALUES (%s, %s, %s);
-        """, (id, total, time))
+            (id, total, time, total_time)
+            VALUES (%s, %s, %s, %s);
+        """, (id, total, time, total_time))
 
     cursor.execute("""
             SELECT total FROM agalludo

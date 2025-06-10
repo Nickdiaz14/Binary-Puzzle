@@ -39,7 +39,7 @@
     <button id="lanzar" class="resolver azulito">Lanzar</button>
     <button id="quedarse" class="resolver rojito">Quedarse</button>
   </div>
-  <h1 id="mensaje" style="font-size: 20px;"></h1>
+  <h1 id="mensaje" style="font-size: 20px; height: 21px"></h1>
 
   <script>
     const dadoEl = document.getElementById("dado");
@@ -74,8 +74,6 @@
             }
         });
         let gamefinished = true;
-        let matrixSize = 4; // Tamaño de la matriz
-        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
         
         // Variables para el cronómetro
         let timerInterval;
@@ -117,34 +115,36 @@
 
         const dadoImg = document.getElementById("imagen-dado");
         let tiempoAnimacion = 800;
-        let intervalo = 100;
+        let intervalo = 200;
         let tiempoPasado = 0;
         let rotacionActual = 0;
+        let valorFinal = 0;
 
         const animacion = setInterval(() => {
-            const valorTemporal = Math.floor(Math.random() * 6) + 1;
-            dadoImg.src = `/static/images/${valorTemporal}.png`;
-            rotacionActual += 360; // Gira en múltiplos de 360 para dar vueltas completas
-            dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
-
-            tiempoPasado += intervalo;
-            if (tiempoPasado >= tiempoAnimacion) {
-                clearInterval(animacion);
-
-                const valorFinal = Math.floor(Math.random() * 6) + 1;
-                dadoImg.src = `/static/images/${valorFinal}.png`;
-                rotacionActual += 360 + (valorFinal * 10); // pequeño offset para variedad
-                dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
-
-                if (valorFinal === 1) {
-                    puntaje = 0;
-                    actualizarPuntaje();
-                    iniciarCooldown(5, "¡Pierdes agalludo!");
-                } else {
-                    puntaje += valorFinal;
-                    actualizarPuntaje();
+            if (tiempoPasado + 400 >= tiempoAnimacion) {
+                if (valorFinal === 0) {
+                  valorFinal = Math.floor(Math.random() * 6) + 1;
                 }
+                dadoImg.src = `/static/images/${valorFinal}.png`;
+                if (tiempoPasado >= tiempoAnimacion) {
+                  clearInterval(animacion);
+                  dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
+                  if (valorFinal === 1) {
+                      puntaje = 0;
+                      actualizarPuntaje();
+                      iniciarCooldown(5, "¡Pierdes agalludo!");
+                  } else {
+                      puntaje += valorFinal;
+                      actualizarPuntaje();
+                  }
+                }
+            } else {
+              const valorTemporal = Math.floor(Math.random() * 6) + 1;
+              dadoImg.src = `/static/images/${valorTemporal}.png`;
+              rotacionActual += 360; // Gira en múltiplos de 360 para dar vueltas completas
+              dadoImg.style.transform = `rotate(${rotacionActual}deg)`;
             }
+            tiempoPasado += intervalo;
         }, intervalo);
     }
 
@@ -158,10 +158,11 @@
       fetch('/dice', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({total:total, time:document.getElementById("timer").textContent, id:localStorage.getItem('userId')}),
+        body: JSON.stringify({total:total, time:document.getElementById("timer").textContent, total_time:centisecondsElapsed, id:localStorage.getItem('userId')}),
     }).then(response => response.json())
         .then(data => {
             if (data.success) {
+                stopTimer();
                 window.location.href = "/win"}
         });
     }
