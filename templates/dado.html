@@ -31,8 +31,16 @@
   <div style="text-align:center;">
       <h1 id="title" style="font-size: 80px; font-weight: bold;">¡Agalludo!</h1>
   </div>
-    <div style="text-align:center; margin: 5px;">
-        <h1 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h1>
+  <div style="text-align:center;">
+      <h1 id="title_part" style="font-size: 20px; font-weight: bold; height: 21px;"></h1>
+  </div>
+    <div style="text-align: center;">
+        <h1 id="timer" style="font-size: 25px; font-weight: bold; margin: 10px 0;">00:00.00</h1>
+    </div>
+    <div id="conteo" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin: 20px 0;">
+      <img src="{{ url_for('static', filename='images/vacio.png') }}" id="dot_image_1" alt="Imagen 1" class="punto" style="width: 30px; height: 30px;">
+      <img src="{{ url_for('static', filename='images/vacio.png') }}" id="dot_image_2" alt="Imagen 2" class="punto" style="width: 30px; height: 30px;">
+      <img src="{{ url_for('static', filename='images/vacio.png') }}" id="dot_image_3" alt="Imagen 3" class="punto" style="width: 30px; height: 30px;">
     </div>
     <div style="display: flex; justify-content: center; gap: 50px; align-items: center;">
   <div id="dado_1" class="dado">
@@ -42,13 +50,17 @@
     <img id="imagen-dado-2" src="{{ url_for('static', filename='images/1.png') }}" width="100" alt="Dado" style="filter: sepia(1) saturate(10) hue-rotate(190deg);">
   </div>
 </div>
-  <h1>Puntaje actual: <span id="puntaje">0</span></h1>
-  <h1>Puntaje total: <span id="total">0</span></h1>
-  <div class="botones">
+  <div style="text-align: center; margin: 20px 0;">
+    <h1 style="font-size: 24px; margin: 10px 0;">Puntaje actual: <span id="puntaje">0</span></h1>
+    <h1 style="font-size: 24px; margin: 10px 0;">Puntaje total: <span id="total">0</span></h1>
+  </div>
+  <div class="botones" style="text-align: center; margin: 20px 0;">
     <button id="lanzar" class="resolver azulito">Lanzar</button>
     <button id="quedarse" class="resolver rojito">Quedarse</button>
   </div>
-  <h1 id="mensaje" style="font-size: 20px; height: 21px"></h1>
+  <div style="text-align: center;">
+    <h1 id="mensaje" style="font-size: 20px; height: 21px; margin: 10px 0;"></h1>
+  </div>
 
   <script>
     const dado1El = document.getElementById("dado_1");
@@ -62,9 +74,9 @@
     let puntaje = 0;
     let total = 0;
     let cooldown = false;
+    const savedTheme = localStorage.getItem("theme");
 
     document.addEventListener("DOMContentLoaded", function() {
-            const savedTheme = localStorage.getItem("theme");
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
@@ -75,6 +87,8 @@
         // Variables para el cronómetro
         let timerInterval;
         let centisecondsElapsed = 0;
+        let cons_pairs = 0;
+        let actual_pair = false;
 
     
         function startTimer() {
@@ -104,6 +118,7 @@
         }
 
      function lanzarDado() {
+        document.getElementById("title_part").textContent = "";
         if (gamefinished) {
             gamefinished = false;
             startTimer();
@@ -127,8 +142,14 @@
         const animacion = setInterval(() => {
             if (tiempoPasado + 200 >= tiempoAnimacion) {
                 if ((valorFinal_1 === 0) || (valorFinal_2 === 0)) {
+                  if (actual_pair) {
+                    valorFinal_1 = Math.floor(Math.random() * 5) + 2;
+                    valorFinal_2 = Math.floor(Math.random() * 5) + 2;
+                  }
+                  else {
                     valorFinal_1 = Math.floor(Math.random() * 6) + 1;
-                    valorFinal_2 = Math.floor(Math.random() * 6) + 1;
+                    valorFinal_2 = Math.floor(Math.random() * 6) + 1; 
+                  }
                 }
                 dadoImg_1.src = `/static/images/${valorFinal_1}.png`;
                 dadoImg_2.src = `/static/images/${valorFinal_2}.png`;
@@ -149,7 +170,6 @@
                     
                     if ((valorFinal_1 === 1) || (valorFinal_2 === 1)) {
                         puntaje = 0;
-                        // CORRECCIÓN: Usar && en lugar de ===
                         if (valorFinal_1 === 1 && valorFinal_2 === 1) {
                             total = Math.max(0,total - 20);
                             fetch('/dice', {
@@ -166,11 +186,57 @@
                             iniciarCooldown(2, "¡Pierdes agalludo!");
                         } else {
                             actualizarPuntaje();
-                            iniciarCooldown(5, "¡Pierdes agalludo!");
+                            iniciarCooldown(4, "¡Pierdes agalludo!");
                         }
                     } else {
                         puntaje += valorFinal_1 + valorFinal_2;
                         actualizarPuntaje();
+                        if (valorFinal_1 === valorFinal_2) {
+                          document.getElementById("title_part").textContent = "¡Tienes un lanzamiento libre!";
+                          actual_pair = true;
+                          cons_pairs+=1;
+                          // CORRECCIÓN: Usar los IDs correctos
+                          const image = document.getElementById(`dot_image_${cons_pairs}`);
+                          if (image) {
+                              image.src = "/static/images/bien.png";
+                              if (savedTheme === "light-theme") {
+                                  image.style.filter = "none";
+                              } else {
+                                  image.style.filter = "invert(100%)";
+                              }
+                          }
+                          if (cons_pairs === 3) {
+                            cons_pairs = 0;
+                            total += 20;
+                            // Resetear las imágenes de los puntos
+                            for (let i = 1; i <= 3; i++) {
+                              const dotImage = document.getElementById(`dot_image_${i}`);
+                              if (dotImage) {
+                                dotImage.src = "/static/images/vacio.png";
+                              }
+                            }
+                            fetch('/dice', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    total: total, 
+                                    time: document.getElementById("timer").textContent, 
+                                    total_time: centisecondsElapsed, 
+                                    id: localStorage.getItem('userId')
+                                }),
+                            });
+                          }
+                        } else {
+                          cons_pairs = 0;
+                          actual_pair = false;
+                          // Resetear las imágenes de los puntos cuando no hay par
+                          for (let i = 1; i <= 3; i++) {
+                            const dotImage = document.getElementById(`dot_image_${i}`);
+                            if (dotImage) {
+                              dotImage.src = "/static/images/vacio.png";
+                            }
+                          }
+                        }
                     }
                 }
             } else {
@@ -195,7 +261,7 @@
       total += puntaje;
       puntaje = 0;
       actualizarPuntaje();
-      iniciarCooldown(8, "¡Guardaste tu puntaje!");
+      iniciarCooldown(6, "¡Guardaste tu puntaje!");
       fetch('/dice', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
