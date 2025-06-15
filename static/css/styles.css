@@ -856,69 +856,19 @@ body.dark-theme .blue {
 ============================================ */
 @media (max-width: 1024px) {
   .main-container {
-    padding: 15px;
-  }
-
-  .grid-container {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    max-width: 400px;
-    padding: 15px;
-  }
-
-  .resolver {
-    width: 200px;
-    height: 50px;
-    font-size: 14px;
-  }
-
-  .botones {
-    gap: 15px;
-  }
-
-  td {
-    font-size: 32px;
-  }
-
-  h1 {
-    font-size: 2.5rem;
-  }
-
-  #countdown-overlay {
-    font-size: 20vw;
-  }
-}
-
-@media (max-width: 768px) {
-  .main-container {
-    padding: 10px;
-  }
-
-  .grid-container {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    max-width: 300px;
-    padding: 10px;
-  }
-
-  .resolver {
-    width: 180px;
-    height: 45px;
-    font-size: 12px;
-  }
-
-  .botones {
+    display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0 auto;
   }
-
-  td {
-    font-size: 28px;
-    padding: 6px;
-  }
-
-  h1 {
-    font-size: 2rem;
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 0.3fr); /* 5 columnas */
+    gap: 10px; /* Espacio entre los botones */
+    justify-items: center;
+    max-width: 1000px; /* Ajusta según necesidad */
+    padding: 5px;
   }
 }
