@@ -24,10 +24,23 @@
     <div style="text-align:center;">
         <!-- Menú Juego 1 (0h-h1) -->
         <div id="game1-menu" style="text-align:center;">
-            <div class="botones">
-                <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
+            <div class="rules-section">
+            <button class="rules-toggle" onclick="toggleRules()">REGLAS</button>
+            <div class="rules-content" id="rulesContent">
+                <div class="rule-item">
+                    <span class="rule-number">1.</span>Todo el tablero debe estar lleno.
+                </div>
+                <div class="rule-item">
+                    <span class="rule-number">2.</span>Cada fila y columna debe tener igual número de celdas de cada color.
+                </div>
+                <div class="rule-item">
+                    <span class="rule-number">3.</span>No puede haber tres celdas consecutivas del mismo color.
+                </div>
+                <div class="rule-item">
+                    <span class="rule-number">4.</span>No puede haber dos filas o columnas idénticas.
+                </div>
             </div>
-            <div id="algorithm-info_1" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
+        </div>
             <div class="botones">
                 <button onclick="location.href='/0hh1'" class="resolver azulito">0h-h1</button>
                 <button onclick="location.href='/time_trial_0hh1'" class="resolver rojito">Contrarreloj</button>
@@ -42,37 +55,36 @@
         <div id="game2-menu" style="text-align:center; display: none;">
             <div class="botones">
                 <button onclick="location.href='/knight'" class="resolver azulito">Knight</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver rojito">Rankings</button>
             </div>
         </div>
 
         <!-- Menú Juego 3 (MindGames) -->
         <div id="game3-menu" style="text-align:center; display: none;">
             <div class="botones">
-                <button onclick="location.href='/memory'" class="resolver azulito">Secuenzo</button>
-                <button onclick="location.href='/speed'" class="resolver rojito">CuentaManía</button>
+                <button onclick="location.href='/memory'" class="resolver azulito" style="width: 150px;">Secuenzo</button>
+                <button onclick="location.href='/speed'" class="resolver rojito" style="width: 150px;">CuentaManía</button>
+                <button onclick="location.href='/sequence'" class="resolver azulito" style="width: 150px;">Patrón Perfecto</button>
             </div>
             <div class="botones">
-                <button onclick="location.href='/sequence'" class="resolver rojito">Patrón Perfecto</button>
-                <button onclick="location.href='/colors'" class="resolver rojito">Colores Cruzados</button>
-            </div>
-            <div class="botones">
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="right: 80px;">Rankings</button>
+                <button onclick="location.href='/colors'" class="resolver rojito" style="width: 150px;">Colores Cruzados</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="width: 150px;">Rankings</button>
             </div>
         </div>
 
         <!-- Menú Juego 4 (0hn0) -->
         <div id="game4-menu" style="text-align:center; display: none;">
-            <div class="botones">
-                <button onclick="toggleInfo()" class="resolver evaluar" style="margin-bottom: 10px; padding: 15px 30px; font-size: 20px; border-radius: 12px; cursor: pointer;">Reglas</button>
+            <div class="rules-section">
+            <button class="rules-toggle" onclick="toggleRules()">REGLAS</button>
+            <div class="rules-content" id="rulesContent_1">
             </div>
-            <div id="algorithm-info_2" style="text-align: left; margin-bottom: 10px; display: none; padding: 15px; border-radius: 8px;"></div>
+        </div>
             <div class="botones">
                 <button onclick="location.href='/0hn0'" class="resolver rojito">0h n0</button>
                 <button onclick="location.href='/tutorial_0hn0'" class="resolver azulito">Tutorial</button>
             </div>
             <div class="botones">
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="right: 80px;">Rankings</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver rojito">Rankings</button>
             </div>
         </div>
 
@@ -80,7 +92,7 @@
         <div id="game5-menu" style="text-align:center; display: none;">
             <div class="botones">
                 <button onclick="location.href='/nerdle'" class="resolver rojito">Nerdle</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="right: 80px;">Rankings</button>
+                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
             </div>
         </div>
 
@@ -91,7 +103,7 @@
             <button id="theme-toggle" class="resolver azulito">Cambiar Tema</button>
             <button onclick="location.href = '/?ch=si'" class="resolver rojito">Cambiar nombre</button>
         </div>
-        <div style="display: flex; align-items: center; gap: 10px; margin-left: 200px;margin-top: 30px;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-left: 170px;margin-top: 30px;">
             <a href="https://www.instagram.com/math_and_beer" target="_blank">
                 <img id="image1" src="{{ url_for('static', filename='images/instagram.png') }}" style="width: 24px;">
             </a>
@@ -131,35 +143,43 @@
             }
         }
 
-        function toggleInfo() {
-            const savedTheme = localStorage.getItem("theme");
-            applyTheme(savedTheme);
-            const gameSelected = document.getElementById("game");
-            const div = gameSelected.value === "0h-h1" ? document.getElementById("algorithm-info_1") : document.getElementById("algorithm-info_2");
-            const description = gameSelected.value === "0h-h1" ? `
-                1. Todo el tablero debe estar lleno. <br>
-                2. Cada fila y columna debe tener igual número de celdas de cada color. <br>
-                3. No puede haber tres celdas consecutivas del mismo color. <br>
-                4. No puede haber dos filas o columnas idénticas.` : `
-                1. Todo el tablero debe estar lleno. <br>
-                2. Las celdas ${color0} bloquean la vista en cualquier dirección. <br>
-                3. Las celdas ${color1} con número indican cuántas celdas ${color1} pueden ver en línea recta, sin que una ${color01} las bloquee. <br>
-                4. Todos los números deben cumplirse exactamente.`;
-            div.innerHTML = description;
-            div.style.display = div.style.display === 'none' ? 'block' : 'none';
+        function toggleRules() {
+            const rulesContent = gameSelected.value === "0h-h1" ? document.getElementById('rulesContent'):
+                                   document.getElementById('rulesContent_1');
+            
+            if (rulesContent.style.display === 'none' || rulesContent.style.display === '') {
+                // Mostrar con animación
+                rulesContent.style.display = 'block';
+                rulesContent.classList.remove('fade-out');
+                rulesContent.classList.add('fade-in');
+            } else {
+                // Ocultar con animación
+                rulesContent.classList.remove('fade-in');
+                rulesContent.classList.add('fade-out');
+                
+                // Ocultar después de la animación
+                setTimeout(() => {
+                    rulesContent.style.display = 'none';
+                    rulesContent.classList.remove('fade-out');
+                }, 300); // 300ms coincide con la duración de la animación
+            }
+            if (gameSelected.value === "0h-n0") {
+                rulesContent.innerHTML = `
+                <div class="rule-item"><span class="rule-number">1.</span>Todo el tablero debe estar lleno.</div>
+                <div class="rule-item"><span class="rule-number">2.</span>Las celdas ${color0} bloquean la vista en cualquier dirección.</div>
+                <div class="rule-item"><span class="rule-number">3.</span>Las celdas ${color1} con número indican cuántas celdas ${color1} pueden ver en línea recta, sin que una ${color01} las bloquee.</div>
+                <div class="rule-item"><span class="rule-number">4.</span>Todos los números deben cumplirse exactamente.</div>`;
+            }
         }
 
         function applyTheme(theme) {
             const gameSelected = document.getElementById("game");
-            const div = gameSelected.value === "0h-h1" ? document.getElementById("algorithm-info_1") : document.getElementById("algorithm-info_2");
             document.body.classList.remove("light-theme", "dark-theme");
             if (theme) document.body.classList.add(theme);
 
             if (theme === "light-theme") {
                 color0 = "rojas"; color01 = "roja"; color1 = "azules";
-                div.style.color = "#000000";
                 link.style.color = "#000000";
-                div.style.border = "1px solid #121212";
                 image.style.filter = "none";
                 image1.style.filter = "none";
                 div1.style.background = "#fffde6";
@@ -167,9 +187,7 @@
                 div1.style.border = "1px solid #121212";
             } else if (theme === "dark-theme") {
                 color0 = "amarillas"; color01 = "amarilla"; color1 = "azules";
-                div.style.color = "#ffffff";
                 link.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
                 image.style.filter = "invert(90%)";
                 image1.style.filter = "invert(90%)";
                 div1.style.background = "#000112";
@@ -177,9 +195,7 @@
                 div1.style.border = "1px solid #ccc";
             } else {
                 color0 = "amarillas"; color01 = "amarilla"; color1 = "moradas";
-                div.style.color = "#ffffff";
                 link.style.color = "#ffffff";
-                div.style.border = "1px solid #ccc";
                 image.style.filter = "invert(90%)";
                 image1.style.filter = "invert(90%)";
                 div1.style.background = "#15003e";
@@ -210,8 +226,6 @@
                     localStorage.removeItem("theme");
                 }
                 applyTheme(next);
-                toggleInfo();
-                toggleInfo();
             });
         });
     </script>

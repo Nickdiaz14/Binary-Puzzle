@@ -186,7 +186,7 @@
                         const cell = table.rows[i].cells[j];
                         cell.className = gameMatrix[i][j] === -2 ? 'grey' :
                                         gameMatrix[i][j] === -1 ? 'red blocked' :
-                                        'blue blocked';
+                                        'blue locked';
                         cell.innerText = gameMatrix[i][j] > 0 ? gameMatrix[i][j] : '';
                     }
                 }

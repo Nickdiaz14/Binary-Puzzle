@@ -224,7 +224,7 @@
                         for (let j = 0; j < gameMatrix[i].length; j++) {
                             const cell = table.rows[i].cells[j];
                             if (matrix[i][j] >= 0){
-                                cell.className = 'blue blocked';
+                                cell.className = 'blue locked';
                             }
                         }
                     }
@@ -243,7 +243,7 @@
                     for (let i = 0; i < gameMatrix.length; i++) {
                         for (let j = 0; j < gameMatrix[i].length; j++) {
                             const cell = table.rows[i].cells[j];
-                            if (cell.className === 'blue blocked') {
+                            if (cell.className === 'blue locked') {
                                 cell.innerText = gameMatrix[i][j] > 0 ? gameMatrix[i][j] : '';
                             }
                         }
