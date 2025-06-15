@@ -232,7 +232,7 @@
                             for (let i = 0; i < 3; i++) {
                                 for (let j = 0; j < 5; j++) {
                                     if ((inputsTable.rows[i].cells[j].innerText === currentCell.innerText) && inputsTable.rows[i].cells[j].className !== 'correct_place' && inputsTable.rows[i].cells[j].className !== 'correct_character') {
-                                        inputsTable.rows[i].cells[j].className = 'nowhere'; // Cambiar a amarillo
+                                        inputsTable.rows[i].cells[j].className = 'nowhere'; // Cambiar a gris
                                     }
                                 }
                             }
@@ -314,7 +314,7 @@
                 let overlay = document.getElementById('countdown-overlay');
                 let count = 2;
                 const countdownElement = document.getElementById("countdown");
-                countdownElement.style.fontSize = "50px"; 
+                countdownElement.style.fontSize = "30px"; 
                 countdownElement.style.textAlign = "center"; 
                 countdownElement.innerHTML = "Adivina la igualdad<br>en el menor tiempo posible";
 
@@ -327,7 +327,7 @@
                         overlay.style.display = "none"; // Ocultar overlay al terminar
                         startTimer(); // Iniciar el cronómetro
                     }
-                }, 1500);
+                }, 1800);
             });
         }
 

@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <img id="image" src="{{ url_for('static', filename='images/logo_M&B.png') }}" style="width: 120px;">
+    <div class="logo-gradiente"></div>
     <div style="text-align:center;">
         <h1 id="title" style="font-size: 60px; font-weight: bold;">¡Hola, {{ nickname }}!</h1>
     </div>
@@ -180,7 +180,7 @@
             if (theme === "light-theme") {
                 color0 = "rojas"; color01 = "roja"; color1 = "azules";
                 link.style.color = "#000000";
-                image.style.filter = "none";
+                //image.style.filter = "none";
                 image1.style.filter = "none";
                 div1.style.background = "#fffde6";
                 div1.style.color = "#000000";
@@ -188,7 +188,7 @@
             } else if (theme === "dark-theme") {
                 color0 = "amarillas"; color01 = "amarilla"; color1 = "azules";
                 link.style.color = "#ffffff";
-                image.style.filter = "invert(90%)";
+                //image.style.filter = "invert(90%)";
                 image1.style.filter = "invert(90%)";
                 div1.style.background = "#000112";
                 div1.style.color = "#ffffff";
@@ -196,7 +196,7 @@
             } else {
                 color0 = "amarillas"; color01 = "amarilla"; color1 = "moradas";
                 link.style.color = "#ffffff";
-                image.style.filter = "invert(90%)";
+                //image.style.filter = "invert(90%)";
                 image1.style.filter = "invert(90%)";
                 div1.style.background = "#15003e";
                 div1.style.color = "#ffffff";

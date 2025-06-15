@@ -14,7 +14,7 @@
 
   /* Colores principales */
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --primary-gradient-text: linear-gradient(135deg, #d7dbf4 0%, #d2b0f5 100%);
+  --primary-gradient-text: linear-gradient(135deg, #b6bde7 0%, #c5a3e7 100%);
   --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
@@ -95,6 +95,21 @@ h1 {
 h1:hover {
   transform: translateY(-1px);
 }
+
+.logo-gradiente {
+  width: 120px;
+  height: 120px;
+  background: var(--primary-gradient-text);
+  -webkit-mask-image:url('/static/images/logo_M&B.png');
+  mask-image: url('/static/images/logo_M&B.png');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
 
 /* ============================================
    COMPONENTES DE TABLA - OPTIMIZADOS
@@ -296,7 +311,7 @@ td:active {
 }
 
 .nowhere {
-  background: rgba(100, 100, 100, 0.3) !important;
+  background: #181717a9 !important;
   /* Sin animación para optimizar */
 }
 
@@ -368,7 +383,7 @@ td:active {
 }
 
 .resolver.evaluar:hover {
-  background: var(--warning-gradient);
+  background: var(--primary-gradient);
   box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
 }
 
@@ -671,13 +686,14 @@ td:active {
    TEMA CLARO - OPTIMIZADO
 ============================================ */
 body.light-theme {
-  --background-color: linear-gradient(135deg, #fffde6 0%, #fefefe 50%, #fffde6 100%);
+  --background-color: linear-gradient(135deg, #f9c24ebd 0%, #fffeee 50%, #f9c24ebd 100%); 
   height: 100%;
   background: var(--background-color);
   color: #333333;
   --timer-gradient: linear-gradient(135deg, #5b5b5b 0%, #2a2a2a 100%);
   --red-gradient: linear-gradient(135deg, #d76305 0%, #ff0606 100%);
   --blue-gradient: linear-gradient(135deg, #9870d0 0%, #0053fb 100%);
+  --primary-gradient-text: linear-gradient(135deg, #4960c8 0%, #593281 100%);
 }
 
 body.light-theme::before {
@@ -687,7 +703,7 @@ body.light-theme::before {
 }
 
 body.light-theme h1 {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-gradient-text);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -705,7 +721,7 @@ body.light-theme td {
 }
 
 body.light-theme .tipo2 {
-  background: #fffde6;
+  background: #fffcdc;
   color: #333333;
   border: 2px solid rgba(0, 0, 0, 0.1);
 }
@@ -716,6 +732,12 @@ body.light-theme .resolver {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+body.light-theme .resolver:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
 body.light-theme #timer {
   font-size: 2rem;
   font-weight: 700;
@@ -723,6 +745,11 @@ body.light-theme #timer {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+body.light-theme .nowhere {
+  background: #6464644d !important;
+  /* Sin animación para optimizar */
 }
 
 body.light-theme .red {
@@ -739,6 +766,20 @@ body.light-theme .blue {
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
+
+body.light-theme .logo-gradiente {
+  width: 120px;
+  height: 120px;
+  background: var(--primary-gradient-text);
+  -webkit-mask-image:url('/static/images/logo_M&B.png');
+  mask-image: url('/static/images/logo_M&B.png');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
 /* ============================================
    TEMA OSCURO - OPTIMIZADO
 ============================================ */
@@ -791,4 +832,4 @@ body.dark-theme .blue {
     max-width: 1000px;
     padding: 5px;
   }
-}
+} 
