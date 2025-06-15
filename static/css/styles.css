@@ -25,16 +25,14 @@
   --red-gradient: linear-gradient(135deg, #fdd316 0%, #c4a806 100%);
   --blue-gradient: linear-gradient(135deg, #9b00fb 0%, #5800d4 100%);
 
-  /* Sombras modernas */
-  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.1);
-  --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.15);
-  --shadow-strong: 0 15px 40px rgba(0, 0, 0, 0.2);
-  --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+  /* Sombras simplificadas */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-strong: 0 6px 20px rgba(0, 0, 0, 0.2);
 
-  /* Transiciones suaves */
-  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-medium: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Transiciones más rápidas */
+  --transition-fast: all 0.15s ease;
+  --transition-medium: all 0.2s ease;
 
   /* Bordes redondeados */
   --radius-small: 8px;
@@ -43,10 +41,8 @@
   --radius-xl: 24px;
 }
 
-
-
 /* ============================================
-   TEMA PRINCIPAL (M&B THEME)
+   TEMA PRINCIPAL (M&B THEME) - OPTIMIZADO
 ============================================ */
 body {
   display: flex;
@@ -64,9 +60,12 @@ body {
   touch-action: manipulation;
   user-select: none;
   overflow-x: hidden;
+  /* Optimización de rendering */
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
-/* Efecto de partículas de fondo */
+/* Efecto de partículas simplificado */
 body::before {
   content: '';
   position: fixed;
@@ -75,9 +74,8 @@ body::before {
   width: 100%;
   height: 100%;
   background-image:
-    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(240, 147, 251, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
   pointer-events: none;
   z-index: -1;
 }
@@ -90,26 +88,26 @@ h1 {
   text-align: center;
   font-weight: 700;
   letter-spacing: -0.02em;
-  transition: var(--transition-medium);
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: var(--transition-fast);
 }
 
+/* Hover simplificado para h1 */
 h1:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 /* ============================================
-   COMPONENTES DE TABLA
+   COMPONENTES DE TABLA - OPTIMIZADOS
 ============================================ */
 table {
   border-collapse: separate;
   border-spacing: 4px;
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-medium);
-  backdrop-filter: blur(10px);
   background: rgba(255, 255, 255, 0.05);
   padding: 8px;
+  /* Optimización de rendering */
+  will-change: auto;
 }
 
 th {
@@ -132,7 +130,6 @@ td {
   border: none;
   aspect-ratio: 1 / 1;
   background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(5px);
   transition: var(--transition-fast);
   padding: 8px;
   font-size: 40px;
@@ -140,29 +137,15 @@ td {
   color: #ffffff;
   border-radius: var(--radius-small);
   position: relative;
-  overflow: hidden;
+  /* Optimización de rendering */
+  will-change: transform;
 }
 
-td::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-  transform: translateX(-100%);
-  transition: transform 0.6s;
-}
-
-td:hover::before {
-  transform: translateX(100%);
-}
-
+/* Efecto hover simplificado - SIN el efecto de brillo que era muy pesado */
 td:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: translateY(-1px) scale(1.02);
   box-shadow: var(--shadow-medium);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 td:active {
@@ -175,7 +158,6 @@ td:active {
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-medium);
   background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
   color: #ffffff;
   padding: 12px 16px;
   transition: var(--transition-fast);
@@ -183,193 +165,156 @@ td:active {
 
 .tipo2:hover {
   border-color: rgba(102, 126, 234, 0.5);
-  box-shadow: var(--shadow-glow);
 }
 
 /* ============================================
-   REGLAS DE JUEGO
+   REGLAS DE JUEGO - SIMPLIFICADAS
 ============================================ */
+.rules-section {
+  margin: 30px 0;
+}
 
-rules-section {
-      margin: 30px 0;
-  }
+.rules-toggle {
+  background: linear-gradient(145deg, #e8dff5, #d1c4e9);
+  color: #5a4b7a;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 20px;
+}
 
-  .rules-toggle {
-      background: linear-gradient(145deg, #e8dff5, #d1c4e9);
-      color: #5a4b7a;
-      border: none;
-      padding: 15px 30px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-  }
+.rules-toggle:hover {
+  background: linear-gradient(145deg, #d1c4e9, #b39ddb);
+  transform: translateY(-1px);
+}
 
-  .rules-toggle:hover {
-      background: linear-gradient(145deg, #d1c4e9, #b39ddb);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-  }
+.rules-content {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #8B7EC8;
+  border-radius: 15px;
+  padding: 15px;
+  margin: 10px;
+  max-width: 600px;
+  text-align: left;
+  box-shadow: var(--shadow-soft);
+  display: none;
+}
 
-  .rules-content {
-      background: rgba(255, 255, 255, 0.9);
-      border: 2px solid #8B7EC8;
-      border-radius: 15px;
-      padding: 15px;
-      margin: 10px;
-      max-width: 600px;
-      text-align: left;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      display: none;
-  }
+/* Animaciones más simples para las reglas */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
-  @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-  }
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
 
-  @keyframes fadeOut {
-      from { opacity: 1; transform: translateY(0); }
-      to { opacity: 0; transform: translateY(-10px); }
-  }
+.rules-content.fade-in {
+  animation: fadeIn 0.2s ease-in forwards;
+}
 
-  .rules-content.fade-in {
-      animation: fadeIn 0.3s ease-in forwards;
-  }
+.rules-content.fade-out {
+  animation: fadeOut 0.2s ease-out forwards;
+}
 
-  .rules-content.fade-out {
-      animation: fadeOut 0.3s ease-out forwards;
-  }
+.rule-item {
+  margin: 8px 0;
+  padding: 12px;
+  background: #f8f5ff;
+  border-left: 4px solid #8B7EC8;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #444;
+  line-height: 1.5;
+}
 
-  .rule-item {
-      margin: 8px 0;
-      padding: 12px;
-      background: #f8f5ff;
-      border-left: 4px solid #8B7EC8;
-      border-radius: 8px;
-      font-size: 14px;
-      color: #444;
-      line-height: 1.5;
-  }
-
-  .rule-number {
-      font-weight: bold;
-      color: #8B7EC8;
-      margin-right: 8px;
-  }
+.rule-number {
+  font-weight: bold;
+  color: #8B7EC8;
+  margin-right: 8px;
+}
 
 /* ============================================
-   ESTADOS DE JUEGO
+   ESTADOS DE JUEGO - ANIMACIONES SIMPLIFICADAS
 ============================================ */
 .red {
   background: var(--red-gradient) !important;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
   color: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .blue {
   background: var(--blue-gradient) !important;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
   color: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .lose {
   background: var(--warning-gradient) !important;
-  box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
+  box-shadow: 0 2px 8px rgba(250, 112, 154, 0.3);
   color: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  animation: shake 0.5s ease-in-out;
+  /* Shake más suave y rápido */
+  animation: shake 0.3s ease-in-out;
 }
 
 @keyframes shake {
-
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-5px);
-  }
-
-  75% {
-    transform: translateX(5px);
-  }
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
 }
 
 .black {
   background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%) !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .white {
   background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%) !important;
   color: #333333 !important;
-  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.3);
 }
 
 .correct_place {
   background: var(--success-gradient-nerdle) !important;
-  animation: correctPulse 0.6s ease-in-out;
+  /* Animación más simple */
+  animation: correctPulse 0.4s ease-in-out;
 }
 
 .correct_character {
   background: var(--warning-gradient-nerdle) !important;
-  animation: partialPulse 0.6s ease-in-out;
+  animation: partialPulse 0.4s ease-in-out;
 }
 
 .nowhere {
   background: rgba(100, 100, 100, 0.3) !important;
-  animation: fadeIn 0.4s ease-in-out;
+  /* Sin animación para optimizar */
 }
 
+/* Animaciones más simples y rápidas */
 @keyframes correctPulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(79, 172, 254, 0.6);
-  }
-
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 @keyframes partialPulse {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(250, 112, 154, 0.6);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 /* ============================================
-   BOTONES MODERNOS
+   BOTONES MODERNOS - OPTIMIZADOS
 ============================================ */
 .resolver {
   height: 60px;
@@ -392,28 +337,15 @@ rules-section {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+  /* Optimización */
+  will-change: transform;
 }
 
-.resolver::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.resolver:hover::before {
-  left: 100%;
-}
-
+/* Eliminado el efecto de brillo que era muy pesado */
 .resolver:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
 }
 
 .resolver:active {
@@ -422,24 +354,22 @@ rules-section {
 
 .resolver.azulito:hover {
   background: var(--primary-gradient);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .resolver.rojito:hover {
   background: var(--secondary-gradient);
-  box-shadow: 0 8px 25px rgba(240, 147, 251, 0.4);
-  border-color: rgba(240, 147, 251, 0.5);
+  box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3);
 }
 
 .resolver.inicio:hover {
   background: var(--success-gradient);
-  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+  box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
 }
 
 .resolver.evaluar:hover {
   background: var(--warning-gradient);
-  box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
+  box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
 }
 
 .resolver.inicio,
@@ -482,7 +412,6 @@ rules-section {
   max-width: 800px;
   padding: 20px;
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
   border-radius: var(--radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -511,7 +440,7 @@ rules-section {
 }
 
 .punto:hover {
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 /* ============================================
@@ -536,16 +465,14 @@ rules-section {
   background-repeat: no-repeat;
   background-position: center;
   z-index: 1;
-  animation: none !important;
-  transition: none !important;
-  will-change: auto !important;
+  /* Eliminadas las propiedades de animación que no se usaban */
 }
 
 .red.blocked::before,
 .blue.blocked::before {
   background-image: url('/static/images/logo_M&B.png');
   display: block;
-  filter: opacity(0.3); /* 0.0 a 1.0 */
+  filter: opacity(0.3);
   width: 80%;
   height: 80%;
 }
@@ -558,7 +485,7 @@ rules-section {
 }
 
 /* ============================================
-   COUNTDOWN Y OVERLAYS
+   COUNTDOWN Y OVERLAYS - OPTIMIZADOS
 ============================================ */
 #countdown-overlay {
   position: fixed;
@@ -567,7 +494,7 @@ rules-section {
   width: 100%;
   height: 100%;
   background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px); /* Reducido el blur */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -584,25 +511,23 @@ rules-section {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: countdownPulse 1s ease-in-out infinite;
+  /* Animación más suave */
+  animation: countdownPulse 0.8s ease-in-out infinite;
 }
 
 @keyframes countdownPulse {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: scale(1);
     opacity: 1;
   }
-
   50% {
-    transform: scale(1.1);
-    opacity: 0.8;
+    transform: scale(1.05);
+    opacity: 0.9;
   }
 }
 
 /* ============================================
-   TIMER
+   TIMER - OPTIMIZADO
 ============================================ */
 #timer {
   font-size: 2rem;
@@ -611,14 +536,12 @@ rules-section {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  transition: var(--transition-medium);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  /* Eliminada la transición para evitar lag en el timer */
 }
 
 /* ============================================
-   CONFETTI ADAPTATIVO POR TEMA
+   CONFETTI OPTIMIZADO
 ============================================ */
-
 @keyframes confetti-slow {
   0% { transform: translate3d(0, 0, 0) rotateX(0) rotateY(0); }
   100% { transform: translate3d(0, 105vh, 0) rotateX(360deg) rotateY(180deg); }
@@ -634,7 +557,6 @@ rules-section {
   100% { transform: translate3d(-50px, 105vh, 0) rotateX(10deg) rotateY(250deg); }
 }
 
-
 .confetti-container {
   perspective: 1000px;
   position: absolute;
@@ -643,7 +565,7 @@ rules-section {
   right: 0;
   bottom: 0;
   left: 0;
-  pointer-events: none; /* Permite interactuar con los elementos debajo */
+  pointer-events: none;
 }
 
 .confetti {
@@ -656,6 +578,7 @@ rules-section {
   left: 50%;
   animation-fill-mode: forwards;
 }
+
 .confetti--animation-slow {
   animation: confetti-slow 3.25s linear 1 forwards;
 }
@@ -667,8 +590,9 @@ rules-section {
 .confetti--animation-fast {
   animation: confetti-fast 2.25s linear 1 forwards;
 }
+
 /* ============================================
-   CHECKMARK MEJORADO
+   CHECKMARK SIMPLIFICADO
 ============================================ */
 .checkmark-circle {
   width: 120px;
@@ -686,7 +610,7 @@ rules-section {
   background: var(--success-gradient);
   position: absolute;
   box-shadow: var(--shadow-medium);
-  animation: checkmarkAppear 0.6s ease-out;
+  animation: checkmarkAppear 0.4s ease-out;
 }
 
 @keyframes checkmarkAppear {
@@ -694,7 +618,6 @@ rules-section {
     transform: scale(0);
     opacity: 0;
   }
-
   100% {
     transform: scale(1);
     opacity: 1;
@@ -702,8 +625,8 @@ rules-section {
 }
 
 .checkmark-circle .checkmark.draw:after {
-  animation: checkmark 2s ease-in-out forwards;
-  animation-delay: 0.5s;
+  animation: checkmark 1.5s ease-in-out forwards;
+  animation-delay: 0.3s;
 }
 
 .checkmark-circle .checkmark:after {
@@ -727,19 +650,16 @@ rules-section {
     width: 0;
     opacity: 1;
   }
-
   25% {
     height: 0;
     width: 30px;
     opacity: 1;
   }
-
   50% {
     height: 60px;
     width: 30px;
     opacity: 1;
   }
-
   100% {
     height: 60px;
     width: 30px;
@@ -748,14 +668,13 @@ rules-section {
 }
 
 /* ============================================
-   TEMA CLARO
+   TEMA CLARO - OPTIMIZADO
 ============================================ */
 body.light-theme {
-  --background-color:linear-gradient(135deg, #fffde6 0%, #c3c3c3 50%, #fffde6 100%);
+  --background-color: linear-gradient(135deg, #fffde6 0%, #fefefe 50%, #fffde6 100%);
   height: 100%;
   background: var(--background-color);
   color: #333333;
-  --confetti-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   --timer-gradient: linear-gradient(135deg, #5b5b5b 0%, #2a2a2a 100%);
   --red-gradient: linear-gradient(135deg, #d76305 0%, #ff0606 100%);
   --blue-gradient: linear-gradient(135deg, #9870d0 0%, #0053fb 100%);
@@ -763,8 +682,8 @@ body.light-theme {
 
 body.light-theme::before {
   background-image:
-    radial-gradient(circle at 20% 80%, rgba(252, 182, 159, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255, 236, 210, 0.2) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(252, 182, 159, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 236, 210, 0.15) 0%, transparent 50%);
 }
 
 body.light-theme h1 {
@@ -781,7 +700,6 @@ body.light-theme th {
 
 body.light-theme td {
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
   color: #333333;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -805,51 +723,49 @@ body.light-theme #timer {
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  transition: var(--transition-medium);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 body.light-theme .red {
   background: var(--red-gradient) !important;
-  box-shadow: 0 4px 15px rgba(255, 168, 8, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 168, 8, 0.3);
   color: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 body.light-theme .blue {
   background: var(--blue-gradient) !important;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
   color: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
+
 /* ============================================
-   TEMA OSCURO
+   TEMA OSCURO - OPTIMIZADO
 ============================================ */
 body.dark-theme {
   --background-color: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0f0f0f 100%);
   height: 100%;
   background: var(--background-color);
-  --confetti-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
   --red-gradient: linear-gradient(135deg, #fdd316 0%, #c4a806 100%);
   --blue-gradient: linear-gradient(135deg, #9870d0 0%, #0053fb 100%);
 }
 
 body.dark-theme::before {
   background-image:
-    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
 }
 
 body.dark-theme .red {
   background: var(--red-gradient) !important;
-  box-shadow: 0 4px 15px rgba(255, 168, 8, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 168, 8, 0.3);
   color: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 body.dark-theme .blue {
   background: var(--blue-gradient) !important;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
   color: #ffffff;
   border: 2px solid rgba(255, 255, 255, 0.2);
 }
@@ -866,12 +782,13 @@ body.dark-theme .blue {
     min-height: 100vh;
     margin: 0 auto;
   }
+  
   .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 0.3fr); /* 5 columnas */
-    gap: 10px; /* Espacio entre los botones */
+    grid-template-columns: repeat(3, 0.3fr);
+    gap: 10px;
     justify-items: center;
-    max-width: 1000px; /* Ajusta según necesidad */
+    max-width: 1000px;
     padding: 5px;
   }
 }
