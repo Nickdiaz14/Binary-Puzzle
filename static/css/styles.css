@@ -751,7 +751,7 @@ rules-section {
    TEMA CLARO
 ============================================ */
 body.light-theme {
-  --background-color:linear-gradient(135deg, #fffde6 0%, #f6f0ad 50%, #d4b487 100%);
+  --background-color:linear-gradient(135deg, #fffde6 0%, #c3c3c3 50%, #fffde6 100%);
   height: 100%;
   background: var(--background-color);
   color: #333333;
