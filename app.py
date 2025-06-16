@@ -490,7 +490,7 @@ def attendance():
 
 @app.route('/win')
 def win_page():
-    return render_template('win.html')
+    return render_template('dice_leaderboards.html',valid=0)
 
 @app.route('/dado')
 def dado_page():
@@ -498,7 +498,7 @@ def dado_page():
 
 @app.route('/dice_leaderboards')
 def dl_page():
-    return render_template('dice_leaderboards.html',data1=json.dumps(get_top_less_AAAAA()),data2=json.dumps(get_top_more_AAAAA()))
+    return render_template('dice_leaderboards.html',valid=1)
 
 @app.route('/api/dice_leaderboards')
 def get_dice_leaderboards_data():

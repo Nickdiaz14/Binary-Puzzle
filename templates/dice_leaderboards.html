@@ -9,7 +9,9 @@
     <body>
         <div class="js-container container" style="top:0px !important;">
             <div style="display: flex; align-items: center; justify-content: center; gap: 40px;">
-                <div id="leaderboard1" style="text-align: center;"></div>
+                {% if valid == 1 %}
+                    <div id="leaderboard1" style="text-align: center;"></div>
+                {% endif %}
                 <div id="leaderboard2" style="text-align: center;"></div>
             </div>
             <div style="text-align:center;" class="botones">
@@ -18,11 +20,16 @@
         </div>
     </body>
         <script>
+            const valid = '{{valid}}';
             let leaderboardData1 = [];
             let leaderboardData2 = [];
 
+            if (valid !== 'True') {
+
+            }
             function reset() {
-                let leaderboardDiv = document.getElementById('leaderboard1');
+                if (valid == 1){
+                    let leaderboardDiv = document.getElementById('leaderboard1');
                 leaderboardDiv.innerHTML = '';
                 let table = document.createElement('table');
                 table.classList.add("leaderboard1");
@@ -54,6 +61,7 @@
                     table.appendChild(emptyRow);
                 }
                 leaderboardDiv.appendChild(table);
+                }
 
                 let leaderboardDiv2 = document.getElementById('leaderboard2');
                 leaderboardDiv2.innerHTML = '';
