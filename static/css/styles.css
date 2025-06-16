@@ -686,7 +686,7 @@ td:active {
    TEMA CLARO - OPTIMIZADO
 ============================================ */
 body.light-theme {
-  --background-color: linear-gradient(135deg, #f9c24ebd 0%, #fffeee 50%, #f9c24ebd 100%); 
+  --background-color: linear-gradient(135deg, #f9dda0bd 0%, #fffeee 50%, #f9dda0bd 100%); 
   height: 100%;
   background: var(--background-color);
   color: #333333;

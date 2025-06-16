@@ -316,7 +316,7 @@
                 const countdownElement = document.getElementById("countdown");
                 countdownElement.style.fontSize = "30px"; 
                 countdownElement.style.textAlign = "center"; 
-                countdownElement.innerHTML = "Adivina la igualdad<br>en el menor tiempo posible";
+                countdownElement.textContent = "Adivina la igualdad";
 
                 const countdownInterval = setInterval(() => {
                     count--;
@@ -333,7 +333,7 @@
 
         function setBoardSize(size) {
             let overlay = document.getElementById('countdown-overlay');
-            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
+            overlay.innerHTML = '<h1 id="countdown"; color: #ffffff;"></h1>';
             document.getElementById("title").textContent = `Nerdle`;
             document.getElementById("title_part").textContent = "¡Adivina la igualdad!";
             matrixSize = size; // Asigna el tamaño seleccionado

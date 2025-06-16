@@ -236,7 +236,7 @@
         function setBoardSize(size) {
             localStorage.removeItem('Ubs');
             let overlay = document.getElementById('countdown-overlay');
-            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
+            overlay.innerHTML = '<h1 id="countdown"; color: #ffffff;"></h1>';
             document.getElementById("title").textContent = size == 0 ? 'Progresivo':'Aleatorio';
             if (size === 0) {
                 mod = true;
