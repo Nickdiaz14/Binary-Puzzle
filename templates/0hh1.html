@@ -37,13 +37,12 @@
     </table>
     <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
-    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.ogg') }}" preload="auto"></audio>
     <audio id="musica" preload="auto"></audio>
     <script>
-        const sonidoCelda = document.getElementById("sonido-celda");
         const musica = document.getElementById("musica");
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
+            sonido.load();
             const savedTheme = localStorage.getItem("theme");
             const numero = Math.floor(Math.random() * 10) + 1;
             musica.src = `/static/sounds/game_music_${numero}.mp3`;
@@ -185,10 +184,6 @@
         }
 
         function toggleColor(row, col, cell) {
-            sonidoCelda.pause();
-            sonidoCelda.currentTime = 0;
-            sonidoCelda.volume = 1; // Ajustar el volumen
-            sonidoCelda.play();
             const cells = document.querySelectorAll("#matrix td");
             cells.forEach(cell => {
                 cell.style.removeProperty("outline");
