@@ -33,13 +33,52 @@
     </table>
     </div>
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.mp3') }}"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
+    <audio id="musica"></audio>
     <script>
         const savedTheme = localStorage.getItem("theme");
+        const musica = document.getElementById("musica");
         document.addEventListener("DOMContentLoaded", function() {
+            const sonido = document.getElementById("sonido-boton");
+            const savedTheme = localStorage.getItem("theme");
+            const numero = Math.floor(Math.random() * 10) + 1;
+            musica.src = `/static/sounds/game_music_${numero}.mp3`;
+            musica.loop = true;
+            musica.volume = 0; // Ajusta el volumen de la música
+            musica.play();
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
+            let paso = 0;
+                const fade = setInterval(() => {
+                    paso++;
+
+                    musica.volume = Math.min(0.36, paso * 0.06);     // fade out
+
+                    if (paso >= 7) {
+                        clearInterval(fade);
+                    }
+                }, 300);
+            document.querySelectorAll(".resolver").forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault(); // Detiene redirección inmediata
+                    let url = this.getAttribute("data-url");
+
+                    if (url === "/menu") {
+                        url = `/menu?userID=${localStorage.getItem('userId')}`;
+                    }
+                    sonido.currentTime = 0;
+                    sonido.volume = 0.2; // Ajustar el volumen del sonido del botón
+                    sonido.play();
+                    if (!url) return;
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200); // Ajusta si el sonido es más largo
+                });
+            });
         });
         document.getElementById("title_part").textContent = "";
         let timerInterval;
@@ -83,6 +122,17 @@
                     document.getElementById("timer").innerText = '00:00.00'
                     document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                     stopTimer();
+                    let paso = 0;
+                    const fade = setInterval(() => {
+                        paso++;
+
+                        musica.volume = Math.max(0, 0.36 - paso * 0.05);     // fade out
+
+                        if (paso >= 8) {
+                            clearInterval(fade);
+                            musicaFondo.pause(); // opcional: pausa la música
+                        }
+                    }, 300);
                     fetch('/leaderboard/update', {
                         method: 'POST',
                         headers: {
@@ -173,6 +223,10 @@
         }
 
         function toggleColor(row, col, cell) {
+            const sonidoCelda = document.getElementById("sonido-celda");
+            sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
+            sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
+            sonidoCelda.play(); // Reproducir el sonido al hacer clic
             total_attempts++;
             const in_cells = document.querySelectorAll('#inputs td');
             in_cells.forEach(cell => {
@@ -192,9 +246,9 @@
 
                 if ((cell.innerText === 'Sí' && valid) || (cell.innerText === 'No' && !valid)) {
                     boards_solved += 1;
-                    cell_color = '#278b02';  // verde
+                    cell_color = 'correct_place';  // verde
                 } else {
-                    cell_color = '#e60000';  // rojo
+                    cell_color = 'correct_character';  // rojo
                 }
 
                 // Ahora que cell_color está definido, aplicamos el color
@@ -202,17 +256,17 @@
                     for (let j = 0; j < 1; j++) {
                         const cell = table.rows[i].cells[j];
                         cell.innerText = '';
-                        cell.style.backgroundColor = cell_color;
+                        cell.className = cell_color;
                     }
                 }
             }, 200);
 
-            // Restaurar colores luego de 3 segundos
+            // Restaurar colores
             setTimeout(() => {
                 const cells = document.querySelectorAll('td');
-                const bgColor = (savedTheme !== 'light-theme') ? '#ffffff0f' : '#c8c4b4';
                 cells.forEach(cell => {
-                    cell.style.backgroundColor = bgColor;
+                    cell.classList.remove('correct_place');
+                    cell.classList.remove('correct_character');
                 });
                 in_cells.forEach(cell => {
                     cell.classList.remove('locked');

@@ -59,9 +59,10 @@
     <button id="quedarse" class="resolver rojito">Quedarse</button>
   </div>
   <div style="text-align: center;">
-    <h1 id="mensaje" style="font-size: 20px; height: 21px; margin: 10px 0;"></h1>
+    <h1 id="mensaje" style="font-size: 20px; height: 40px; margin: 10px 0;"></h1>
   </div>
-
+<audio id="sonido-lanzar" src="{{ url_for('static', filename='sounds/dice_sound.mp3') }}"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
   <script>
     const dado1El = document.getElementById("dado_1");
     const dado2El = document.getElementById("dado_2");
@@ -77,10 +78,29 @@
     const savedTheme = localStorage.getItem("theme");
 
     document.addEventListener("DOMContentLoaded", function() {
+            const sonido = document.getElementById("sonido-boton");
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
+            document.querySelectorAll(".resolver").forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault(); // Detiene redirección inmediata
+                    let url = this.getAttribute("data-url");
+
+                    if (url === "/menu") {
+                        url = `/menu?userID=${localStorage.getItem('userId')}`;
+                    }
+                    sonido.currentTime = 0;
+                    sonido.volume = 0.2; // Ajustar el volumen del sonido del botón
+                    sonido.play();
+                    if (!url) return;
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200); // Ajusta si el sonido es más largo
+                });
+            });
         });
         let gamefinished = true;
         
@@ -134,11 +154,15 @@
             startTimer();
         }
         if (cooldown) return;
-
+        // Cooldown para evitar múltiples lanzamientos rápidos
+        iniciarCooldown(1, "¡Lanzando dados!");
+        const sonido = document.getElementById("sonido-lanzar");
+        sonido.currentTime = 0;
+        sonido.play();
         const dadoImg_1 = document.getElementById("imagen-dado-1");
         const dadoImg_2 = document.getElementById("imagen-dado-2");
-        let tiempoAnimacion = 800;
-        let intervalo = 80; // Intervalo más espaciado
+        let tiempoAnimacion = 1000;
+        let intervalo = 50; // Intervalo más espaciado
         let tiempoPasado = 0;
         let rotacionActual_1 = 0;
         let rotacionActual_2 = 0;
@@ -306,6 +330,7 @@
     }
 
     function iniciarCooldown(segundos, texto) {
+      // Evitar agregar múltiples cooldowns
       cooldown = true;
       lanzarBtn.classList.add("cooldown");
       quedarseBtn.classList.add("cooldown");

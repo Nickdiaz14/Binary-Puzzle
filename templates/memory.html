@@ -31,13 +31,53 @@
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
-    <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.mp3') }}"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
+    <audio id="musica"></audio>
     <script>
         const savedTheme = localStorage.getItem("theme");
+        const musica = document.getElementById("musica");
+        document.addEventListener("DOMContentLoaded", function() {
+            const sonido = document.getElementById("sonido-boton");
+            const numero = Math.floor(Math.random() * 10) + 1;
+            musica.src = `/static/sounds/game_music_${numero}.mp3`;
+            musica.loop = true;
+            musica.volume = 0; // Ajusta el volumen de la música
+            musica.play();
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
+            let paso = 0;
+            const fade = setInterval(() => {
+                paso++;
+
+                musica.volume = Math.min(0.36, paso * 0.06);     // fade out
+
+                if (paso >= 7) {
+                    clearInterval(fade);
+                }
+            }, 300);
+            document.querySelectorAll(".resolver").forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault(); // Detiene redirección inmediata
+                    let url = this.getAttribute("data-url");
+
+                    if (url === "/menu") {
+                        url = `/menu?userID=${localStorage.getItem('userId')}`;
+                    }
+                    sonido.currentTime = 0;
+                    sonido.volume = 0.2; // Ajustar el volumen del sonido del botón
+                    sonido.play();
+                    if (!url) return;
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200); // Ajusta si el sonido es más largo
+                });
+            });
+        });
         let matrixSize = 5; // Tamaño de la matriz
         let gamestarted = true;
         let gamefinished = false;
@@ -56,6 +96,17 @@
                 if (centisecondsElapsed === 0) {
                     stopTimer();
                     if (gamefinished) {
+                        let paso = 0;
+                        const fade = setInterval(() => {
+                            paso++;
+
+                            musica.volume = Math.max(0, 0.36 - paso * 0.05);     // fade out
+
+                            if (paso >= 8) {
+                                clearInterval(fade);
+                                musicaFondo.pause(); // opcional: pausa la música
+                            }
+                        }, 300);
                         document.getElementById("title_part").textContent = "¡Se acabó el tiempo!";
                         games = matrixSize === 5 ? 'mindgrid2' : 'mindgrid1';
                         fetch('/leaderboard/update', {
@@ -149,14 +200,34 @@
         }
 
         function toggleColor(row, col, cell) {
+            const sonidoCelda = document.getElementById("sonido-celda");
+            sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
+            sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
+            sonidoCelda.play(); // Reproducir el sonido al hacer clic
             if (cell.classList.contains('locked')) {
                 return; // Do nothing if the cell is blocked
             }
             if (matrix[row][col] === -1) {
                 cell.className = 'lose';
                 matrix[row][col] = 1;
+                sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
+                sonidoCelda.pause(); // Pausar el sonido si la celda no es correcta
+                sonidoCelda.src = "{{ url_for('static', filename='sounds/lose_sound.mp3') }}"; // Cambiar a sonido de error
+                sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de error
+                sonidoCelda.play(); // Reproducir el sonido de error
                 document.getElementById("title_part").textContent = "¡Sigue intentándolo!";
                 stopTimer();
+                let paso = 0;
+                const fade = setInterval(() => {
+                    paso++;
+
+                    musica.volume = Math.max(0, 0.36 - paso * 0.05);     // fade out
+
+                    if (paso >= 8) {
+                        clearInterval(fade);
+                        musicaFondo.pause(); // opcional: pausa la música
+                    }
+                }, 300);
                 let games = matrixSize === 5 ? 'mindgrid2' : 'mindgrid1';
                 fetch('/leaderboard/update', {
                     method: 'POST',

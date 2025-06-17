@@ -15,32 +15,56 @@
             <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
             <div style="text-align:center;" class="botones">
                 <button onclick="reintentar()" class="resolver evaluar">Reintentar</button>
-                <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class= "resolver evaluar">Volver</button>
+                <button data-url="/menu" class= "resolver evaluar">Volver</button>
             </div>
         </div>
+        <audio id="celebrate" src="{{ url_for('static', filename='sounds/celebrate.mp3') }}"></audio>
+        <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
         <script>
+            const celebrate = document.getElementById('celebrate');
+            const sonido = document.getElementById("sonido-boton");
+            document.querySelectorAll(".resolver").forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault(); // Detiene redirección inmediata
+                    let url = this.getAttribute("data-url");
+
+                    if (url === "/menu") {
+                        url = `/menu?userID=${localStorage.getItem('userId')}`;
+                    }
+                    sonido.currentTime = 0;
+                    sonido.volume = 0.2; // Ajustar el volumen del sonido del botón
+                    sonido.play();
+                    if (!url) return;
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200); // Ajusta si el sonido es más largo
+                });
+            });
             function reintentar() {
-                if (board === "Contrareloj") {
-                    window.location.href = '/time_trial_0hh1'
-                } else if (board.includes('Cruzado')) {
-                    window.location.href = '/colors'
-                } else if (board.includes('color')) {
-                    window.location.href = '/memory'
-                } else if (board.includes('Aleatorio') || board.includes('Progresivo')) {
-                    window.location.href = '/sequence'
-                } else if (board.includes('CuentaManía')) {
-                    window.location.href = '/speed'
-                } else if (board.includes('Knight')) {
-                    window.location.href = '/knight'
-                } else if (board.includes('Light')) {
-                    window.location.href = '/light_out'
-                } else if (board.includes('Nerdle')) {
-                    window.location.href = '/nerdle'
-                } else if (game.includes('T0')) {
-                    window.location.href = '/0hn0'
-                } else {
-                    window.location.href = '/0hh1'
-                }
+                setTimeout(() => {
+                    if (board === "Contrareloj") {
+                        window.location.href = '/time_trial_0hh1'
+                    } else if (board.includes('Cruzado')) {
+                        window.location.href = '/colors'
+                    } else if (board.includes('color')) {
+                        window.location.href = '/memory'
+                    } else if (board.includes('Aleatorio') || board.includes('Progresivo')) {
+                        window.location.href = '/sequence'
+                    } else if (board.includes('CuentaManía')) {
+                        window.location.href = '/speed'
+                    } else if (board.includes('Knight')) {
+                        window.location.href = '/knight'
+                    } else if (board.includes('Light')) {
+                        window.location.href = '/light_out'
+                    } else if (board.includes('Nerdle')) {
+                        window.location.href = '/nerdle'
+                    } else if (game.includes('T0')) {
+                        window.location.href = '/0hn0'
+                    } else {
+                        window.location.href = '/0hh1'
+                    }
+                }, 200); // Ajusta si el sonido es más largo
             }
             const best = '{{best}}'
             const board = '{{board}}'
@@ -87,13 +111,28 @@
                 // Detener la animación después de 10 segundos
                 setTimeout(() => {
                     clearInterval(this.confettiInterval);
+                    let paso = 0;
+                    const fade = setInterval(() => {
+                        paso++;
+
+                        celebrate.volume = Math.max(0, 0.2 - paso * 0.01);     // fade out
+
+                        if (paso >= 20) {
+                            clearInterval(fade);
+                        }
+                    }, 200);
                 }, 7000);
             };
 
             window.addEventListener('DOMContentLoaded', () => {
                 const container = document.querySelector('.js-container');
                 if(best === "True") {
-                    new Confettiful(container);
+                    // Reproducir el sonido de celebración
+                    celebrate.volume = 0.2; // Asegurarse de que el volumen esté al máximo
+                    celebrate.play()
+                    setTimeout(() => {
+                        new Confettiful(container);
+                    }, 2000); // Duración del sonido de celebración
                 }
             });
             // Obtener los datos del leaderboard pasado desde el backend

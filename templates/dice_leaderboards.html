@@ -15,11 +15,31 @@
                 <div id="leaderboard2" style="text-align: center;"></div>
             </div>
             <div style="text-align:center;" class="botones">
-                <button onclick="location.href=`/`" class="resolver evaluar">Volver</button>
+                <button data-url="/menu" class="resolver evaluar">Volver</button>
             </div>
         </div>
+        <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
     </body>
         <script>
+            const sonido = document.getElementById("sonido-boton");
+            document.querySelectorAll(".resolver").forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault(); // Detiene redirección inmediata
+                    let url = this.getAttribute("data-url");
+
+                    if (url === "/menu") {
+                        url = `/menu?userID=${localStorage.getItem('userId')}`;
+                    }
+                    sonido.currentTime = 0;
+                    sonido.volume = 0.2; // Ajustar el volumen del sonido del botón
+                    sonido.play();
+                    if (!url) return;
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200); // Ajusta si el sonido es más largo
+                });
+            });
             const valid = '{{valid}}';
             let leaderboardData1 = [];
             let leaderboardData2 = [];

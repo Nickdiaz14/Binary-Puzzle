@@ -13,7 +13,8 @@
             </select>
         </div>
         <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
-        <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
+        <button data-url="/menu" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
+        <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 const savedTheme = localStorage.getItem("theme");
@@ -37,6 +38,27 @@
                     div.style.color = "#ffffff";
                     div.style.border = "1px solid #ccc";
                 }
+
+                
+                const sonido = document.getElementById("sonido-boton");
+                document.querySelectorAll(".resolver").forEach(boton => {
+                    boton.addEventListener("click", function (e) {
+                        e.preventDefault(); // Detiene redirección inmediata
+                        let url = this.getAttribute("data-url");
+
+                        if (url === "/menu") {
+                            url = `/menu?userID=${localStorage.getItem('userId')}`;
+                        }
+                        sonido.currentTime = 0;
+                        sonido.volume = 0.2; // Ajustar el volumen del sonido del botón
+                        sonido.play();
+                        if (!url) return;
+
+                        setTimeout(() => {
+                            window.location.href = url;
+                        }, 200); // Ajusta si el sonido es más largo
+                    });
+                });
         
                 // Restaurar selección desde localStorage
                 const savedSelection = localStorage.getItem("selectedMatrix");

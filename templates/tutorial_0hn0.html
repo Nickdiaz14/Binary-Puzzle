@@ -21,25 +21,21 @@
     {% if init %}
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Omitir</button>
     {% endif %}
+    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.mp3') }}"></audio>
+    <audio id="musica"></audio>
     <script>
+        const musica = document.getElementById("musica");
         document.addEventListener("DOMContentLoaded", function() {
             const savedTheme = localStorage.getItem("theme");
+            const numero = Math.floor(Math.random() * 10) + 1;
+            musica.src = `/static/sounds/game_music_${numero}.mp3`;
+            musica.loop = true;
+            musica.volume = 0; // Ajusta el volumen de la música
+            musica.play();
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
-        });
-        document.getElementById("title_part").textContent = '';
-        let color0;
-        let color1;
-        let border;
-        let step = 0;
-        let matrixSize = 4; // Tamaño de la matriz
-        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-2));
-        const table = document.getElementById('matrix');
-
-        function createTable() {
-            const savedTheme = localStorage.getItem("theme");
             if (savedTheme === "light-theme") {
                 color0 = "rojas";
                 color1 = "azules";
@@ -53,6 +49,27 @@
                 color1 = "moradas";
                 border = "rgb(255,255,255)"
             }
+            let paso = 0;
+                const fade = setInterval(() => {
+                    paso++;
+
+                    musica.volume = Math.min(0.36, paso * 0.06);     // fade out
+
+                    if (paso >= 7) {
+                        clearInterval(fade);
+                    }
+                }, 300);
+        });
+        document.getElementById("title_part").textContent = '';
+        let color0;
+        let color1;
+        let border;
+        let step = 0;
+        let matrixSize = 4; // Tamaño de la matriz
+        let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-2));
+        const table = document.getElementById('matrix');
+
+        function createTable() {
             const table = document.getElementById('matrix');
             table.innerHTML = ''; // Limpiar contenido de la tabla existente
             for (let i = 0; i < matrixSize; i++) {
@@ -75,6 +92,10 @@
         }
 
         function toggleColor(row, col, cell) {
+            const sonidoCelda = document.getElementById("sonido-celda");
+            sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
+            sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
+            sonidoCelda.play(); // Reproducir el sonido al hacer clic
             let countdownElement = document.getElementById("title_part")
             if (cell.classList.contains('locked')) {
                 return; // Do nothing if the cell is blocked
@@ -202,6 +223,17 @@
                     }
                 }
                 countdownElement.innerHTML = `El tablero está completo. ¡Buen trabajo!.`;
+                let paso = 0;
+                const fade = setInterval(() => {
+                    paso++;
+
+                    musica.volume = Math.max(0, 0.36 - paso * 0.05);     // fade out
+
+                    if (paso >= 8) {
+                        clearInterval(fade);
+                        musicaFondo.pause(); // opcional: pausa la música
+                    }
+                }, 300);
                 setTimeout(() => {
                     const user = localStorage.getItem('userId');
                     window.location.href = `/menu?userID=${user}`

@@ -42,33 +42,33 @@
             </div>
         </div>
             <div class="botones">
-                <button onclick="location.href='/0hh1'" class="resolver azulito">0h-h1</button>
-                <button onclick="location.href='/time_trial_0hh1'" class="resolver rojito">Contrarreloj</button>
+                <button data-url="/0hh1" class="resolver azulito">0h-h1</button>
+                <button data-url="/time_trial_0hh1" class="resolver rojito">Contrarreloj</button>
             </div>
             <div class="botones">
-                <button onclick="location.href='/tutorial'" class="resolver rojito">Tutorial</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
+                <button data-url="/tutorial" class="resolver rojito">Tutorial</button>
+                <button data-url="/leaderboards" class="resolver azulito">Rankings</button>
             </div>
         </div>
 
         <!-- Menú Juego 2 (ChessGames) -->
         <div id="game2-menu" style="text-align:center; display: none;">
             <div class="botones">
-                <button onclick="location.href='/knight'" class="resolver azulito">Knight</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver rojito">Rankings</button>
+                <button data-url="/knight" class="resolver azulito">Knight</button>
+                <button data-url="/leaderboards" class="resolver rojito">Rankings</button>
             </div>
         </div>
 
         <!-- Menú Juego 3 (MindGames) -->
         <div id="game3-menu" style="text-align:center; display: none;">
             <div class="botones">
-                <button onclick="location.href='/memory'" class="resolver azulito" style="width: 150px;">Secuenzo</button>
-                <button onclick="location.href='/speed'" class="resolver rojito" style="width: 150px;">CuentaManía</button>
-                <button onclick="location.href='/sequence'" class="resolver azulito" style="width: 150px;">Patrón Perfecto</button>
+                <button data-url="/memory" class="resolver azulito" style="width: 150px;">Secuenzo</button>
+                <button data-url="/speed" class="resolver rojito" style="width: 150px;">CuentaManía</button>
+                <button data-url="/sequence" class="resolver azulito" style="width: 150px;">Patrón Perfecto</button>
             </div>
             <div class="botones">
-                <button onclick="location.href='/colors'" class="resolver rojito" style="width: 150px;">Colores Cruzados</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito" style="width: 150px;">Rankings</button>
+                <button data-url="/colors" class="resolver rojito" style="width: 150px;">Colores Cruzados</button>
+                <button data-url="/leaderboards" class="resolver azulito" style="width: 150px;">Rankings</button>
             </div>
         </div>
 
@@ -80,19 +80,19 @@
             </div>
         </div>
             <div class="botones">
-                <button onclick="location.href='/0hn0'" class="resolver rojito">0h n0</button>
-                <button onclick="location.href='/tutorial_0hn0'" class="resolver azulito">Tutorial</button>
+                <button data-url="/0hn0" class="resolver rojito">0h n0</button>
+                <button data-url="/tutorial_0hn0" class="resolver azulito">Tutorial</button>
             </div>
             <div class="botones">
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver rojito">Rankings</button>
+                <button data-url="/leaderboards" class="resolver rojito">Rankings</button>
             </div>
         </div>
 
         <!-- Menú Juego 5 (MathGames)) -->
         <div id="game5-menu" style="text-align:center; display: none;">
             <div class="botones">
-                <button onclick="location.href='/nerdle'" class="resolver rojito">Nerdle</button>
-                <button onclick="location.href=`/leaderboards?userID=${localStorage.getItem('userId')}&game=${document.getElementById('game').value}`" class="resolver azulito">Rankings</button>
+                <button data-url="/nerdle" class="resolver rojito">Nerdle</button>
+                <button data-url="/leaderboards" class="resolver azulito">Rankings</button>
             </div>
         </div>
 
@@ -101,8 +101,8 @@
 
         <div style="text-align:center;" class="botones">
             <button id="theme-toggle" class="resolver azulito">Cambiar Tema</button>
-            <button onclick="location.href = '/?ch=si'" class="resolver rojito">Cambiar nombre</button>
-        </div>
+            <button data-url="/?ch=si" class="resolver rojito">Cambiar nombre</button>
+        </div>  
         <div style="display: flex; align-items: center; gap: 10px; margin-left: 170px;margin-top: 30px;">
             <a href="https://www.instagram.com/math_and_beer" target="_blank">
                 <img id="image1" src="{{ url_for('static', filename='images/instagram.png') }}" style="width: 24px;">
@@ -112,6 +112,7 @@
             </a>
         </div>
     </div>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
     <script>
         const gameSelected = document.getElementById("game");
         const link = document.getElementById("link");
@@ -206,6 +207,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             const savedGame = localStorage.getItem("gameSelected");
+            const sonido = document.getElementById("sonido-boton");
             if (savedGame) gameSelected.value = savedGame;
             handleGameChange();
 
@@ -226,6 +228,29 @@
                     localStorage.removeItem("theme");
                 }
                 applyTheme(next);
+            });
+            document.querySelectorAll(".resolver").forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault(); // Detiene redirección inmediata
+                    let url = this.getAttribute("data-url");
+
+                    if (url === "/leaderboards") {
+                        const game = document.getElementById("game").value;
+                        url = `/leaderboards?userID=${localStorage.getItem('userId')}&game=${game}`;
+                    } else if (url === "/") {
+                        
+                    }
+
+
+                    sonido.currentTime = 0;
+                    sonido.volume = 0.2; // Ajusta el volumen si es necesario
+                    sonido.play();
+                    if (!url) return;
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200); // Ajusta si el sonido es más largo
+                });
             });
         });
     </script>

@@ -12,14 +12,34 @@
     <h1 id = "case" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</h1>
     <input type="text" id="nickname" name="nickname" required style="margin-top: 15px; padding: 10px; border: 2px solid #007BFF; border-radius: 5px; font-size: 16px;">
     <button onclick="startGame()" style="margin-top: 15px;" class="resolver evaluar">Empezar</button>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const sonido = document.getElementById("sonido-boton");
             const savedTheme = localStorage.getItem("theme");
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
             }
+            document.querySelectorAll(".resolver").forEach(boton => {
+                boton.addEventListener("click", function (e) {
+                    e.preventDefault(); // Detiene redirección inmediata
+                    let url = this.getAttribute("data-url");
+
+                    if (url === "/menu") {
+                        url = `/menu?userID=${localStorage.getItem('userId')}`;
+                    }
+                    sonido.currentTime = 0;
+                    sonido.volume = 0.2; // Ajustar el volumen del sonido del botón
+                    sonido.play();
+                    if (!url) return;
+
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 200); // Ajusta si el sonido es más largo
+                });
+            });
         });
         function startGame() {
             const nickname = document.getElementById('nickname').value;
