@@ -36,13 +36,43 @@
         <!-- JavaScript will generate the table here -->
     </table>
     <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
-    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.mp3') }}"> preload="auto"></audio>
     <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
     <audio id="musica"> preload="auto"></audio>
     <script>
+        let audioContext;
+        let bubbleBuffer;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            loadBubbleSound();
+        });
+
+        function loadBubbleSound() {
+            fetch('/static/sounds/bubble.mp3') // o bubble.ogg si tienes uno optimizado
+                .then(response => response.arrayBuffer())
+                .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+                .then(buffer => {
+                    bubbleBuffer = buffer;
+                })
+                .catch(e => console.error('Error al cargar el sonido:', e));
+        }
+
+        function playBubbleSound() {
+            if (!bubbleBuffer) return;
+
+            const source = audioContext.createBufferSource();
+            source.buffer = bubbleBuffer;
+
+            const gainNode = audioContext.createGain();
+            gainNode.gain.value = 0.1; // volumen bajo
+
+            source.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            source.start(0);
+        }
+
         const musica = document.getElementById("musica");
-        const sonidoCelda = document.getElementById("sonido-celda");
-        sonidoCelda.load();
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
             const savedTheme = localStorage.getItem("theme");
@@ -186,14 +216,7 @@
         }
 
         function toggleColor(row, col, cell) {
-            const sonidoCelda = document.getElementById("sonido-celda");
-            if (!sonidoCelda.paused) {
-                sonidoCelda.pause();
-            }
-            sonidoCelda.currentTime = 0;
-            sonidoCelda.volume = 0.1;
-            sonidoCelda.play();
-
+            playBubbleSound();
             const cells = document.querySelectorAll("#matrix td");
             cells.forEach(cell => {
                 cell.style.removeProperty("outline");
