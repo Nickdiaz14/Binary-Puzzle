@@ -18,8 +18,8 @@
                 <button data-url="/menu" class= "resolver evaluar">Volver</button>
             </div>
         </div>
-        <audio id="celebrate" src="{{ url_for('static', filename='sounds/celebrate.mp3') }}"></audio>
-        <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
+        <audio id="celebrate" src="{{ url_for('static', filename='sounds/celebrate.mp3') }}"> preload="auto"></audio>
+        <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
         <script>
             const celebrate = document.getElementById('celebrate');
             const sonido = document.getElementById("sonido-boton");
@@ -38,7 +38,7 @@
 
                     setTimeout(() => {
                         window.location.href = url;
-                    }, 200); // Ajusta si el sonido es más largo
+                    }, 300); // Ajusta si el sonido es más largo
                 });
             });
             function reintentar() {

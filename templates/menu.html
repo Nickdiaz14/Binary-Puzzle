@@ -112,7 +112,7 @@
             </a>
         </div>
     </div>
-    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
     <script>
         const gameSelected = document.getElementById("game");
         const link = document.getElementById("link");
@@ -249,7 +249,7 @@
 
                     setTimeout(() => {
                         window.location.href = url;
-                    }, 200); // Ajusta si el sonido es más largo
+                    }, 300); // Ajusta si el sonido es más largo
                 });
             });
         });

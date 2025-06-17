@@ -32,9 +32,9 @@
         <!-- JavaScript will generate the table here -->
     </table>
     <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
-    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.mp3') }}"></audio>
-    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
-    <audio id="musica"></audio>
+    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.mp3') }}"> preload="auto"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
+    <audio id="musica"> preload="auto"></audio>
     <script>
         const savedTheme = localStorage.getItem("theme");
         const musica = document.getElementById("musica");
@@ -74,7 +74,7 @@
 
                     setTimeout(() => {
                         window.location.href = url;
-                    }, 200); // Ajusta si el sonido es más largo
+                    }, 300); // Ajusta si el sonido es más largo
                 });
             });
         });

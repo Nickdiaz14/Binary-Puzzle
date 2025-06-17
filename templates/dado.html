@@ -61,8 +61,8 @@
   <div style="text-align: center;">
     <h1 id="mensaje" style="font-size: 20px; height: 40px; margin: 10px 0;"></h1>
   </div>
-<audio id="sonido-lanzar" src="{{ url_for('static', filename='sounds/dice_sound.mp3') }}"></audio>
-    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"></audio>
+<audio id="sonido-lanzar" src="{{ url_for('static', filename='sounds/dice_sound.mp3') }}"> preload="auto"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
   <script>
     const dado1El = document.getElementById("dado_1");
     const dado2El = document.getElementById("dado_2");
@@ -98,7 +98,7 @@
 
                     setTimeout(() => {
                         window.location.href = url;
-                    }, 200); // Ajusta si el sonido es más largo
+                    }, 300); // Ajusta si el sonido es más largo
                 });
             });
         });
