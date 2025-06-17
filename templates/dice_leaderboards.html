@@ -18,7 +18,7 @@
                 <button data-url="/menu" class="resolver evaluar">Volver</button>
             </div>
         </div>
-        <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
+        <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
     </body>
         <script>
             const sonido = document.getElementById("sonido-boton");

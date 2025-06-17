@@ -36,8 +36,8 @@
         <!-- JavaScript will generate the table here -->
     </table>
     <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
-    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
-    <audio id="musica"> preload="auto"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
+    <audio id="musica" preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
         document.addEventListener("DOMContentLoaded", function() {
@@ -175,11 +175,7 @@
             let moves = [[i-2, j-1], [i-2, j+1], [i+2, j-1], [i+2, j+1], [i-1, j-2], [i+1, j-2], [i-1, j+2], [i+1, j+2]];
             const isMove = moves.some(pos => pos[0] === row && pos[1] === col);
             const isImp = pairs.some(pair => pair[0] === row && pair[1] === col);
-            if (isMove) {      
-                const sonidoCelda = document.getElementById("sonido-celda");
-                sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
-                sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
-                sonidoCelda.play(); // Reproducir el sonido al hacer clic
+            if (isMove) {
                 movements++;
                 const table = document.getElementById('matrix');
                 const cells = table.rows[i].cells[j];

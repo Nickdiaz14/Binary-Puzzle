@@ -21,7 +21,7 @@
     {% if init %}
     <button onclick="location.href=`/menu?userID=${localStorage.getItem('userId')}`" class="resolver evaluar" style="margin-top: 20px;">Omitir</button>
     {% endif %}
-    <audio id="musica"> preload="auto"></audio>
+    <audio id="musica" preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
         const savedTheme = localStorage.getItem("theme");

@@ -30,14 +30,13 @@
         <!-- JavaScript will generate the table here -->
     </table>
     <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
-    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
-    <audio id="musica"> preload="auto"></audio>
+    <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
+    <audio id="musica" preload="auto"></audio>
     <script>
         const savedTheme = localStorage.getItem("theme");
         const musica = document.getElementById("musica");
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
-            sonido.load();
             const savedTheme = localStorage.getItem("theme");
             const numero = Math.floor(Math.random() * 10) + 1;
             musica.src = `/static/sounds/game_music_${numero}.mp3`;
@@ -166,11 +165,12 @@
                     image.src = "{{ url_for('static', filename='images/mal.png') }}";
                     image.style.filter = "none";
                 }
-                sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
-                sonidoCelda.pause(); // Pausar el sonido si la celda no es correcta
-                sonidoCelda.src = "{{ url_for('static', filename='sounds/lose_sound.mp3') }}"; // Cambiar a sonido de error
-                sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de error
-                sonidoCelda.play(); // Reproducir el sonido de error
+                musica.currentTime = 0; // Reiniciar el sonido al inicio
+                musica.pause(); // Pausar el sonido si la celda no es correcta
+                musica.src = "{{ url_for('static', filename='sounds/lose_sound.mp3') }}"; // Cambiar a sonido de error
+                musica.loop = false; // Asegurarse de que no se repita
+                musica.volume = 0.1; // Ajustar el volumen del sonido de error
+                musica.play(); // Reproducir el sonido de error
                 let paso = 0;
                 const fade = setInterval(() => {
                     paso++;
