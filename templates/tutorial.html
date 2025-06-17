@@ -42,7 +42,7 @@
                     if (paso >= 20) {
                         clearInterval(fade);
                     }
-                }, 300);
+                }, 100);
         });
         document.getElementById("title_part").textContent = '';
         let border;
@@ -257,9 +257,9 @@
 
                     if (paso >= 20) {
                         clearInterval(fade);
-                        musicaFondo.pause(); // opcional: pausa la música
+                        
                     }
-                }, 300);
+                }, 100);
                 setTimeout(() => {
                     const user = localStorage.getItem('userId');
                     window.location.href = `/menu?userID=${user}`

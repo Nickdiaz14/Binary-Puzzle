@@ -71,7 +71,7 @@
                     if (paso >= 20) {
                         clearInterval(fade);
                     }
-                }, 300);
+                }, 100);
             document.querySelectorAll(".resolver").forEach(boton => {
                 boton.addEventListener("click", function (e) {
                     e.preventDefault(); // Detiene redirección inmediata
@@ -87,7 +87,7 @@
 
                     setTimeout(() => {
                         window.location.href = url;
-                    }, 300); // Ajusta si el sonido es más largo
+                    }, 100); // Ajusta si el sonido es más largo
                 });
             });
         });
@@ -269,9 +269,8 @@
 
                     if (paso >= 20) {
                         clearInterval(fade);
-                        musicaFondo.pause(); // opcional: pausa la música
                     }
-                }, 300);
+                }, 100);
                 fetch('/leaderboard/update', {
                     method: 'POST',
                     headers: {
