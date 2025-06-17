@@ -48,7 +48,7 @@
         });
 
         function loadBubbleSound() {
-            fetch('/static/sounds/bubble.mp3') // o bubble.ogg si tienes uno optimizado
+            fetch('/static/sounds/bubble.ogg') // o bubble.ogg si tienes uno optimizado
                 .then(response => response.arrayBuffer())
                 .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
                 .then(buffer => {
