@@ -23,6 +23,7 @@
         <script>
             const celebrate = document.getElementById('celebrate');
             const sonido = document.getElementById("sonido-boton");
+            sonido.load();
             document.querySelectorAll(".resolver").forEach(boton => {
                 boton.addEventListener("click", function (e) {
                     e.preventDefault(); // Detiene redirección inmediata

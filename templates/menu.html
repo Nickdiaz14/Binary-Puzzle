@@ -208,6 +208,7 @@
         document.addEventListener("DOMContentLoaded", () => {
             const savedGame = localStorage.getItem("gameSelected");
             const sonido = document.getElementById("sonido-boton");
+            sonido.load();
             if (savedGame) gameSelected.value = savedGame;
             handleGameChange();
 

@@ -44,15 +44,13 @@
     <div class="botones">
         <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
     </div>
-    <audio id="sonido-celda" src="{{ url_for('static', filename='sounds/bubble.mp3') }}"> preload="auto"></audio>
     <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}"> preload="auto"></audio>
     <audio id="musica"> preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
-        const sonidoCelda = document.getElementById("sonido-celda");
-        sonidoCelda.load();
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
+            sonido.load();
             const savedTheme = localStorage.getItem("theme");
             const numero = Math.floor(Math.random() * 10) + 1;
             musica.src = `/static/sounds/game_music_${numero}.mp3`;
@@ -67,9 +65,9 @@
                 const fade = setInterval(() => {
                     paso++;
 
-                    musica.volume = Math.min(0.36, paso * 0.06);     // fade out
+                    musica.volume = Math.min(0.36, paso * 0.02);     // fade out
 
-                    if (paso >= 15) {
+                    if (paso >= 20) {
                         clearInterval(fade);
                     }
                 }, 300);
@@ -225,14 +223,6 @@
         }
 
         function send(value) {
-            const sonidoCelda = document.getElementById("sonido-celda");
-            if (!sonidoCelda.paused) {
-                sonidoCelda.pause();
-            }
-            sonidoCelda.currentTime = 0;
-            sonidoCelda.volume = 0.1;
-            sonidoCelda.play();
-
             const table = document.getElementById('matrix');
             const inputsTable = document.getElementById('inputs');
             let intento = '';
@@ -326,14 +316,6 @@
         }
 
         function keyboard(value) {
-            const sonidoCelda = document.getElementById("sonido-celda");
-            if (!sonidoCelda.paused) {
-                sonidoCelda.pause();
-            }
-            sonidoCelda.currentTime = 0;
-            sonidoCelda.volume = 0.1;
-            sonidoCelda.play();
-
             document.getElementById("title_part").textContent = "¡Adivina la igualdad!";
             const table = document.getElementById('matrix');
             for (let j = 0; j < matrixSize; j++) {
@@ -409,9 +391,9 @@
             const fade = setInterval(() => {
                 paso++;
 
-                musica.volume = Math.max(0, 0.36 - paso * 0.05);     // fade out
+                musica.volume = Math.max(0, 0.36 - paso * 0.02);     // fade out
 
-                if (paso >= 8) {
+                if (paso >= 20) {
                     clearInterval(fade);
                     musicaFondo.pause(); // opcional: pausa la música
                 }
