@@ -41,6 +41,8 @@
     <audio id="musica"> preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
+        const sonidoCelda = document.getElementById("sonido-celda");
+        sonidoCelda.load();
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
             const savedTheme = localStorage.getItem("theme");
@@ -185,9 +187,13 @@
 
         function toggleColor(row, col, cell) {
             const sonidoCelda = document.getElementById("sonido-celda");
-            sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
-            sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
-            sonidoCelda.play(); // Reproducir el sonido al hacer clic
+            if (!sonidoCelda.paused) {
+                sonidoCelda.pause();
+            }
+            sonidoCelda.currentTime = 0;
+            sonidoCelda.volume = 0.1;
+            sonidoCelda.play();
+
             const cells = document.querySelectorAll("#matrix td");
             cells.forEach(cell => {
                 cell.style.removeProperty("outline");

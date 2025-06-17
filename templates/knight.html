@@ -41,6 +41,8 @@
     <audio id="musica"> preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
+        const sonidoCelda = document.getElementById("sonido-celda");
+        sonidoCelda.load();
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
             const savedTheme = localStorage.getItem("theme");

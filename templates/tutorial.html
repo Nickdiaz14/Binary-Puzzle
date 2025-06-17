@@ -25,6 +25,8 @@
     <audio id="musica"> preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
+        const sonidoCelda = document.getElementById("sonido-celda");
+        sonidoCelda.load();
         const savedTheme = localStorage.getItem("theme");
         let color0 = "";
         let color1 = "";
@@ -92,9 +94,13 @@
 
         function toggleColor(row, col, cell) {
             const sonidoCelda = document.getElementById("sonido-celda");
-            sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
-            sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
-            sonidoCelda.play(); // Reproducir el sonido al hacer clic
+            if (!sonidoCelda.paused) {
+                sonidoCelda.pause();
+            }
+            sonidoCelda.currentTime = 0;
+            sonidoCelda.volume = 0.1;
+            sonidoCelda.play();
+
             if (cell.classList.contains('blocked')) {
                 return; // Do nothing if the cell is blocked
             }

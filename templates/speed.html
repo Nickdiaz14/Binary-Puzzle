@@ -175,9 +175,13 @@
 
         function toggleColor(row, col, cell) {
             const sonidoCelda = document.getElementById("sonido-celda");
-            sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
-            sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
-            sonidoCelda.play(); // Reproducir el sonido al hacer clic
+            if (!sonidoCelda.paused) {
+                sonidoCelda.pause();
+            }
+            sonidoCelda.currentTime = 0;
+            sonidoCelda.volume = 0.1;
+            sonidoCelda.play();
+
             const minValue = Math.max(...usermatrix.flat());
             if (cell.classList.contains('blocked')) {
                 return; // Do nothing if the cell is blocked

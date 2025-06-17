@@ -38,6 +38,8 @@
     <script>
         const savedTheme = localStorage.getItem("theme");
         const musica = document.getElementById("musica");
+        const sonidoCelda = document.getElementById("sonido-celda");
+        sonidoCelda.load();
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
             const numero = Math.floor(Math.random() * 10) + 1;
@@ -201,9 +203,13 @@
 
         function toggleColor(row, col, cell) {
             const sonidoCelda = document.getElementById("sonido-celda");
-            sonidoCelda.volume = 0.1; // Ajustar el volumen del sonido de la celda
-            sonidoCelda.currentTime = 0; // Reiniciar el sonido al inicio
-            sonidoCelda.play(); // Reproducir el sonido al hacer clic
+            if (!sonidoCelda.paused) {
+                sonidoCelda.pause();
+            }
+            sonidoCelda.currentTime = 0;
+            sonidoCelda.volume = 0.1;
+            sonidoCelda.play();
+
             if (cell.classList.contains('locked')) {
                 return; // Do nothing if the cell is blocked
             }
