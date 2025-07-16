@@ -16,13 +16,24 @@
                 <div id="leaderboard2" style="text-align: center;"></div>
             </div>
             <div style="text-align:center;" class="botones">
-                <button data-url="/menu" class="resolver evaluar">Volver</button>
+                <button data-url="/menu" class="resolver azulito" style="width: 75px;">
+                    <img id="home" src="{{ url_for('static', filename='images/home.png') }}" style="height: 37px;filter: brightness(0) invert(1);" alt="Inicio">
+                </button>
             </div>
         </div>
         <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
     </body>
         <script>
             const sonido = document.getElementById("sonido-boton");
+            const home = document.getElementById("home");
+            const savedTheme = localStorage.getItem("theme");
+            if (savedTheme) {
+                document.body.classList.remove("light-theme", "dark-theme");
+                document.body.classList.add(savedTheme);
+                if (savedTheme === "light-theme") {
+                    home.style.filter = "brightness(0)";
+                }
+            }
             sonido.load();
             document.querySelectorAll(".resolver").forEach(boton => {
                 boton.addEventListener("click", function (e) {

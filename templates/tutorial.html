@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5, user-scalable=no">
     <title>Tutorial</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,6 +25,8 @@
     <audio id="musica" preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
+        const home = document.getElementById("home");
+        const reload = document.getElementById("reload");
         const savedTheme = localStorage.getItem("theme");
         let color0 = "";
         let color1 = "";

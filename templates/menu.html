@@ -20,6 +20,7 @@
             <option value="MindGrid">MindGames</option>
             <option value="0h-n0">0h-n0</option>
             <option value="MathGames">MathGames</option>
+            <option value="Agalludo">Agalludo</option>
         </select>
     </div>
     <div style="text-align:center;">
@@ -97,6 +98,13 @@
             </div>
         </div>
 
+        <!-- Menú Juego 6 (Agalludo) -->
+        <div id="game6-menu" style="text-align:center; display: none;">
+            <div class="botones">
+                <button data-url="/dado" class="resolver azulito">Agalludo</button>
+                <button data-url="/leaderboards" class="resolver rojito">Rankings</button>
+            </div>
+        </div>
 
         <h1 id="title" style="margin-top: 20px; font-size: 27px; font-weight: bold;">Ajustes</h1>
 
@@ -131,6 +139,7 @@
             document.getElementById("game3-menu").style.display = "none";
             document.getElementById("game4-menu").style.display = "none";
             document.getElementById("game5-menu").style.display = "none";
+            document.getElementById("game6-menu").style.display = "none";
 
             if (gameSelect === "0h-h1") {
                 document.getElementById("game1-menu").style.display = "block";
@@ -142,6 +151,8 @@
                 document.getElementById("game4-menu").style.display = "block";
             } else if (gameSelect === "MathGames") {
                 document.getElementById("game5-menu").style.display = "block";
+            } else if (gameSelect === "Agalludo") {
+                document.getElementById("game6-menu").style.display = "block";
             }
         }
 

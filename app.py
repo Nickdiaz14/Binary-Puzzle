@@ -494,7 +494,14 @@ def win_page():
 
 @app.route('/dado')
 def dado_page():
-    return render_template('dado.html')
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    SELECT total FROM agalludo 
+    WHERE id = %s;
+    """,("AAAAA",))
+    return render_template('dado.html',total=cursor.fetchone()[0])
 
 @app.route('/dice_leaderboards')
 def dl_page():

@@ -110,7 +110,41 @@ h1:hover {
   mask-position: center;
 }
 
+.button-container {
+  display: flex;
+  gap: 1rem;
+}
 
+.btn {
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  transition: transform 0.2s;
+}
+
+.btn img {
+  width: 30px;
+  height: 30px;
+}
+
+/* Colores de fondo personalizados */
+.home-btn {
+  background-color: #e4417a;
+}
+
+.reload-btn {
+  background-color: #9b3fe7;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+}
 /* ============================================
    COMPONENTES DE TABLA - OPTIMIZADOS
 ============================================ */

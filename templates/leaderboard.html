@@ -14,10 +14,15 @@
             </div>
             <h1 for="matrix-size" style="font-size: 22px; font-weight: bold; margin-top: 10px; margin-bottom: 10px">{{ message }}</h1>
             <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
-            <div style="text-align:center;" class="botones">
-                <button onclick="reintentar()" class="resolver evaluar">Reintentar</button>
-                <button data-url="/menu" class= "resolver evaluar">Volver</button>
-            </div>
+            
+    <div class="botones">
+        <button data-url="/menu" class="resolver azulito" style="width: 75px;">
+            <img id="home" src="{{ url_for('static', filename='images/home.png') }}" style="height: 37px;filter: brightness(0) invert(1);" alt="Inicio">
+        </button>
+        <button onclick="reintentar()" class="resolver azulito" style="width: 80px;">
+            <img id="reload" src="{{ url_for('static', filename='images/reload.png') }}" style="height: 32px; filter: invert(1);" alt="Inicio">
+        </button>
+    </div>
         </div>
         <audio id="celebrate" src="{{ url_for('static', filename='sounds/celebrate.mp3') }}" preload="auto"></audio>
         <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>

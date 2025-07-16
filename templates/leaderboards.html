@@ -14,7 +14,11 @@
             </select>
         </div>
         <div id="leaderboard" style="text-align: center;margin-top: 20px;"></div>
-        <button data-url="/menu" class="resolver azulito" style="margin-top: 20px;text-align: center; width: 150px; height: 50px; font-size: 18px;">Volver</button>
+        <div class="botones">
+        <button data-url="/menu" class="resolver azulito" style="width: 75px;">
+            <img id="home" src="{{ url_for('static', filename='images/home.png') }}" style="height: 37px;filter: brightness(0) invert(1);" alt="Inicio">
+        </button>
+    </div>
         <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
         <script>
             document.addEventListener("DOMContentLoaded", function() {

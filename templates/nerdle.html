@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5">
     <title>Nerdle</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,12 +43,19 @@
     </table>
     </div>
     <div class="botones">
-        <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+        <button data-url="/menu" class="resolver azulito" style="width: 75px;">
+            <img id="home" src="{{ url_for('static', filename='images/home.png') }}" style="height: 37px;filter: brightness(0) invert(1);" alt="Inicio">
+        </button>
+        <button onclick="reset()" class="resolver azulito" style="width: 75px;">
+            <img id="reload" src="{{ url_for('static', filename='images/reload.png') }}" style="height: 32px; filter: invert(1);" alt="Inicio">
+        </button>
     </div>
     <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
     <audio id="musica" preload="auto"></audio>
     <script>
         const musica = document.getElementById("musica");
+        const home = document.getElementById("home");
+        const reload = document.getElementById("reload");
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
             sonido.load();
@@ -116,9 +123,21 @@
         }
 
         function reset(){
+            let overlay = document.getElementById('countdown-overlay');
+            overlay.style.display = "flex"; // Mostrar el overlay
+            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
             document.getElementById("timer").textContent = `00:00.00`;
-            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            centisecondsElapsed = 0; // Reiniciar el cronómetro
+            stopTimer(); // Detener el cronómetro
+            guesses = 0; // Reiniciar el número de intentos
+            igualdad = '';
+            gamefinished = false; // Reiniciar el estado del juego
+            let initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
             createTable(initial);
+            const table = document.getElementById('matrix');
+            gamefinished = false;
+            document.getElementById("title_part").textContent = '';
+            startGame(); // Reiniciar el juego
         }
         
         function stopTimer() {
@@ -376,7 +395,8 @@
             document.getElementById("title").textContent = `Nerdle`;
             document.getElementById("title_part").textContent = "¡Adivina la igualdad!";
             matrixSize = size; // Asigna el tamaño seleccionado
-            reset();
+            let initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            createTable(initial);
             startGame(); // Inicia la cuenta regresiva
         }
 

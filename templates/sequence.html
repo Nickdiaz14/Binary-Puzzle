@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5">
     <title>Patrón Perfecto</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,12 +30,22 @@
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
-    <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <div class="botones">
+        <button data-url="/menu" class="resolver azulito" style="width: 75px;">
+            <img id="home" src="{{ url_for('static', filename='images/home.png') }}" style="height: 37px;filter: brightness(0) invert(1);" alt="Inicio">
+        </button>
+        <button onclick="reset()" class="resolver azulito" style="width: 75px;">
+            <img id="reload" src="{{ url_for('static', filename='images/reload.png') }}" style="height: 32px; filter: invert(1);" alt="Inicio">
+        </button>
+    </div>
     <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
     <audio id="musica" preload="auto"></audio>
     <script>
         const savedTheme = localStorage.getItem("theme");
         const musica = document.getElementById("musica");
+        const home = document.getElementById("home");
+        const reload = document.getElementById("reload");
+
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
             const savedTheme = localStorage.getItem("theme");
@@ -49,6 +59,8 @@
                 document.body.classList.add(savedTheme);
             }
             if (savedTheme === "light-theme") {
+                reload.style.filter = "invert(0)";
+                home.style.filter = "brightness(0)";
                 color0 = "rojas";
                 color1 = "azules";
                 border = "rgb(0,0,0)"
@@ -93,6 +105,7 @@
         let matrixSize = 3; // Tamaño de la matriz
         let boards_solved = 0
         let mod = false;
+        let game_played = 0; // 0 para progresivo, 1 para aleatorio
         let coords;
         let tiles;
         let gamestarted = true;
@@ -109,9 +122,49 @@
             document.body.classList.add(lockSizeClass);
         }
         
-        function reset(){
-            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
-            createTable(initial);
+        async function reset(){
+            // Reiniciar todas las variables del juego
+            boards_solved = 0;
+            gamestarted = true;
+            
+            // Limpiar el localStorage
+            localStorage.removeItem('Ubs');
+            
+            // Reiniciar la música
+            musica.pause();
+            const numero = Math.floor(Math.random() * 10) + 1;
+            musica.src = `/static/sounds/game_music_${numero}.mp3`;
+            musica.loop = true;
+            musica.volume = 0;
+            musica.play();
+            
+            // Fade in de la música
+            let paso = 0;
+            const fade = setInterval(() => {
+                paso++;
+                musica.volume = Math.min(0.36, paso * 0.02);
+                if (paso >= 20) {
+                    clearInterval(fade);
+                }
+            }, 100);
+
+            let overlay = document.getElementById('countdown-overlay');
+            overlay.style.display = "flex"; // Mostrar el overlay de reinicio
+            setBoardSize(game_played); // Reiniciar el tamaño del tablero
+            
+            // Reiniciar el título
+            document.getElementById("title").textContent = "Memoria";
+            document.getElementById("title_part").textContent = "¡Replica el patrón!";
+            
+            // Limpiar el conteo
+            document.getElementById("conteo").innerHTML = '';
+            
+            // Reiniciar las matrices
+            matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            user_matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            
+            // Recrear la tabla
+            createTable();
         }
 
         function adjustCellSize() {
@@ -279,7 +332,7 @@
                         await new Promise(resolve => setTimeout(resolve, 2100));
                     }
                     await new Promise(resolve => setTimeout(resolve, 1000));
-                    highlightCellsSequentially(coords,170); // Llama a la función secuencialmente
+                    highlightCellsSequentially(coords,200); // Llama a la función secuencialmente
                 } else {
                     coords = ubs.slice(0,(boards_solved+3)*2);
                     tiles = coords.length
@@ -298,13 +351,14 @@
                         }
                     }
                     await new Promise(resolve => setTimeout(resolve, 1000));
-                    highlightCellsSequentially(coords,170); // Llama a la función secuencialmente
+                    highlightCellsSequentially(coords,200); // Llama a la función secuencialmente
                 }
             });
         }
 
 
         function setBoardSize(size) {
+            game_played = size;
             localStorage.removeItem('Ubs');
             let overlay = document.getElementById('countdown-overlay');
             overlay.innerHTML = '<h1 id="countdown"; color: #ffffff;"></h1>';
@@ -312,7 +366,6 @@
             if (size === 0) {
                 mod = true;
             }
-            reset(); // Genera el nuevo tablero
             startGame(); // Inicia la cuenta regresiva
         }
         createTable();

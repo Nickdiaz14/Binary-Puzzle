@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.6, maximum-scale=0.6, minimum-scale=0.6">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=0.5, minimum-scale=0.5">
     <title>Secuenzo</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,12 +32,22 @@
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
     </table>
-    <button data-url="/menu" class="resolver evaluar" style="margin-top: 20px;">Volver</button>
+    <div class="botones">
+        <button data-url="/menu" class="resolver azulito" style="width: 75px;">
+            <img id="home" src="{{ url_for('static', filename='images/home.png') }}" style="height: 37px;filter: brightness(0) invert(1);" alt="Inicio">
+        </button>
+        <button onclick="reset()" class="resolver azulito" style="width: 75px;">
+            <img id="reload" src="{{ url_for('static', filename='images/reload.png') }}" style="height: 32px; filter: invert(1);" alt="Inicio">
+        </button>
+    </div>
     <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>
     <audio id="musica" preload="auto"></audio>
     <script>
         const savedTheme = localStorage.getItem("theme");
         const musica = document.getElementById("musica");
+        const home = document.getElementById("home");
+        const reload = document.getElementById("reload");
+
         document.addEventListener("DOMContentLoaded", function() {
             const sonido = document.getElementById("sonido-boton");
             sonido.load();
@@ -49,6 +59,10 @@
             if (savedTheme) {
                 document.body.classList.remove("light-theme", "dark-theme");
                 document.body.classList.add(savedTheme);
+                if (savedTheme === "light-theme") {
+                    reload.style.filter = "invert(0)";
+                    home.style.filter = "brightness(0)";
+                }
             }
             let paso = 0;
             const fade = setInterval(() => {
@@ -165,9 +179,18 @@
         }
         
         function reset(){
+            gamefinished = false;
+            centisecondsElapsed = 200; // Reiniciar el cronómetro a 2 segundos
+            let overlay = document.getElementById('countdown-overlay');
+            overlay.style.display = "flex"; // Mostrar el overlay
+            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
             document.getElementById("timer").textContent = `00:00.00`;
-            initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
+            let initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
             createTable(initial);
+            gamestarted = true;
+            boards_solved = 0;
+            document.getElementById("title_part").textContent = 'Tableros resueltos: 0';
+            startGame(); // Reiniciar el juego
         }
 
         function adjustCellSize() {
@@ -261,6 +284,7 @@
                     centisecondsElapsed = 200;
                     startTimer();
                     boards_solved++;
+                    document.getElementById("title_part").textContent = `Tableros resueltos: ${boards_solved}`;
                     startGame();
                     acc = 0;
                 }, 1000);
