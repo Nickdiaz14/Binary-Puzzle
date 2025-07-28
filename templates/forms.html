@@ -7,20 +7,24 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
-        /* ----------------------------- M&B Theme Mejorado ----------------------------- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+        }
+        
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
+            justify-content: flex-start;
             background-color: #15003e;
             font-family: "Rubik", sans-serif;
             box-sizing: border-box;
             touch-action: manipulation;
-            overflow: hidden; /* Evita el desplazamiento de toda la página */
             user-select: none;
         }
 
@@ -47,6 +51,25 @@
             width: 80%;
             max-height: 70vh; /* Establece una altura máxima */
             overflow-y: auto; /* Habilita el desplazamiento vertical */
+        }
+
+        /* Scrollbar personalizado para el formulario */
+        form::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        form::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        form::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+        }
+
+        form::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
 
         label {
