@@ -2,12 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width height=device-height, initial-scale=0.7">
     <title>Asistencia</title>
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
-        /* ----------------------------- M&B Theme Mejorado ----------------------------- */
         html, body {
             height: 100%;
             margin: 0;
@@ -31,8 +30,7 @@
 
         h1 {
             color: #ffffff;
-            margin: 10px 0;
-            flex-shrink: 0;
+            margin-bottom: 20px;
         }
 
         .background-logo {
@@ -43,15 +41,6 @@
             z-index: 0;
         }
 
-        .form-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding: 10px;
-            overflow: hidden;
-        }
-
         form {
             position: relative;
             z-index: 1;
@@ -59,11 +48,9 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            width: 90%;
-            max-width: 500px;
-            height: calc(100vh - 120px);
-            overflow-y: auto;
-            overflow-x: hidden;
+            width: 80%;
+            max-height: 90vh; /* Establece una altura máxima */
+            overflow-y: auto; /* Habilita el desplazamiento vertical */
         }
 
         /* Scrollbar personalizado para el formulario */
@@ -73,12 +60,12 @@
 
         form::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+            border-radius: 8px;
         }
 
         form::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
+            border-radius: 8px;
         }
 
         form::-webkit-scrollbar-thumb:hover {
@@ -90,41 +77,31 @@
             font-size: 16px;
         }
 
-        select {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0 20px 0;
-            border: 2px solid #4a4949;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            font-size: 16px;
-            box-sizing: border-box;
+        .opcion-multiple {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            gap: 10px;
+            transition: background-color 0.3s ease;
             cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 20px;
-            padding-right: 40px;
         }
 
-        select:focus {
-            outline: none;
-            border-color: #00d4ff;
-            background-color: rgba(255, 255, 255, 0.3);
+        .opcion-multiple:hover {
+            background-color: rgba(255, 255, 255, 0.2); /* se aclara al pasar el mouse */
         }
 
-        select option {
-            background-color: #15003e;
-            color: #ffffff;
-            padding: 10px;
+        .opcion-multiple input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #00d4ff;
         }
 
         input[type="text"],
         input[type="email"],
         textarea {
-            width: calc(100% - 20px);
+            width: 98%;
             padding: 10px;
             margin: 10px 0 20px 0;
             border: 2px solid #4a4949;
@@ -132,7 +109,6 @@
             background-color: rgba(255, 255, 255, 0.2);
             color: #ffffff;
             font-size: 16px;
-            box-sizing: border-box;
         }
 
         label.titulo-pregunta {
@@ -159,7 +135,6 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
             width: 100%;
-            box-sizing: border-box;
         }
 
         button:hover {
@@ -171,13 +146,11 @@
             display: flex;
             justify-content: center;
             margin: 15px 0;
-            flex-wrap: wrap;
-            gap: 5px;
         }
 
         .rating img {
             width: 40px;
-            height: 40px;
+            height:  40px;
             cursor: pointer;
             opacity: 0.5;
             transition: opacity 0.3s ease;
@@ -185,12 +158,14 @@
 
         .rating img.active {
             opacity: 1;
+
         }
 
         .rating input[type="radio"] {
             opacity: 0;
-            position: absolute;
-            left: -9999px;
+            position: relative;
+            left: 60px;
+            top: 0px;
         }
 
         .rating label img {
@@ -204,19 +179,6 @@
             transform: scale(1.1);
         }
 
-        .footer-info {
-            text-align: center;
-            padding: 10px;
-            flex-shrink: 0;
-        }
-
-        .footer-info label {
-            font-size: clamp(10px, 2.5vw, 14px);
-            display: inline-block;
-            max-width: 100%;
-            color: #ffffff;
-        }
-
         #overlay { 
             position: fixed;
             top: 0;
@@ -228,158 +190,151 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            align-items: center;
             color: white;
             font-size: 15vw;
             font-family: 'Rubik', sans-serif;
             z-index: 1000;
         }
-
-        /* Media queries para dispositivos móviles */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 5vw;
-                margin: 5px 0;
-            }
-            
-            form {
-                padding: 15px;
-                width: 95%;
-                height: calc(100vh - 100px);
-            }
-            
-            .rating img {
-                width: 35px;
-                height: 35px;
-            }
-            
-            input[type="text"],
-            input[type="email"],
-            textarea {
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .rating {
-                gap: 2px;
-            }
-            
-            .rating img {
-                width: 30px;
-                height: 30px;
-            }
-        }
     </style>
 </head>
 
 <body>
-        <div id="overlay">
-            <label id="overlay-label" style="font-size: 33px; margin-bottom: 20px; text-align: center;"></label>
-            <div id="overlay-buttons"></div>
+    <div id="overlay">
+        <label id="overlay-label" style="font-size: 33px; margin-bottom: 20px; text-align: center;"></label>
+        <div id="overlay-buttons"></div>
+    </div>
+    <h1 style="font-size: 9vw; text-align: center; white-space: nowrap;">Asistencia Math & Beer</h1>
+
+    <form id="your-form-id" onsubmit="submitForm(event)" style="margin-bottom: 10px;">
+        <label class="titulo-pregunta">Nombre Completo <span style="color: red;">*</span></label>
+        <input type="text" name="nombre_completo" required><br>
+
+        <label class="titulo-pregunta">Sexo <span style="color: red;">*</span></label>
+        <div class="opcion-multiple">
+            <input type="radio" name="sexo" value="Masculino">
+            <label>Masculino</label>
         </div>
-        
-        <h1 style="text-align: center; white-space: nowrap;">Asistencia Math & Beer</h1>
-        
-        <div class="form-container">
-            <form id="your-form-id" onsubmit="submitForm(event)">
-                <label class="titulo-pregunta">Nombre Completo <span style="color: red;">*</span></label>
-                <input type="text" name="nombre_completo" required><br>
-
-                <label class="titulo-pregunta">Sexo <span style="color: red;">*</span></label>
-                <select name="sexo" required>
-                    <option value="">Selecciona una opción</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Femenino">Femenino</option>
-                    <option value="Otro">Otro</option>
-                </select>
-
-                <label class="titulo-pregunta">Edad <span style="color: red;">*</span></label>
-                <select name="edad" required>
-                    <option value="">Selecciona una opción</option>
-                    <option value="Menor de 18">Menor de 18</option>
-                    <option value="18 - 25">18 - 25</option>
-                    <option value="26 - 35">26 - 35</option>
-                    <option value="36 - 50">36 - 50</option>
-                    <option value="51 - 65">51 - 65</option>
-                    <option value="Mayor de 65">Mayor de 65</option>
-                </select>
-
-                <label class="titulo-pregunta">Correo Electrónico <span style="color: red;">*</span></label>
-                <input type="email" name="correo_electronico" required><br>
-
-                <label class="titulo-pregunta">Rol del Asistente <span style="color: red;">*</span></label>
-                <select name="rol" required>
-                    <option value="">Selecciona una opción</option>
-                    <option value="Asistente ocasional">Asistente ocasional</option>
-                    <option value="Estudiante de la Konrad Lorenz">Estudiante de la Konrad Lorenz</option>
-                    <option value="Egresado de la Konrad Lorenz">Egresado de la Konrad Lorenz</option>
-                    <option value="Docente de la Konrad Lorenz">Docente de la Konrad Lorenz</option>
-                </select>
-
-                <label class="titulo-pregunta">¿Qué te pareció el contenido y desarrollo del evento? <span style="color: red;">*</span></label>
-                <label>¡Califícalo del 1 al 5!</label>
-                <div class="rating">
-                    <input type="radio" name="calificacion" value="1" id="star1" required>
-                    <label for="star1"><img src="/static/images/logo_M&B_b.png" alt="1 estrella" onclick="updateRating(1)"></label>
-                    <input type="radio" name="calificacion" value="2" id="star2" required>
-                    <label for="star2"><img src="/static/images/logo_M&B_b.png" alt="2 estrella" onclick="updateRating(2)"></label>
-                    <input type="radio" name="calificacion" value="3" id="star3" required>
-                    <label for="star3"><img src="/static/images/logo_M&B_b.png" alt="3 estrella" onclick="updateRating(3)"></label>
-                    <input type="radio" name="calificacion" value="4" id="star4" required>
-                    <label for="star4"><img src="/static/images/logo_M&B_b.png" alt="4 estrella" onclick="updateRating(4)"></label>
-                    <input type="radio" name="calificacion" value="5" id="star5" required>
-                    <label for="star5"><img src="/static/images/logo_M&B_b.png" alt="5 estrella" onclick="updateRating(5)"></label>
-                </div>
-                <input type="hidden" name="calificacion" id="calificacion">
-
-                <label class="titulo-pregunta">¿Quieres que te invitemos a nuestras próximas ediciones de Math&Beer? <span style="color: red;">*</span></label>
-                <select name="futuros_eventos" required>
-                    <option value="">Selecciona una opción</option>
-                    <option value="¡Por supuesto!">¡Por supuesto!</option>
-                    <option value="No, gracias.">No, gracias.</option>
-                </select>
-
-                <label class="titulo-pregunta">¿Tienes algún comentario o recomendación?</label>
-                <label>Tu opinión es muy importante y nos ayuda a mejorar.</label>
-                <textarea name="comentario" rows="2" placeholder="Escribe tus comentarios aquí..."></textarea><br>
-                <button id="enviar" type="submit">Enviar</button>
-            </form>
+        <div class="opcion-multiple">
+            <input type="radio" name="sexo" value="Femenino">
+            <label>Femenino</label>
         </div>
-        
-        <div class="footer-info">
-            <label>
-              Si quiere más información sobre el trabajo del equipo Math&Beer ingresa
-              <a id="link" href="https://trello.com/b/QlcXyEHR/math-and-beer" target="_blank"
-                 style="font-size: inherit; text-decoration: underline; color: #ffffff; text-underline-offset: 1px;">
-                aquí
-              </a>
-            </label>
+        <div class="opcion-multiple">
+            <input type="radio" name="sexo" value="Otro" required>
+            <label>Otro</label>
         </div>
+
+        <label class="titulo-pregunta">Edad <span style="color: red;">*</span></label>
+        <div class="opcion-multiple">
+            <input type="radio" name="edad" value="Menor de 18">
+            <label>Menor de 18</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="edad" value="18 - 25">
+            <label>18 - 25</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="edad" value="26 - 35">
+            <label>26 - 35</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="edad" value="36 - 50">
+            <label>36 - 50</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="edad" value="51 - 65">
+            <label>51 - 65</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="edad" value="Mayor de 65" required>
+            <label>Mayor de 65</label>
+        </div>
+
+        <label class="titulo-pregunta">Correo Electrónico <span style="color: red;">*</span></label>
+        <input type="email" name="correo_electronico" required><br>
+
+        <label class="titulo-pregunta">Rol del Asistente <span style="color: red;">*</span></label>
+        <div class="opcion-multiple">
+            <input type="radio" name="rol" value="Asistente ocasional">
+            <label>Asistente ocasional</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="rol" value="Estudiante de la Konrad Lorenz">
+            <label>Estudiante de la Konrad Lorenz</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="rol" value="Egresado de la Konrad Lorenz">
+            <label>Egresado de la Konrad Lorenz</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="rol" value="Docente de la Konrad Lorenz" required>
+            <label>Docente de la Konrad Lorenz</label>
+        </div>
+
+        <label class="titulo-pregunta">¿Qué te pareció el contenido y desarrollo del evento? <span style="color: red;">*</span></label>
+        <label>¡Califícalo del 1 al 5!</label>
+        <div class="rating">
+            <input type="radio" name="calificacion" value="1" id="star1" required>
+            <label for="star1"><img src="/static/images/logo_M&B_b.png" style="width: 86px; height: 86px;" alt="1 estrella" onclick="updateRating(1)"></label>
+            <input type="radio" name="calificacion" value="2" id="star2" required>
+            <label for="star2"><img src="/static/images/logo_M&B_b.png" style="width: 86px; height: 86px;" alt="2 estrella" onclick="updateRating(2)"></label>
+            <input type="radio" name="calificacion" value="3" id="star3" required>
+            <label for="star3"><img src="/static/images/logo_M&B_b.png" style="width: 86px; height: 86px;" alt="3 estrella" onclick="updateRating(3)"></label>
+            <input type="radio" name="calificacion" value="4" id="star4" required>
+            <label for="star4"><img src="/static/images/logo_M&B_b.png" style="width: 86px; height: 86px;" alt="4 estrella" onclick="updateRating(4)"></label>
+            <input type="radio" name="calificacion" value="5" id="star5" required>
+            <label for="star5"><img src="/static/images/logo_M&B_b.png" style="width: 86px; height: 86px;" alt="5 estrella" onclick="updateRating(5)"></label>
+        </div>
+        <input type="hidden" name="calificacion" id="calificacion">
+
+        <label class="titulo-pregunta">¿Quieres que te invitemos a nuestras próximas ediciones de Math&Beer? <span style="color: red;">*</span></label>
+        <div class="opcion-multiple">
+            <input type="radio" name="futuros_eventos" value="¡Por supuesto!">
+            <label>¡Por supuesto!</label>
+        </div>
+        <div class="opcion-multiple">
+            <input type="radio" name="futuros_eventos" value="No, gracias." required>
+            <label>No, gracias.</label>
+        </div>
+
+        <label class="titulo-pregunta">¿Tienes algún comentario o recomendación?</label>
+        <label>Tu opinión es muy importante y nos ayuda a mejorar.</label>
+        <textarea name="comentario" rows="2" placeholder="Escribe tus comentarios aquí..."></textarea><br>
+        <button id="enviar" type="submit">Enviar</button>
+    </form>
+    <div style="text-align: center; margin-bottom: 30px; padding: 0 10px;">
+        <label style="font-size: clamp(10px, 2.5vw, 14px); display: inline-block; max-width: 100%; color: #ffffff;">
+          Si quiere más información sobre el trabajo del equipo Math&Beer ingresa
+          <a id="link" href="https://trello.com/b/QlcXyEHR/math-and-beer" target="_blank"
+             style="font-size: inherit; text-decoration: underline; color: #ffffff; text-underline-offset: 1px;">
+            aquí
+          </a>
+        </label>
+      </div>
 
     <script>
         let overlay = document.getElementById('overlay');
-        overlay.style.display = "none";
+        overlay.style.display = "none"; // Ocultar overlay al empezar
 
         const form = document.querySelector('form');
 
-        // Prevenir scroll en el body
-        document.body.addEventListener('touchmove', function(e) {
-            e.preventDefault();
-        }, { passive: false });
-
-        // Permitir scroll solo en el formulario
-        form.addEventListener('touchmove', function(e) {
-            e.stopPropagation();
-        }, { passive: true });
+        document.querySelectorAll('.opcion-multiple').forEach(opcion => {
+            opcion.addEventListener('click', function() {
+                const radio = opcion.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                }
+            });
+        });
 
         const logos = [];
 
-        for (let i = 0; i < 50; i++) { // Reducido para mejor performance en móviles
+        for (let i = 0; i < 100; i++) {
             const img = document.createElement('img');
             img.src = "/static/images/logo_M&B_b.png";
             img.className = 'background-logo';
             img.style.position = 'fixed';
-            img.style.width = `${Math.random() * 60 + 30}px`;
+            img.style.width = `${Math.random() * 80 + 40}px`;
             img.style.height = 'auto';
             img.style.opacity = 0.1;
             img.style.zIndex = '-1';
@@ -391,11 +346,11 @@
                 element: img,
                 x: Math.random() * window.innerWidth,
                 y: Math.random() * window.innerHeight,
-                vx: (Math.random() - 0.5) * 1,
-                vy: (Math.random() - 0.5) * 1,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: (Math.random() - 0.5) * 1.5,
                 width: width,
-                angle: Math.random() * 360,
-                rotationSpeed: (Math.random() - 0.5) * 1.5
+                angle: Math.random() * 360,  // Ángulo inicial
+                rotationSpeed: (Math.random() - 0.5) * 2.5 // Velocidad angular aleatoria
             };
 
             img.style.left = `${logo.x}px`;
@@ -440,11 +395,11 @@
         }
 
         async function submitForm(event) {
-            event.preventDefault();
+            event.preventDefault(); // Evitar recargar página
             const submitButton = document.getElementById('enviar');
-            submitButton.textContent = 'Enviando...';
-            submitButton.style.backgroundColor = '#ccc';
-            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...'; // Cambiar texto del botón
+            submitButton.style.backgroundColor = '#ccc'; // Cambiar color del botón
+            submitButton.disabled = true; // Deshabilitar el botón de envío
             
             const formData = new FormData(event.target);
 
@@ -455,7 +410,7 @@
 
             const result = await response.json();
             const overlay = document.getElementById('overlay');
-            overlay.style.display = 'flex';
+            overlay.style.display = 'flex'; // Mostrar overlay al enviar el formulario
             const overlayContent = document.createElement('div');
             const overlayLabel = document.getElementById('overlay-label');
             const overlayButtons = document.getElementById('overlay-buttons');
@@ -467,12 +422,13 @@
                 `;
             } else {
                 overlayLabel.textContent = 'Se produjo un error, intente nuevamente.';
-                overlayButtons.innerHTML = '';
+                overlayButtons.innerHTML = ''; // Limpiamos botones
                 setTimeout(() => {
-                    window.location.reload();
+                    window.location.reload(); // Recargar página después de 3 segundos
                 }, 3000);
             }
         }
+
     </script>
 </body>
 </html>
