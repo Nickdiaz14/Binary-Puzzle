@@ -33,10 +33,10 @@
       <h1 id="title" style="font-size: 80px; font-weight: bold;">¡Agalludo!</h1>
   </div>
   <div style="text-align:center;">
-      <h1 id="title_part" style="font-size: 20px; font-weight: bold; height: 31px;">Llega a {{ total }}</h1>
+      <h2 id="title_part" style="font-size: 20px; font-weight: bold; height: 31px;">Llega a {{ total }}</h2>
   </div>
     <div style="text-align: center;">
-        <h1 id="timer" style="font-size: 25px; font-weight: bold; margin: 10px 0;">00:00.00</h1>
+        <h2 id="timer" style="font-size: 25px; font-weight: bold; margin: 10px 0;">00:00.00</h2>
     </div>
     <div id="conteo" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin: 20px 0;">
       <img src="{{ url_for('static', filename='images/vacio.png') }}" id="dot_image_1" alt="Imagen 1" class="punto" style="width: 25px; height: 25px;">
@@ -52,15 +52,15 @@
   </div>
 </div>
   <div style="text-align: center; margin: 20px 0;">
-    <h1 style="font-size: 24px; margin: 10px 0;">Puntaje actual: <span id="puntaje">0</span></h1>
-    <h1 style="font-size: 24px; margin: 10px 0;">Puntaje total: <span id="total">0</span></h1>
+    <h2 style="font-size: 24px; margin: 10px 0;">Puntaje actual: <span id="puntaje">0</span></h2>
+    <h2 style="font-size: 24px; margin: 10px 0;">Puntaje total: <span id="total">0</span></h2>
   </div>
   <div class="botones" style="text-align: center; margin: 20px 0;">
     <button id="lanzar" class="resolver azulito">Lanzar</button>
     <button id="quedarse" class="resolver rojito">Quedarse</button>
   </div>
   <div style="text-align: center;">
-    <h1 id="mensaje" style="font-size: 20px; height: 40px; margin: 10px 0;"></h1>
+    <h2 id="mensaje" style="font-size: 20px; height: 40px; margin: 10px 0;"></h2>
   </div>
     <div class="botones">
         <button data-url="/menu" class="resolver azulito" style="width: 75px;">

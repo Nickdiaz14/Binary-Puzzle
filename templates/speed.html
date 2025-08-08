@@ -11,19 +11,19 @@
 </head>
 <body>
     <div id="countdown-overlay">
-        <h1 id="countdown" style="color: #ffffff;"></h1>
+        <h2 id="countdown" style="color: #ffffff;"></h2>
     </div>
     <div style="text-align:center;">
         <h1 id="title" style="font-size: 60px; font-weight: bold;">CuentaManía</h1>
     </div>
     <div style="text-align:center;">
-        <h1 id="title_part" style="font-size: 30px; font-weight: bold; height: 40px;">¡Pulsa en orden ascendente!</h1>
+        <h2 id="title_part" style="font-size: 30px; font-weight: bold; height: 40px;">¡Pulsa en orden ascendente!</h2>
     </div>
     <div style="text-align:center; margin-bottom: 8px;">
     </div>
     <!-- Cronómetro -->
     <div style="text-align:center; margin: 20px;">
-        <h1 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h1>
+        <h2 id="timer" style="font-size: 25px; font-weight: bold;">00:00.00</h2>
     </div>
     <table id="matrix">
         <!-- JavaScript will generate the table here -->
@@ -144,7 +144,7 @@
         function reset(){
             let overlay = document.getElementById('countdown-overlay');
             overlay.style.display = "flex"; // Mostrar el overlay
-            overlay.innerHTML = '<h1 id="countdown" style="font-size: 120px; color: #ffffff;"></h1>';
+            overlay.innerHTML = '<h2 id="countdown" style="font-size: 120px; color: #ffffff;"></h2>';
             document.getElementById("timer").textContent = `00:00.00`;
             let initial = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(-1));
             createTable(initial);

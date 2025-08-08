@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.6">
-    <title>Register</title>
+    <title>Juegos Math&Beer</title>
+    <meta name="description" content="¡Bienvenido a Math & Beer! Aquí podrás jugar a diferentes juegos matemáticos y poner a prueba tus habilidades.">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <h1 for="matrix-size" style="font-size: 50px; font-weight: bold; margin-bottom: 20px;">¡Bienvenido a Math & Beer!</h1>
-    <h1 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">Ingresa un nombre o apodo</h1>
-    <h1 id = "case" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</h1>
+    <h2 style="font-size: 30px;margin-top: 15px; font-weight: bold; margin-right: 10px;">Ingresa un nombre o apodo</h2>
+    <h2 id = "case" style="font-size: 20px; color: #ff0000; font-weight: bold; margin-top: 10px">{{ message }}</h2>
     <input type="text" id="nickname" name="nickname" required style="margin-top: 15px; padding: 10px; border: 2px solid #007BFF; border-radius: 5px; font-size: 16px;">
     <button onclick="startGame()" style="margin-top: 15px;" class="resolver evaluar">Empezar</button>
     <audio id="sonido-boton" src="{{ url_for('static', filename='sounds/click.mp3') }}" preload="auto"></audio>

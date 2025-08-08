@@ -80,7 +80,7 @@ body::before {
   z-index: -1;
 }
 
-h1 {
+h1, h2 {
   background: var(--primary-gradient-text);
   background-clip: text;
   -webkit-background-clip: text;
@@ -91,8 +91,8 @@ h1 {
   transition: var(--transition-fast);
 }
 
-/* Hover simplificado para h1 */
-h1:hover {
+/* Hover simplificado para h1, h2 */
+h1, h2:hover {
   transform: translateY(-1px);
 }
 
@@ -736,7 +736,7 @@ body.light-theme::before {
     radial-gradient(circle at 80% 20%, rgba(255, 236, 210, 0.15) 0%, transparent 50%);
 }
 
-body.light-theme h1 {
+body.light-theme h1, h2 {
   background: var(--primary-gradient-text);
   background-clip: text;
   -webkit-background-clip: text;
