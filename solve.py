@@ -1,4 +1,3 @@
-from flask import request, jsonify
 from itertools import permutations
 from constraint import Problem
 import concurrent.futures
@@ -108,9 +107,7 @@ def generate_permutations(n):
     # Inicializamos la búsqueda con secuencia vacía, n/2 ceros y n/2 unos
     return backtrack([], n // 2, n // 2, [])
 
-@app.route('/solve/solve_fuerza/matrix', methods=['POST'])
-def solve_matrix():
-    matrix = request.json['matrix']
+def solve_matrix(matrix):
     if check_cond_ini(matrix):
         col = []
         row = []
@@ -136,11 +133,11 @@ def solve_matrix():
         solutions_count = sum(list(zip(*results))[0])
         solutions = [sol for sublist in list(zip(*results))[1] for sol in sublist]
         if len(solutions) == 0:
-            return jsonify({'solution': 0})
+            return None
         else:
-            return jsonify({'solution': solutions})
+            return solutions
     else:
-        return jsonify({'solution': 0})
+        return None
 
 #---------------------------------------backtracking-------------------------------------------------------
 def backtracking(board, row=0, col=0):
@@ -178,13 +175,11 @@ def backtracking(board, row=0, col=0):
     steps.append(aux)
     return 0
 
-@app.route('/solve/solve_backtracking/matrix', methods=['POST'])
-def backtracking1():
-    board = request.json['matrix']
+def backtracking_func(board):
     sol = backtracking(board)
     aux = steps.copy()
     steps.clear()
-    return jsonify({'solution': sol, 'steps': aux})
+    return sol, aux
 
 
 #---------------------------------------------cumpliendo reglas-----------------------------------------------------
@@ -331,16 +326,14 @@ def aplicar_reglas_basicas(sudoku):
                             steps.append(sudoku.tolist())
                             cambios = True
 
-@app.route('/solve/solve_by_rules/matrix', methods=['POST'])
-def resolver_sudoku_binario():
-    sudoku = np.array(request.json['matrix'], dtype=np.int32)
+def resolver_sudoku_binario(sudoku):
     aplicar_reglas_basicas(sudoku)
     aux = steps.copy()
     steps.clear()
     if rules([list(row) for row in sudoku]):
-        return jsonify({'solution': 1, 'steps': aux})
+        return True, aux
     else:
-        return jsonify({'solution': 0, 'steps': aux})
+        return False, aux
 
 
 #------------------------------------------------algoritmo genetico-------------------------------------------------------
@@ -469,13 +462,12 @@ def count_rule_violations(individual,mtx,ubi):
     violations.extend(enforce_constraints(individual,mtx,ubi))
     return violations
 
-@app.route('/solve/solve_genetic_algorithm/matrix', methods=['POST'])
-def genetic_algorithm1():
+def genetic_algorithm_func(initial_matrix):
     global result_found, result_matrix
     MUTATION_RATE = 0.01
     ELITISM_COUNT = 2
     POPULATION_SIZE = 50
-    inicial_matrix = np.array(request.json['matrix'], dtype=np.int32)
+    inicial_matrix = np.array(initial_matrix, dtype=np.int32)
     chromosome_length = len(inicial_matrix)
     
     # Ubicaciones no -1 en la matriz inicial
@@ -497,9 +489,9 @@ def genetic_algorithm1():
         aux = result_matrix.copy()
         result_found = False
         result_matrix = None
-        return jsonify({'solution': 1, 'steps': [aux.tolist() for i in range(2)]})
+        return True, [aux.tolist() for i in range(2)]
     else:
-        return jsonify({'solution': 0, 'steps': []})
+        return False, None
 
 #------------------------------constraint problem---------------------------------------------------------------------
 def binary_puzzle_solver(n, matrix, ubi):
@@ -564,21 +556,10 @@ def binary_puzzle_solver(n, matrix, ubi):
     else:
         return []
 
-@app.route('/solve/solve_constraint_problem/matrix', methods=['POST'])
-def constraint_solver ():
-    matrix = request.json['matrix']
+def constraint_solver (matrix):
     n = len(matrix)  # Puzzle size (must be even)
 
     ubi = [(i, j) for i in range(n) for j in range(n) if matrix[i][j] != -1]
     solutions = binary_puzzle_solver(n, matrix, ubi)
-    return jsonify({'solution': solutions})
+    return solutions
 
-@app.route('/display_level')
-def display_levels_page():
-    level = int(request.args.get('level'))
-    n = int(request.args.get('n'))
-    with open(f'retos/aleatorios{n}.txt', 'r', encoding='utf-8') as file:
-        lineas = file.readlines()
-        linea_especifica = lineas[level - 1].strip()  # Remueve espacios en blanco y saltos de línea
-    matrix = eval(linea_especifica)
-    return render_template('display_level.html', matrix=json.dumps(matrix), n=n, level = level)
